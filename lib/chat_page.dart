@@ -1,0 +1,217 @@
+import 'package:flutter/material.dart';
+import 'package:test/chat_detail_page.dart';
+import 'package:test/notifications_page.dart';
+import 'package:test/swipePage.dart';
+import 'package:test/settings_page.dart';
+
+class ChatPage extends StatefulWidget {
+  const ChatPage({super.key});
+
+  @override
+  _ChatPageState createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
+  int _selectedIndex = 1; // Default to "Chats" tab
+
+  final List<Widget> _pages = [
+    const SwipePage(), // Home Page
+    const ChatPage(), // Chat Page
+    const NotificationsPage(), // Notifications page
+    const SettingsPage(), // Settings Page
+  ];
+
+  void _onItemTapped(int index) {
+    if (_selectedIndex != index) {
+      setState(() {
+        _selectedIndex = index;
+      });
+
+      // Navigate to different pages
+      switch (index) {
+        case 0:
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const SwipePage()),
+          );
+          break;
+        case 1:
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const ChatPage()),
+          );
+          break;
+        case 2:
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const NotificationsPage()),
+          );
+          break;
+        case 3:
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const SettingsPage()),
+          );
+          break;
+      }
+    }
+  }
+
+  Widget _buildIcon(String assetPath, int index) {
+    bool isSelected = _selectedIndex == index;
+
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: isSelected
+            ? Colors.white
+            : Colors.transparent, // White background for selected icon
+      ),
+      child: Center(
+        child: ImageIcon(
+          AssetImage(assetPath),
+          size: 35, // Ensure all icons use the same size
+          color: isSelected ? Colors.grey : Colors.grey, // Color stays grey
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: const Text('Chats'),
+      ),
+      body: ListView(
+        children: [
+          // Chat with Emily
+          ListTile(
+            leading: CircleAvatar(
+              radius: 25,
+              backgroundImage: const AssetImage(
+                  'assets/profile/1.png'), // Load from local file
+            ),
+            title: const Text('Emily'),
+            subtitle: const Text('Nice to meet you too :)'),
+            trailing: const Text('1:00 PM'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatDetailPage(
+                    userName: 'Emily',
+                    profileImageAsset:
+                        'assets/profile/1.png', // Pass the correct local file path
+                    messages: [
+                      {
+                        'content': 'Hi Emily!',
+                        'timestamp': '12:00 PM',
+                        'isSender': true
+                      },
+                      {
+                        'content': 'Nice to meet you too :)',
+                        'timestamp': '1:00 PM',
+                        'isSender': false
+                      },
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+          // Chat with Bruno
+          ListTile(
+            leading: CircleAvatar(
+              radius: 25,
+              backgroundImage: const AssetImage(
+                  'assets/profile/2.png'), // Load from local file
+            ),
+            title: const Text('Bruno'),
+            subtitle: const Text('Hello!'),
+            trailing: const Text('12:00 AM'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChatDetailPage(
+                    userName: 'Bruno',
+                    profileImageAsset:
+                        'assets/profile/2.png', // Pass the correct local file path
+                    messages: [
+                      {
+                        'content': 'Hello Bruno!',
+                        'timestamp': '11:30 PM',
+                        'isSender': true
+                      },
+                      {
+                        'content': 'Hey there!',
+                        'timestamp': '12:00 AM',
+                        'isSender': false
+                      },
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      // BottomNavigationBar in build method
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFFC7FBD2),
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              spreadRadius: 2,
+              blurRadius: 10,
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+          child: BottomNavigationBar(
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+            backgroundColor: const Color(0xFFC7FBD2),
+            elevation: 0,
+            selectedItemColor: Colors.grey,
+            unselectedItemColor: Colors.grey,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            type: BottomNavigationBarType.fixed,
+            items: [
+              BottomNavigationBarItem(
+                icon: _buildIcon('assets/icons/homebutton.png', 0),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIcon('assets/icons/chatbutton.png', 1),
+                label: 'Chats',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIcon('assets/icons/notificationbutton.png', 2),
+                label: 'Notifications',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIcon('assets/icons/settingsbutton.png', 3),
+                label: 'Settings',
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
