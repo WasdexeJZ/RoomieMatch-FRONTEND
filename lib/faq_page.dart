@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'settings_page.dart';
-import 'swipePage.dart';
+import 'views/swipe.dart';
 import 'chat_page.dart';
 import 'notifications_page.dart';
 

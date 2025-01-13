@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:test/chat_detail_page.dart';
-import 'package:test/notifications_page.dart';
-import 'package:test/swipePage.dart';
-import 'package:test/settings_page.dart';
+import './chat_detail_page.dart';
+import './notifications_page.dart';
+import 'views/swipe.dart';
+import './settings_page.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'sleep_mode_page.dart'; // Import the Sleep Mode Page
 import 'chat_page.dart';
-import 'swipePage.dart';
+import 'views/swipe.dart';
 import 'settings_page.dart';
-import 'package:test/notifications_page.dart';
+import '/notifications_page.dart';
 
 class NotificationSettingsPage extends StatefulWidget {
   const NotificationSettingsPage({super.key});

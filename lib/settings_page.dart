@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'chat_page.dart';
 import 'notifications_page.dart';
-import 'swipePage.dart';
+import 'views/swipe.dart';
 import 'faq_page.dart';
 import 'notifications_settings_page.dart';
-import 'login.dart'; // Import the Login Page
+import 'views/login.dart'; // Import the Login Page
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -139,8 +139,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                          const NotificationSettingsPage(),
+                          builder: (context) => const NotificationSettingsPage(),
                         ),
                       );
                     },
@@ -174,8 +173,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => const FAQPage()),
+                        MaterialPageRoute(builder: (context) => const FAQPage()),
                       );
                     },
                   ),
@@ -186,14 +184,14 @@ class _SettingsPageState extends State<SettingsPage> {
                       Colors.grey,
                     ),
                     title: const Text('Logout'),
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LogInPage(),
-                        ),
-                      );
-                    },
+                    // onTap: () {
+                    //   Navigator.pushReplacement(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) => LogInPage(authService: null, authStore: null,),
+                    //     ),
+                    //   );
+                    // },
                   ),
                 ],
               ),
@@ -252,7 +250,6 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
         ),
       ),
-
     );
   }
 
