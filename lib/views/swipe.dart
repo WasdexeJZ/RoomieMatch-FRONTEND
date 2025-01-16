@@ -1,40 +1,31 @@
 import 'package:flutter/material.dart';
-import '../chat_page.dart';
-import '../notifications_page.dart';
+
+import '../services/auth_service.dart';
+import '../stores/auth_store.dart';
+
+import 'notifications.dart';
 import '../filter_page.dart';
 import '../info_page.dart';
-import '../settings_page.dart';
+import 'chat.dart';
+import 'settings.dart';
 
 class SwipePage extends StatefulWidget {
-  const SwipePage({super.key});
+  final AuthStore authStore;
+  final AuthService authService;
+
+  const SwipePage({super.key, required this.authStore, required this.authService});
 
   @override
   _SwipePageState createState() => _SwipePageState();
 }
 
-class _SwipePageState extends State<SwipePage>
-    with SingleTickerProviderStateMixin {
+class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMixin {
   int _selectedIndex = 0;
 
   final List<Map<String, String>> _photoData = [
-    {
-      'image': 'assets/profile/8.png',
-      'name': 'Ahmad',
-      'age': '24',
-      'distance': '1km'
-    },
-    {
-      'image': 'assets/profile/9.png',
-      'name': 'Alex',
-      'age': '22',
-      'distance': '5km'
-    },
-    {
-      'image': 'assets/profile/10.png',
-      'name': 'John',
-      'age': '27',
-      'distance': '8km'
-    },
+    {'image': 'assets/profile/8.png', 'name': 'Ahmad', 'age': '24', 'distance': '1km'},
+    {'image': 'assets/profile/9.png', 'name': 'Alex', 'age': '22', 'distance': '5km'},
+    {'image': 'assets/profile/10.png', 'name': 'John', 'age': '27', 'distance': '8km'},
   ];
   int _currentPhotoIndex = 0;
 
@@ -86,19 +77,31 @@ class _SwipePageState extends State<SwipePage>
       case 1:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const ChatPage()),
+          MaterialPageRoute(
+              builder: (context) => ChatPage(
+                    authStore: widget.authStore,
+                    authService: widget.authService,
+                  )),
         );
         break;
       case 2:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const NotificationsPage()),
+          MaterialPageRoute(
+              builder: (context) => NotificationsPage(
+                    authStore: widget.authStore,
+                    authService: widget.authService,
+                  )),
         );
         break;
       case 3:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const SettingsPage()),
+          MaterialPageRoute(
+              builder: (context) => SettingsPage(
+                    authStore: widget.authStore,
+                    authService: widget.authService,
+                  )),
         );
         break;
     }
@@ -124,8 +127,7 @@ class _SwipePageState extends State<SwipePage>
                 initialMaxAge: 34,
                 initialMinBudget: 550,
                 initialMaxBudget: 1200,
-                onApply: (distance, genderIndex, minAge, maxAge, minBudget,
-                    maxBudget) {
+                onApply: (distance, genderIndex, minAge, maxAge, minBudget, maxBudget) {
                   Navigator.pop(context);
                 },
               ),
@@ -308,8 +310,7 @@ class _SwipePageState extends State<SwipePage>
                             name: _photoData[_currentPhotoIndex]['name']!,
                             age: _photoData[_currentPhotoIndex]['age']!,
                             imagePath: _photoData[_currentPhotoIndex]['image']!,
-                            distance: _photoData[_currentPhotoIndex]
-                                ['distance']!,
+                            distance: _photoData[_currentPhotoIndex]['distance']!,
                             location: 'Sample Location',
                             about: 'Sample About Information',
                             preferences: ['Preference 1', 'Preference 2'],
@@ -335,8 +336,7 @@ class _SwipePageState extends State<SwipePage>
                     ],
                   ),
                   child: IconButton(
-                    icon:
-                        const Icon(Icons.check, color: Colors.green, size: 40),
+                    icon: const Icon(Icons.check, color: Colors.green, size: 40),
                     onPressed: () {
                       _swipePhoto(true); // Swipe right
                     },

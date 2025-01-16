@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
+// import 'package:http/http.dart' as http;
+import 'package:supertokens_flutter/http.dart' as http;
 
 class ApiService {
-  // final String baseUrl = 'https://api.example.com'; // Replace with your API base URL
   final String baseUrl = 'http://localhost:8000/api/v1'; // Replace with your API base URL
 
   Future<Map<String, dynamic>> get(String endpoint) async {

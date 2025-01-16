@@ -1,10 +1,9 @@
 class User {
-//   static User? _instance;
-  final String id;
-  String? name;
+  String userId;
+  String? username;
   String email;
 
-  User({required this.id, this.name, required this.email});
+  User({required this.userId, this.username, required this.email});
 
 //   User? getInstance(String inputId, String inputName, String inputEmail) {
 //     if (_instance == null) {
@@ -18,12 +17,16 @@ class User {
 //     _instance = null;
 //   }
 
-  String get getId => id;
-  String get getName => name ?? "";
+  String get getUserId => userId;
+  String get getUsername => username ?? "";
   String get getEmail => email;
 
-  set setName(String name) {
-    this.name = name;
+  set setUserId(String userId) {
+    this.userId = userId;
+  }
+
+  set setUsername(String username) {
+    this.username = username;
   }
 
   set setEmail(String email) {

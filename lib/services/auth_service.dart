@@ -1,3 +1,5 @@
+import 'package:supertokens_flutter/supertokens.dart';
+
 import '../models/user.dart';
 import './api_service.dart';
 import '../stores/auth_store.dart';
@@ -32,7 +34,7 @@ class AuthService {
       return {"status": "ERROR", "error": "The input email and password combination is incorrect."};
     } else if (apiResponse['status'] == "OK") {
       authStore.setIsAuthenticated = true;
-      authStore.setUser = User(id: apiResponse["user"]["id"], email: email);
+      authStore.setUser = User(userId: apiResponse["user"]["id"], email: email);
 
       return {"status": "OK"};
     } else {
@@ -52,13 +54,33 @@ class AuthService {
       return {"status": "ERROR", "error": apiResponse["formFields"][0]["error"]};
     } else if (apiResponse['status'] == "OK") {
       authStore.setIsAuthenticated = true;
-      authStore.setUser = User(id: apiResponse["user"]["id"], email: email);
+      authStore.setUser = User(userId: apiResponse["user"]["id"], email: email);
 
-      // call own create user funciton
+      apiResponse = await createUser(apiResponse["user"]["id"], email, username);
 
-      return {"status": "OK"};
+      if (apiResponse["status"] == "ERROR") {
+        return {"status": "ERROR", "error": apiResponse["error"].toString()};
+      } else {
+        return {"status": "OK"};
+      }
     } else {
       return {"status": "UNKNOWN"};
     }
+  }
+
+  Future<Map<String, dynamic>> createUser(String userId, String email, String username) async {
+    Map<String, String> payload = {"user_id": userId, "email": email, "username": username};
+
+    print(payload);
+    Map<String, dynamic> apiResponse = await apiService.post('user/create-user', payload);
+
+    return apiResponse;
+  }
+
+  Future<void> signOut() async {
+    await SuperTokens.signOut();
+
+    authStore.setUser = null;
+    authStore.setIsAuthenticated = false;
   }
 }

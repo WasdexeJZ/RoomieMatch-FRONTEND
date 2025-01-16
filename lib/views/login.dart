@@ -19,6 +19,7 @@ class _LogInPageState extends State<LogInPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+
   // Simple login logic
   void _logIn() async {
     final String username = _usernameController.text;
@@ -32,7 +33,7 @@ class _LogInPageState extends State<LogInPage> {
       if (response["status"] == "OK") {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const SwipePage()),
+          MaterialPageRoute(builder: (context) => SwipePage(authStore: widget.authStore, authService: widget.authService)),
         );
       } else if (response["status"] == "ERROR") {
         _showErrorDialog(response["error"] ?? "An unknown error occurred.");

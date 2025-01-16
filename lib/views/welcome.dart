@@ -19,6 +19,7 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
     super.initState();
+    print(widget.authStore.getUser);
 
     // Start a 3-second delay before navigating to the Login Page
     Future.delayed(const Duration(seconds: 5), () {
@@ -40,7 +41,7 @@ class _WelcomePageState extends State<WelcomePage> {
   void _goToSwipePage(BuildContext context) {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const SwipePage()),
+      MaterialPageRoute(builder: (context) => SwipePage(authStore: widget.authStore, authService: widget.authService)),
     );
   }
 

@@ -8,7 +8,7 @@ import 'stores/auth_store.dart';
 void main() {
   SuperTokens.init(
     apiDomain: "http://localhost:8000",
-    apiBasePath: "/auth",
+    apiBasePath: "/api/v1/auth",
   );
 
   runApp(
@@ -28,6 +28,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final AuthStore authStore = Provider.of<AuthStore>(context, listen: false);
     final AuthService authService = AuthService(authStore);
+
+    authStore.init();
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
