@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
+
 import '../services/auth_service.dart';
-import '../stores/auth_store.dart';
 import '../style.dart'; // Import the styles file
+
 import 'swipe.dart';
 import 'register.dart'; // Import the RegisterPage (if you have one)
 
 class LogInPage extends StatefulWidget {
-  final AuthStore authStore;
-  final AuthService authService;
-
-  const LogInPage({super.key, required this.authStore, required this.authService});
+  const LogInPage({super.key});
 
   @override
   _LogInPageState createState() => _LogInPageState();
@@ -19,7 +17,6 @@ class _LogInPageState extends State<LogInPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-
   // Simple login logic
   void _logIn() async {
     final String username = _usernameController.text;
@@ -28,12 +25,12 @@ class _LogInPageState extends State<LogInPage> {
     if (username.isEmpty || password.isEmpty) {
       _showErrorDialog('Please fill in both fields.');
     } else {
-      Map<String, String> response = await widget.authService.login(username, password);
+      Map<String, String> response = await AuthService.login(username, password);
 
       if (response["status"] == "OK") {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => SwipePage(authStore: widget.authStore, authService: widget.authService)),
+          MaterialPageRoute(builder: (context) => SwipePage()),
         );
       } else if (response["status"] == "ERROR") {
         _showErrorDialog(response["error"] ?? "An unknown error occurred.");
@@ -47,7 +44,7 @@ class _LogInPageState extends State<LogInPage> {
   void _goToRegisterPage() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => RegisterPage(authStore: widget.authStore, authService: widget.authService)), // Update with your actual RegisterPage
+      MaterialPageRoute(builder: (context) => RegisterPage()), // Update with your actual RegisterPage
     );
   }
 

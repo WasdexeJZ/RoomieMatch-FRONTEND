@@ -1,7 +1,6 @@
+import 'package:RoomieMatch/models/user.dart';
+import 'package:RoomieMatch/services/hive_service.dart';
 import 'package:flutter/material.dart';
-
-import '../services/auth_service.dart';
-import '../stores/auth_store.dart';
 
 import 'notifications.dart';
 import '../filter_page.dart';
@@ -10,10 +9,7 @@ import 'chat.dart';
 import 'settings.dart';
 
 class SwipePage extends StatefulWidget {
-  final AuthStore authStore;
-  final AuthService authService;
-
-  const SwipePage({super.key, required this.authStore, required this.authService});
+  const SwipePage({super.key});
 
   @override
   _SwipePageState createState() => _SwipePageState();
@@ -35,6 +31,11 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
   @override
   void initState() {
     super.initState();
+
+    User temp = HiveService.getUser() ?? User(userId: 'hi', username: 'hi', email: 'hi');
+    print(temp.userId);
+    print(temp.email);
+    print(temp.username);
 
     _swipeController = AnimationController(
       duration: const Duration(milliseconds: 500),
@@ -77,31 +78,19 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
       case 1:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-              builder: (context) => ChatPage(
-                    authStore: widget.authStore,
-                    authService: widget.authService,
-                  )),
+          MaterialPageRoute(builder: (context) => ChatPage()),
         );
         break;
       case 2:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-              builder: (context) => NotificationsPage(
-                    authStore: widget.authStore,
-                    authService: widget.authService,
-                  )),
+          MaterialPageRoute(builder: (context) => NotificationsPage()),
         );
         break;
       case 3:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-              builder: (context) => SettingsPage(
-                    authStore: widget.authStore,
-                    authService: widget.authService,
-                  )),
+          MaterialPageRoute(builder: (context) => SettingsPage()),
         );
         break;
     }

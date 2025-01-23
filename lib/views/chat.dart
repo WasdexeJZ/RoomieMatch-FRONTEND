@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../../stores/auth_store.dart';
-import '../../services/auth_service.dart';
-
 import '../chat_detail_page.dart';
 import 'notifications.dart';
 import 'swipe.dart';
 import 'settings.dart';
 
 class ChatPage extends StatefulWidget {
-  final AuthStore authStore;
-  final AuthService authService;
-
-  const ChatPage({super.key, required this.authStore, required this.authService});
+  const ChatPage({super.key});
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -32,31 +26,19 @@ class _ChatPageState extends State<ChatPage> {
         case 0:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
-                builder: (context) => SwipePage(
-                      authStore: widget.authStore,
-                      authService: widget.authService,
-                    )),
+            MaterialPageRoute(builder: (context) => SwipePage()),
           );
           break;
         case 2:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
-                builder: (context) => NotificationsPage(
-                      authStore: widget.authStore,
-                      authService: widget.authService,
-                    )),
+            MaterialPageRoute(builder: (context) => NotificationsPage()),
           );
           break;
         case 3:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
-                builder: (context) => SettingsPage(
-                      authStore: widget.authStore,
-                      authService: widget.authService,
-                    )),
+            MaterialPageRoute(builder: (context) => SettingsPage()),
           );
           break;
       }

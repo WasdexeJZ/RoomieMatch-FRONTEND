@@ -1,5 +1,4 @@
 import 'dart:convert';
-// import 'package:http/http.dart' as http;
 import 'package:supertokens_flutter/http.dart' as http;
 
 class ApiService {

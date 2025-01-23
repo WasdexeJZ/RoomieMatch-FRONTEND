@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../services/auth_service.dart';
-import '../stores/auth_store.dart';
-
 import '../sleep_mode_page.dart'; // Import the Sleep Mode Page
 import 'chat.dart';
 import 'swipe.dart';
@@ -10,15 +7,10 @@ import 'settings.dart';
 import 'notifications.dart';
 
 class NotificationSettingsPage extends StatefulWidget {
-  final AuthStore authStore;
-  final AuthService authService;
-
-  const NotificationSettingsPage({super.key, required this.authStore, required this.authService});
-
+  const NotificationSettingsPage({super.key});
 
   @override
-  _NotificationSettingsPageState createState() =>
-      _NotificationSettingsPageState();
+  _NotificationSettingsPageState createState() => _NotificationSettingsPageState();
 }
 
 class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
@@ -40,47 +32,30 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
         case 0:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
-                builder: (context) => SwipePage(
-                      authStore: widget.authStore,
-                      authService: widget.authService,
-                    )),
+            MaterialPageRoute(builder: (context) => SwipePage()),
           );
           break;
         case 1:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
-                builder: (context) => ChatPage(
-                      authStore: widget.authStore,
-                      authService: widget.authService,
-                    )),
+            MaterialPageRoute(builder: (context) => ChatPage()),
           );
           break;
         case 2: // Navigate to Notifications Page
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
-                builder: (context) => NotificationsPage(
-                      authStore: widget.authStore,
-                      authService: widget.authService,
-                    )),
+            MaterialPageRoute(builder: (context) => NotificationsPage()),
           );
           break;
         case 3:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
-                builder: (context) => SettingsPage(
-                      authStore: widget.authStore,
-                      authService: widget.authService,
-                    )),
+            MaterialPageRoute(builder: (context) => SettingsPage()),
           );
           break;
       }
     }
   }
-
 
   Widget _buildIcon(String assetPath, bool isSelected) {
     return Container(

@@ -1,15 +1,13 @@
+import 'package:RoomieMatch/services/hive_service.dart';
 import 'package:flutter/material.dart';
-import '../services/auth_service.dart';
-import '../stores/auth_store.dart';
+
 import 'swipe.dart';
 import 'login.dart';
 
 class WelcomePage extends StatefulWidget {
   final String title;
-  final AuthStore authStore;
-  final AuthService authService;
 
-  const WelcomePage({super.key, required this.title, required this.authStore, required this.authService});
+  const WelcomePage({super.key, required this.title});
 
   @override
   State<WelcomePage> createState() => _WelcomePageState();
@@ -19,11 +17,10 @@ class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
     super.initState();
-    print(widget.authStore.getUser);
 
     // Start a 3-second delay before navigating to the Login Page
-    Future.delayed(const Duration(seconds: 5), () {
-      if (widget.authStore.getIsAuthenticated) {
+    Future.delayed(const Duration(seconds: 3), () {
+      if (HiveService.getAuth()?.isAuthenticated ?? false) {
         _goToSwipePage(context);
       } else {
         _goToLoginPage(context);
@@ -34,14 +31,14 @@ class _WelcomePageState extends State<WelcomePage> {
   void _goToLoginPage(BuildContext context) {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => LogInPage(authStore: widget.authStore, authService: widget.authService)),
+      MaterialPageRoute(builder: (context) => LogInPage()),
     );
   }
 
   void _goToSwipePage(BuildContext context) {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => SwipePage(authStore: widget.authStore, authService: widget.authService)),
+      MaterialPageRoute(builder: (context) => SwipePage()),
     );
   }
 

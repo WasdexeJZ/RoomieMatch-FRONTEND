@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../services/auth_service.dart';
-import '../stores/auth_store.dart';
-
 import 'settings.dart';
 import 'swipe.dart';
 import 'chat.dart';
 import 'notifications.dart';
 
 class FAQPage extends StatefulWidget {
-  final AuthStore authStore;
-  final AuthService authService;
-
-  const FAQPage({super.key, required this.authStore, required this.authService});
+  const FAQPage({super.key});
 
   @override
   _FAQPageState createState() => _FAQPageState();
@@ -33,38 +27,25 @@ class _FAQPageState extends State<FAQPage> {
         case 0:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => SwipePage(
-                      authStore: widget.authStore,
-                      authService: widget.authService,
-                    )),
+            MaterialPageRoute(builder: (context) => SwipePage()),
           );
           break;
         case 1:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => ChatPage(
-                      authStore: widget.authStore,
-                      authService: widget.authService,
-                    )),
+            MaterialPageRoute(builder: (context) => ChatPage()),
           );
           break;
         case 2:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
-                builder: (context) => NotificationsPage(
-                      authStore: widget.authStore,
-                      authService: widget.authService,
-                    )),
+            MaterialPageRoute(builder: (context) => NotificationsPage()),
           );
           break;
         case 3:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => SettingsPage(
-                      authStore: widget.authStore,
-                      authService: widget.authService,
-                    )),
+            MaterialPageRoute(builder: (context) => SettingsPage()),
           );
           break;
       }

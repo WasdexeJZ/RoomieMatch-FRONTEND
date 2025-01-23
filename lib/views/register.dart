@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
+
 import '../services/auth_service.dart';
-import '../stores/auth_store.dart';
+
 import 'swipe.dart'; // Import the HomePage to navigate to it
 
 class RegisterPage extends StatefulWidget {
-  final AuthStore authStore;
-  final AuthService authService;
-
-  const RegisterPage({super.key, required this.authStore, required this.authService});
+  const RegisterPage({super.key});
 
   @override
   _RegisterPageState createState() => _RegisterPageState();
@@ -26,16 +24,12 @@ class _RegisterPageState extends State<RegisterPage> {
     if (username.isEmpty || email.isEmpty || password.isEmpty) {
       _showErrorDialog('Please fill in all the required information.');
     } else {
-      Map<String, String> response = await widget.authService.signup(email, password, username);
+      Map<String, String> response = await AuthService.signup(email, password, username);
 
       if (response["status"] == "OK") {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
-              builder: (context) => SwipePage(
-                    authStore: widget.authStore,
-                    authService: widget.authService,
-                  )),
+          MaterialPageRoute(builder: (context) => SwipePage()),
         );
       } else if (response["status"] == "ERROR") {
         _showErrorDialog(response["error"] ?? "An unknown error occurred.");

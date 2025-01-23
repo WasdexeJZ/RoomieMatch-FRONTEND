@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:supertokens_flutter/supertokens.dart';
-import '../models/user.dart';
+import '../models/user2.dart';
 
 class AuthStore with ChangeNotifier {
   User? _user;

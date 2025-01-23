@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../services/auth_service.dart';
-import '../stores/auth_store.dart';
 
 import 'swipe.dart';
 import 'chat.dart';
@@ -11,10 +10,7 @@ import 'notifications_settings.dart';
 import 'login.dart';
 
 class SettingsPage extends StatefulWidget {
-  final AuthStore authStore;
-  final AuthService authService;
-
-  const SettingsPage({super.key, required this.authStore, required this.authService});
+  const SettingsPage({super.key});
 
   @override
   _SettingsPageState createState() => _SettingsPageState();
@@ -35,31 +31,19 @@ class _SettingsPageState extends State<SettingsPage> {
         case 0:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
-                builder: (context) => SwipePage(
-                      authStore: widget.authStore,
-                      authService: widget.authService,
-                    )),
+            MaterialPageRoute(builder: (context) => SwipePage()),
           );
           break;
         case 1:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
-                builder: (context) => ChatPage(
-                      authStore: widget.authStore,
-                      authService: widget.authService,
-                    )),
+            MaterialPageRoute(builder: (context) => ChatPage()),
           );
           break;
         case 2:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(
-                builder: (context) => NotificationsPage(
-                      authStore: widget.authStore,
-                      authService: widget.authService,
-                    )),
+            MaterialPageRoute(builder: (context) => NotificationsPage()),
           );
           break;
       }
@@ -158,10 +142,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => NotificationSettingsPage(
-                            authStore: widget.authStore,
-                            authService: widget.authService,
-                          ),
+                          builder: (context) => NotificationSettingsPage(),
                         ),
                       );
                     },
@@ -195,11 +176,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                            builder: (context) => FAQPage(
-                                  authStore: widget.authStore,
-                                  authService: widget.authService,
-                                )),
+                        MaterialPageRoute(builder: (context) => FAQPage()),
                       );
                     },
                   ),
@@ -210,16 +187,13 @@ class _SettingsPageState extends State<SettingsPage> {
                       Colors.grey,
                     ),
                     title: const Text('Logout'),
-                    onTap: () {
-                      widget.authService.signOut();
+                    onTap: () async {
+                      await AuthService.signOut();
 
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => LogInPage(
-                            authService: widget.authService,
-                            authStore: widget.authStore,
-                          ),
+                          builder: (context) => LogInPage(),
                         ),
                       );
                     },

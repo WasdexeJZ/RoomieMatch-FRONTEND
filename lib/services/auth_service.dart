@@ -1,40 +1,39 @@
+import 'package:RoomieMatch/helpers/auth_box_helper.dart';
+import 'package:RoomieMatch/models/user.dart';
+import 'package:RoomieMatch/services/hive_service.dart';
 import 'package:supertokens_flutter/supertokens.dart';
 
-import '../models/user.dart';
 import './api_service.dart';
-import '../stores/auth_store.dart';
 
 class AuthService {
-  final AuthStore authStore;
-  final ApiService apiService = ApiService();
+  static final ApiService apiService = ApiService();
 
-  Map<String, dynamic> authMap = {
-    "formFields": [
-      {
-        "id": "email",
-        "value": "" // Leave this as an empty string initially
-      },
-      {"id": "password", "value": ""}
-    ]
-  };
+  AuthService();
 
-  AuthService(this.authStore);
+  // Login Function
+  //
+  static Future<Map<String, String>> login(String email, String password) async {
+    Map<String, dynamic> signinMap = {
+      "formFields": [
+        {"id": "email", "value": ""},
+        {"id": "password", "value": ""}
+      ] // Leave this as an empty string initially
+    };
 
-  Future<Map<String, String>> login(String email, String password) async {
-    authMap['formFields'][0]['value'] = email;
-    authMap['formFields'][1]['value'] = password;
+    signinMap['formFields'][0]['value'] = email;
+    signinMap['formFields'][1]['value'] = password;
 
     print('Logging in with username: $email and password: $password');
 
-    Map<String, dynamic> apiResponse = await apiService.post('auth/signin', authMap);
+    Map<String, dynamic> apiResponse = await apiService.post('auth/signin', signinMap);
 
     if (apiResponse['status'] == "FIELD_ERROR") {
       return {"status": "ERROR", "error": apiResponse["formFields"][0]["error"]};
     } else if (apiResponse['status'] == 'WRONG_CREDENTIALS_ERROR') {
       return {"status": "ERROR", "error": "The input email and password combination is incorrect."};
     } else if (apiResponse['status'] == "OK") {
-      authStore.setIsAuthenticated = true;
-      authStore.setUser = User(userId: apiResponse["user"]["id"], email: email);
+      AuthBoxHelper.setIsAuthenticated(true);
+      HiveService.setUser(User(userId: apiResponse["user"]["id"], username: "TEMP", email: "TEMP"));
 
       return {"status": "OK"};
     } else {
@@ -42,33 +41,41 @@ class AuthService {
     }
   }
 
-  Future<Map<String, String>> signup(String email, String password, String username) async {
-    authMap['formFields'][0]['value'] = email;
-    authMap['formFields'][1]['value'] = password;
+  // Signup Function
+  //
+  static Future<Map<String, String>> signup(String email, String password, String username) async {
+    Map<String, dynamic> signupMap = {
+      "formFields": [
+        {"id": "email", "value": "nan"},
+        {"id": "actualEmail", "value": ""},
+        {"id": "username", "value": ""},
+        {"id": "password", "value": ""}
+      ] // Leave this as an empty string initially
+    };
+
+    signupMap['formFields'][1]['value'] = email;
+    signupMap['formFields'][2]['value'] = username;
+    signupMap['formFields'][3]['value'] = password;
 
     print('Registering with username: $username, email: $email, and password: $password');
 
-    Map<String, dynamic> apiResponse = await apiService.post('auth/signup', authMap);
+    Map<String, dynamic> apiResponse = await apiService.post('auth/signup', signupMap);
 
     if (apiResponse['status'] == "FIELD_ERROR") {
       return {"status": "ERROR", "error": apiResponse["formFields"][0]["error"]};
     } else if (apiResponse['status'] == "OK") {
-      authStore.setIsAuthenticated = true;
-      authStore.setUser = User(userId: apiResponse["user"]["id"], email: email);
+      AuthBoxHelper.setIsAuthenticated(true);
+      HiveService.setUser(User(userId: apiResponse["user"]["id"], username: "TEMP", email: "TEMP"));
 
-      apiResponse = await createUser(apiResponse["user"]["id"], email, username);
-
-      if (apiResponse["status"] == "ERROR") {
-        return {"status": "ERROR", "error": apiResponse["error"].toString()};
-      } else {
-        return {"status": "OK"};
-      }
+      return {"status": "OK"};
     } else {
       return {"status": "UNKNOWN"};
     }
   }
 
-  Future<Map<String, dynamic>> createUser(String userId, String email, String username) async {
+  // Create User after Sign Up success
+  //
+  static Future<Map<String, dynamic>> createUser(String userId, String email, String username) async {
     Map<String, String> payload = {"user_id": userId, "email": email, "username": username};
 
     print(payload);
@@ -77,10 +84,22 @@ class AuthService {
     return apiResponse;
   }
 
-  Future<void> signOut() async {
+  // Check Auth of a user on app load
+  //
+  static Future<void> checkAuth() async {
+    if (await SuperTokens.doesSessionExist()) {
+      AuthBoxHelper.setIsAuthenticated(true);
+    } else {
+      AuthBoxHelper.setIsAuthenticated(false);
+    }
+  }
+
+  // Call on Log out button press
+  //
+  static Future<void> signOut() async {
     await SuperTokens.signOut();
 
-    authStore.setUser = null;
-    authStore.setIsAuthenticated = false;
+    HiveService.deleteUser();
+    AuthBoxHelper.setIsAuthenticated(false);
   }
 }

@@ -1,24 +1,41 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:supertokens_flutter/supertokens.dart';
-import 'views/welcome.dart';
-import 'services/auth_service.dart';
-import 'stores/auth_store.dart';
+import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 
-void main() {
+import 'services/auth_service.dart';
+import 'services/hive_service.dart';
+
+import 'models/auth.dart';
+import 'models/user.dart';
+
+import 'views/welcome.dart';
+
+void main() async {
   SuperTokens.init(
     apiDomain: "http://localhost:8000",
     apiBasePath: "/api/v1/auth",
   );
 
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => AuthStore()),
-      ],
-      child: MyApp(),
-    ),
-  );
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Hive
+  final appDocumentDirectory = await getApplicationDocumentsDirectory();
+  await Hive.initFlutter(appDocumentDirectory.path);
+
+  // Register Hive adapter for data Model
+  Hive.registerAdapter(AuthAdapter());
+  Hive.registerAdapter(UserAdapter());
+
+  // Open Hive Boxes
+  await Hive.openBox('authBox');
+  // await Hive.openBox('appBox');
+
+  // Set default Auth Model and update if Authentication True
+  HiveService.setAuth(Auth());
+  await AuthService.checkAuth();
+
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -26,11 +43,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AuthStore authStore = Provider.of<AuthStore>(context, listen: false);
-    final AuthService authService = AuthService(authStore);
-
-    authStore.init();
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Roommate Matching App',
@@ -38,7 +50,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
         useMaterial3: true,
       ),
-      home: WelcomePage(title: 'RoomieMatch', authStore: authStore, authService: authService),
+      home: WelcomePage(title: 'RoomieMatch'),
     );
   }
 }

@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../services/auth_service.dart';
-import '../stores/auth_store.dart';
-
 import 'chat.dart';
 import 'swipe.dart';
 import 'settings.dart';
 
 class NotificationsPage extends StatefulWidget {
-  final AuthStore authStore;
-  final AuthService authService;
-
-  const NotificationsPage({super.key, required this.authStore, required this.authService});
+  const NotificationsPage({super.key});
 
   @override
   _NotificationsPageState createState() => _NotificationsPageState();
@@ -28,36 +22,23 @@ class _NotificationsPageState extends State<NotificationsPage> {
     if (index == 0) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-            builder: (context) => SwipePage(
-                  authStore: widget.authStore,
-                  authService: widget.authService,
-                )),
+        MaterialPageRoute(builder: (context) => SwipePage()),
       );
     }
 
     if (index == 1) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-            builder: (context) => ChatPage(
-                  authStore: widget.authStore,
-                  authService: widget.authService,
-                )),
+        MaterialPageRoute(builder: (context) => ChatPage()),
       );
     }
 
     if (index == 3) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-            builder: (context) => SettingsPage(
-                  authStore: widget.authStore,
-                  authService: widget.authService,
-                )),
+        MaterialPageRoute(builder: (context) => SettingsPage()),
       );
     }
-
   }
 
   Widget _buildIcon(String assetPath, int index) {
@@ -68,17 +49,13 @@ class _NotificationsPageState extends State<NotificationsPage> {
       height: 50,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: isSelected
-            ? Colors.white
-            : Colors.transparent, // White background for selected icon
+        color: isSelected ? Colors.white : Colors.transparent, // White background for selected icon
       ),
       child: Center(
         child: ImageIcon(
           AssetImage(assetPath),
           size: 35,
-          color: isSelected
-              ? Colors.grey
-              : Colors.grey, // Change color for selected/unselected
+          color: isSelected ? Colors.grey : Colors.grey, // Change color for selected/unselected
         ),
       ),
     );
@@ -152,8 +129,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
               children: [
                 CircleAvatar(
                   radius: 25,
-                  backgroundImage: AssetImage(notification[
-                      'avatarPath']), // Use AssetImage for local images
+                  backgroundImage: AssetImage(notification['avatarPath']), // Use AssetImage for local images
                 ),
                 const SizedBox(width: 10),
                 Expanded(
