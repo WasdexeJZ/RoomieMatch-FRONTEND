@@ -1,3 +1,5 @@
+import 'package:RoomieMatch/models/settings.dart';
+import 'package:RoomieMatch/services/hive_service.dart';
 import 'package:flutter/material.dart';
 
 class SleepModePage extends StatefulWidget {
@@ -9,10 +11,11 @@ class SleepModePage extends StatefulWidget {
 
 class _SleepModePageState extends State<SleepModePage> {
   // State variables
-  bool isSleepModeEnabled = false;
-  TimeOfDay startTime = const TimeOfDay(hour: 0, minute: 0);
-  TimeOfDay endTime = const TimeOfDay(hour: 0, minute: 0);
-  List<bool> selectedDays = [false, false, false, false, false, false, false]; // S M T W T F S
+  Settings settings = HiveService.getSettings() ?? Settings();
+  TimeOfDay startTime = _formatTime((HiveService.getSettings() ?? Settings()).sleepStartTime);
+  TimeOfDay endTime = _formatTime((HiveService.getSettings() ?? Settings()).sleepEndTime);
+  // List<bool> selectedDays = [false, false, false, false, false, false, false]; // S M T W T F S
+  List<bool> selectedDays = (HiveService.getSettings() ?? Settings()).sleepChooseDays;
   bool isSaved = false; // Track if the settings are saved
 
   // Function to pick time
@@ -46,10 +49,16 @@ class _SleepModePageState extends State<SleepModePage> {
           endTime = picked;
         }
       });
+
+      String tempTime = picked.hour.toString().padLeft(2, '0') + picked.minute.toString().padLeft(2, '0');
+      if (isStartTime) {
+        settings.sleepStartTime = tempTime;
+      } else {
+        settings.sleepEndTime = tempTime;
+      }
+      HiveService.setSettings(settings);
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -74,12 +83,12 @@ class _SleepModePageState extends State<SleepModePage> {
           children: [
             // Sleep Mode Toggle
             SwitchListTile(
-              value: isSleepModeEnabled,
+              value: settings.sleepMode,
               onChanged: (value) {
                 setState(() {
-                  isSleepModeEnabled = value;
-                  isSaved = false; // Mark as unsaved when settings change
+                  settings.sleepMode = value;
                 });
+                HiveService.setSettings(settings);
               },
               title: const Text(
                 'Sleep mode',
@@ -138,16 +147,15 @@ class _SleepModePageState extends State<SleepModePage> {
                   onTap: () {
                     setState(() {
                       selectedDays[index] = !selectedDays[index];
-                      isSaved = false; // Mark as unsaved when settings change
+                      HiveService.setSettings(settings);
+                      // isSaved = false; // Mark as unsaved when settings change
                     });
                   },
                   child: Container(
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: selectedDays[index]
-                          ? const Color(0xFF1C8585)
-                          : Colors.grey[300],
+                      color: selectedDays[index] ? const Color(0xFF1C8585) : Colors.grey[300],
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Center(
@@ -165,33 +173,46 @@ class _SleepModePageState extends State<SleepModePage> {
             ),
             const Spacer(),
 
-            // Save Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    isSaved = true; // Mark as saved when the button is pressed
-                  });
-                  // Add your logic to save settings here
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                  isSaved ? Colors.grey[400] : const Color(0xFF1C8585), // Change color
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: Text(
-                  isSaved ? 'Saved' : 'Save',
-                  style: const TextStyle(fontSize: 18, color: Colors.white),
-                ),
-              ),
-            ),
+            // // Save Button
+            // SizedBox(
+            //   width: double.infinity,
+            //   child: ElevatedButton(
+            //     onPressed: () {
+            //       setState(() {
+            //         isSaved = true; // Mark as saved when the button is pressed
+            //       });
+            //       // Add your logic to save settings here
+            //     },
+            //     style: ElevatedButton.styleFrom(
+            //       backgroundColor: isSaved ? Colors.grey[400] : const Color(0xFF1C8585), // Change color
+            //       shape: RoundedRectangleBorder(
+            //         borderRadius: BorderRadius.circular(8),
+            //       ),
+            //       padding: const EdgeInsets.symmetric(vertical: 16),
+            //     ),
+            //     child: Text(
+            //       isSaved ? 'Saved' : 'Save',
+            //       style: const TextStyle(fontSize: 18, color: Colors.white),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
     );
   }
 }
+
+TimeOfDay _formatTime(String time) {
+  int hour = int.tryParse(time.substring(0, 2)) ?? 0;
+  int minute = int.tryParse(time.substring(2, 4)) ?? 0;
+  // print(time);
+  // HiveService.getSettings().
+
+  return TimeOfDay(hour: hour, minute: minute);
+  // return TimeOfDay(hour: 0, minute: 0);
+}
+
+// List<bool>
+
+  // List<bool> selectedDays = [false, false, false, false, false, false, false]; // S M T W T F S

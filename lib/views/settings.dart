@@ -1,3 +1,5 @@
+import 'package:RoomieMatch/models/settings.dart';
+import 'package:RoomieMatch/services/hive_service.dart';
 import 'package:flutter/material.dart';
 
 import '../services/auth_service.dart';
@@ -72,6 +74,8 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    Settings settings = HiveService.getSettings() ?? Settings();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
@@ -155,11 +159,12 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                     title: const Text('Account Privacy'),
                     trailing: Switch(
-                      value: isAccountPrivate,
+                      value: settings.accountPrivacy,
                       onChanged: (value) {
                         setState(() {
-                          isAccountPrivate = value;
+                          settings.accountPrivacy = value;
                         });
+                        HiveService.setSettings(settings);
                       },
                       activeColor: const Color(0xFF1C8585),
                       activeTrackColor: const Color(0xFF1C8585).withOpacity(0.5),

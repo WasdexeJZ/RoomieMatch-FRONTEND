@@ -1,10 +1,13 @@
-import 'package:RoomieMatch/models/auth.dart';
 import 'package:hive/hive.dart';
+
+import '../models/auth.dart';
 import '../models/user.dart';
+import '../models/profile.dart';
+import '../models/settings.dart';
 
 class HiveService {
   static final authBox = Hive.box('authBox');
-  // static final appBox = Hive.box('appBox');
+  static final appBox = Hive.box('appBox');
 
   static Auth? getAuth() {
     return authBox.get('auth');
@@ -28,5 +31,22 @@ class HiveService {
 
   static void clearAuthBox() {
     authBox.clear();
+  }
+
+  static Profile? getProfile() {
+    return appBox.get('profile');
+  }
+
+  static void setProfile(Profile profile) {
+    appBox.put('profile', profile);
+  }
+
+  static Settings? getSettings() {
+    return appBox.get('settings');
+  }
+
+  static void setSettings(Settings settings) {
+    appBox.delete('settings');
+    appBox.put('settings', settings);
   }
 }

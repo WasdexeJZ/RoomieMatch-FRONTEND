@@ -73,16 +73,16 @@ class AuthService {
     }
   }
 
-  // Create User after Sign Up success
-  //
-  static Future<Map<String, dynamic>> createUser(String userId, String email, String username) async {
-    Map<String, String> payload = {"user_id": userId, "email": email, "username": username};
+  // // Create User after Sign Up success
+  // //
+  // static Future<Map<String, dynamic>> createUser(String userId, String email, String username) async {
+  //   Map<String, String> payload = {"user_id": userId, "email": email, "username": username};
 
-    print(payload);
-    Map<String, dynamic> apiResponse = await apiService.post('user/create-user', payload);
+  //   print(payload);
+  //   Map<String, dynamic> apiResponse = await apiService.post('user/create-user', payload);
 
-    return apiResponse;
-  }
+  //   return apiResponse;
+  // }
 
   // Check Auth of a user on app load
   //

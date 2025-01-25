@@ -1,3 +1,5 @@
+import 'package:RoomieMatch/models/profile.dart';
+import 'package:RoomieMatch/models/settings.dart';
 import 'package:supertokens_flutter/supertokens.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -26,10 +28,12 @@ void main() async {
   // Register Hive adapter for data Model
   Hive.registerAdapter(AuthAdapter());
   Hive.registerAdapter(UserAdapter());
+  Hive.registerAdapter(ProfileAdapter());
+  Hive.registerAdapter(SettingsAdapter());
 
   // Open Hive Boxes
   await Hive.openBox('authBox');
-  // await Hive.openBox('appBox');
+  await Hive.openBox('appBox');
 
   // Set default Auth Model and update if Authentication True
   HiveService.setAuth(Auth());

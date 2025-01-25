@@ -1,3 +1,5 @@
+import 'package:RoomieMatch/models/settings.dart';
+import 'package:RoomieMatch/services/hive_service.dart';
 import 'package:flutter/material.dart';
 
 import '../sleep_mode_page.dart'; // Import the Sleep Mode Page
@@ -78,6 +80,8 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    Settings settings = HiveService.getSettings() ?? Settings();
+
     return Scaffold(
       backgroundColor: Colors.white, // Set the background to white
       appBar: AppBar(
@@ -109,11 +113,12 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
 
             // Pause All Notifications
             SwitchListTile(
-              value: pauseAll,
+              value: settings.notifPauseAll,
               onChanged: (value) {
                 setState(() {
-                  pauseAll = value;
+                  settings.notifPauseAll = value;
                 });
+                HiveService.setSettings(settings);
               },
               title: const Text('Pause all'),
               subtitle: const Text(
@@ -127,11 +132,12 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
 
             // Messages Notifications
             SwitchListTile(
-              value: messages,
+              value: settings.notifMessages,
               onChanged: (value) {
                 setState(() {
-                  messages = value;
+                  settings.notifMessages = value;
                 });
+                HiveService.setSettings(settings);
               },
               title: const Text('Messages'),
               subtitle: const Text(
@@ -145,11 +151,12 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
 
             // New Match Requests Notifications
             SwitchListTile(
-              value: matchRequests,
+              value: settings.notifNewMatch,
               onChanged: (value) {
                 setState(() {
-                  matchRequests = value;
+                  settings.notifNewMatch = value;
                 });
+                HiveService.setSettings(settings);
               },
               title: const Text('New match requests'),
               subtitle: const Text(
