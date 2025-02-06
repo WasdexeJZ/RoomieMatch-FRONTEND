@@ -1,6 +1,9 @@
+import 'package:RoomieMatch/models/settings.dart';
+import 'package:RoomieMatch/services/hive_service.dart';
 import 'package:flutter/material.dart';
 
 import '../services/auth_service.dart';
+import '../services/db_service.dart';
 import '../style.dart'; // Import the styles file
 
 import 'swipe.dart';
@@ -28,6 +31,8 @@ class _LogInPageState extends State<LogInPage> {
       Map<String, String> response = await AuthService.login(username, password);
 
       if (response["status"] == "OK") {
+        _getAllSettings();
+
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => SwipePage()),
@@ -37,6 +42,32 @@ class _LogInPageState extends State<LogInPage> {
       } else if (response["status"] == "UNKNOWN") {
         _showErrorDialog("An unknown error occurred.");
       }
+    }
+  }
+
+  void _getAllSettings() async {
+    Map<String, dynamic> response = await DBService.getAllSettings();
+
+    if (response["status"] == "ERROR") {
+      _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+    } else if (response["status"] == "UNKNOWN") {
+      _showErrorDialog("An unknown error occurred.");
+    } else if (response["status"] == "OK") {
+      HiveService.deleteSettings();
+
+      Settings settings = Settings();
+      settings.notifPauseAll = response["notifPauseAll"] == "T" ? true : false;
+      settings.notifMessages = response["notifMessages"] == "T" ? true : false;
+      settings.notifNewMatch = response["notifNewMatch"] == "T" ? true : false;
+      settings.sleepMode = response["sleepMode"] == "T" ? true : false;
+      settings.sleepStartTime = response["sleepStartTime"];
+      settings.sleepEndTime = response["sleepEndTime"];
+      for (int i = 0; i < 7; i++) {
+        settings.sleepChooseDays[i] = response["sleepChooseDays"][i] == "T" ? true : false;
+      }
+      settings.accountPrivacy = response["accountPrivacy"] == "T" ? true : false;
+
+      HiveService.setSettings(settings);
     }
   }
 

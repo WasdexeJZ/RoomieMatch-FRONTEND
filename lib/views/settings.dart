@@ -1,4 +1,5 @@
 import 'package:RoomieMatch/models/settings.dart';
+import 'package:RoomieMatch/services/db_service.dart';
 import 'package:RoomieMatch/services/hive_service.dart';
 import 'package:flutter/material.dart';
 
@@ -70,6 +71,37 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
       ),
     );
+  }
+
+  // Show error dialog
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _updateSettings(String field, String value) async {
+    Map<String, String> response = await DBService.updateSettingsField(field, value);
+
+    if (response["status"] == "ERROR") {
+      _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+    } else if (response["status"] == "UNKNOWN") {
+      _showErrorDialog("An unknown error occurred.");
+    }
   }
 
   @override
@@ -164,7 +196,14 @@ class _SettingsPageState extends State<SettingsPage> {
                         setState(() {
                           settings.accountPrivacy = value;
                         });
+
                         HiveService.setSettings(settings);
+
+                        if (value) {
+                          _updateSettings('accountPrivacy', 'T');
+                        } else {
+                          _updateSettings('accountPrivacy', 'F');
+                        }
                       },
                       activeColor: const Color(0xFF1C8585),
                       activeTrackColor: const Color(0xFF1C8585).withOpacity(0.5),

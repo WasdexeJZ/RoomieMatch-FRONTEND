@@ -1,8 +1,8 @@
-import 'package:RoomieMatch/helpers/auth_box_helper.dart';
-import 'package:RoomieMatch/models/user.dart';
-import 'package:RoomieMatch/services/hive_service.dart';
 import 'package:supertokens_flutter/supertokens.dart';
 
+import '../helpers/auth_box_helper.dart';
+import '../models/user.dart';
+import './hive_service.dart';
 import './api_service.dart';
 
 class AuthService {
@@ -22,8 +22,6 @@ class AuthService {
 
     signinMap['formFields'][0]['value'] = email;
     signinMap['formFields'][1]['value'] = password;
-
-    print('Logging in with username: $email and password: $password');
 
     Map<String, dynamic> apiResponse = await apiService.post('auth/signin', signinMap);
 
@@ -57,8 +55,6 @@ class AuthService {
     signupMap['formFields'][2]['value'] = username;
     signupMap['formFields'][3]['value'] = password;
 
-    print('Registering with username: $username, email: $email, and password: $password');
-
     Map<String, dynamic> apiResponse = await apiService.post('auth/signup', signupMap);
 
     if (apiResponse['status'] == "FIELD_ERROR") {
@@ -72,17 +68,6 @@ class AuthService {
       return {"status": "UNKNOWN"};
     }
   }
-
-  // // Create User after Sign Up success
-  // //
-  // static Future<Map<String, dynamic>> createUser(String userId, String email, String username) async {
-  //   Map<String, String> payload = {"user_id": userId, "email": email, "username": username};
-
-  //   print(payload);
-  //   Map<String, dynamic> apiResponse = await apiService.post('user/create-user', payload);
-
-  //   return apiResponse;
-  // }
 
   // Check Auth of a user on app load
   //
@@ -100,6 +85,8 @@ class AuthService {
     await SuperTokens.signOut();
 
     HiveService.deleteUser();
+    HiveService.deleteSettings();
+    print(HiveService.getSettings().toString());
     AuthBoxHelper.setIsAuthenticated(false);
   }
 }

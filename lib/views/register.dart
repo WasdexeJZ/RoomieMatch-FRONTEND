@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../services/auth_service.dart';
+import '../services/db_service.dart';
 
 import 'swipe.dart'; // Import the HomePage to navigate to it
 
@@ -27,6 +28,8 @@ class _RegisterPageState extends State<RegisterPage> {
       Map<String, String> response = await AuthService.signup(email, password, username);
 
       if (response["status"] == "OK") {
+        _updateSettings("notifPauseAll", "F");
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => SwipePage()),
@@ -34,6 +37,16 @@ class _RegisterPageState extends State<RegisterPage> {
       } else if (response["status"] == "ERROR") {
         _showErrorDialog(response["error"] ?? "An unknown error occurred.");
       }
+    }
+  }
+
+  void _updateSettings(String field, String value) async {
+    Map<String, String> response = await DBService.updateSettingsField(field, value);
+
+    if (response["status"] == "ERROR") {
+      _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+    } else if (response["status"] == "UNKNOWN") {
+      _showErrorDialog("An unknown error occurred.");
     }
   }
 

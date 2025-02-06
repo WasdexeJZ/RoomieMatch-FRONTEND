@@ -1,5 +1,5 @@
-import 'package:RoomieMatch/models/auth.dart';
-import 'package:RoomieMatch/services/hive_service.dart';
+import '../models/auth.dart';
+import '../services/hive_service.dart';
 
 class AuthBoxHelper {
   static void setIsAuthenticated(bool isAuthenticated) {
@@ -9,8 +9,4 @@ class AuthBoxHelper {
 
     HiveService.setAuth(temp);
   }
-
-
-
-
 }

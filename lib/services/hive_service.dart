@@ -46,7 +46,10 @@ class HiveService {
   }
 
   static void setSettings(Settings settings) {
-    appBox.delete('settings');
     appBox.put('settings', settings);
+  }
+
+  static void deleteSettings() {
+    appBox.delete('settings');
   }
 }

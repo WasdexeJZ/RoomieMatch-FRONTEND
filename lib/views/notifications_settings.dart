@@ -1,12 +1,14 @@
-import 'package:RoomieMatch/models/settings.dart';
-import 'package:RoomieMatch/services/hive_service.dart';
 import 'package:flutter/material.dart';
 
-import '../sleep_mode_page.dart'; // Import the Sleep Mode Page
+import 'sleep_mode_page.dart'; 
 import 'chat.dart';
 import 'swipe.dart';
 import 'settings.dart';
 import 'notifications.dart';
+
+import '../models/settings.dart';
+import '../services/hive_service.dart';
+import '../services/db_service.dart';
 
 class NotificationSettingsPage extends StatefulWidget {
   const NotificationSettingsPage({super.key});
@@ -78,6 +80,40 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
     );
   }
 
+
+  // Show error dialog
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+ 
+
+  void _updateSettings(String field, String value) async {
+    Map<String, String> response = await DBService.updateSettingsField(field, value);
+
+    if (response["status"] == "ERROR") {
+      _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+    } else if (response["status"] == "UNKNOWN") {
+      _showErrorDialog("An unknown error occurred.");
+    }
+  }
+
+  
   @override
   Widget build(BuildContext context) {
     Settings settings = HiveService.getSettings() ?? Settings();
@@ -118,7 +154,15 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                 setState(() {
                   settings.notifPauseAll = value;
                 });
+
                 HiveService.setSettings(settings);
+                
+                if (value){
+                  _updateSettings('notifPauseAll', 'T');
+                }
+                else{
+                  _updateSettings('notifPauseAll', 'F');
+                }
               },
               title: const Text('Pause all'),
               subtitle: const Text(
@@ -137,7 +181,15 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                 setState(() {
                   settings.notifMessages = value;
                 });
+
                 HiveService.setSettings(settings);
+                
+                if (value){
+                  _updateSettings('notifMessages', 'T');
+                }
+                else{
+                  _updateSettings('notifMessages', 'F');
+                }
               },
               title: const Text('Messages'),
               subtitle: const Text(
@@ -156,7 +208,15 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                 setState(() {
                   settings.notifNewMatch = value;
                 });
+
                 HiveService.setSettings(settings);
+
+                if (value){
+                  _updateSettings('notifNewMatch', 'T');
+                }
+                else{
+                  _updateSettings('notifNewMatch', 'F');
+                }
               },
               title: const Text('New match requests'),
               subtitle: const Text(
