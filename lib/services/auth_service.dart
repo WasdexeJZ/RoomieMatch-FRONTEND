@@ -44,7 +44,7 @@ class AuthService {
   static Future<Map<String, String>> signup(String email, String password, String username) async {
     Map<String, dynamic> signupMap = {
       "formFields": [
-        {"id": "email", "value": "nan"},
+        {"id": "email", "value": "na"},
         {"id": "actualEmail", "value": ""},
         {"id": "username", "value": ""},
         {"id": "password", "value": ""}

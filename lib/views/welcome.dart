@@ -1,5 +1,6 @@
-import 'package:RoomieMatch/services/hive_service.dart';
 import 'package:flutter/material.dart';
+
+import '../services/hive_service.dart';
 
 import 'swipe.dart';
 import 'login.dart';

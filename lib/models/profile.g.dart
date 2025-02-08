@@ -16,43 +16,39 @@ class ProfileAdapter extends TypeAdapter<Profile> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Profile(
-      userId: fields[0] as String,
-    )
-      ..firstName = fields[1] as String
-      ..lastName = fields[2] as String
-      ..age = fields[3] as int
-      ..gender = fields[4] as String
-      ..latitude = fields[5] as String
-      ..longitude = fields[6] as String
-      ..budget = fields[7] as int
-      ..job = fields[8] as String
-      ..allergies = fields[9] as String;
+    return Profile()
+      ..firstName = fields[0] as String
+      ..lastName = fields[1] as String
+      ..age = fields[2] as int
+      ..gender = fields[3] as String
+      ..latitude = fields[4] as String
+      ..longitude = fields[5] as String
+      ..budget = fields[6] as int
+      ..job = fields[7] as String
+      ..allergies = fields[8] as String;
   }
 
   @override
   void write(BinaryWriter writer, Profile obj) {
     writer
-      ..writeByte(10)
-      ..writeByte(0)
-      ..write(obj.userId)
-      ..writeByte(1)
-      ..write(obj.firstName)
-      ..writeByte(2)
-      ..write(obj.lastName)
-      ..writeByte(3)
-      ..write(obj.age)
-      ..writeByte(4)
-      ..write(obj.gender)
-      ..writeByte(5)
-      ..write(obj.latitude)
-      ..writeByte(6)
-      ..write(obj.longitude)
-      ..writeByte(7)
-      ..write(obj.budget)
-      ..writeByte(8)
-      ..write(obj.job)
       ..writeByte(9)
+      ..writeByte(0)
+      ..write(obj.firstName)
+      ..writeByte(1)
+      ..write(obj.lastName)
+      ..writeByte(2)
+      ..write(obj.age)
+      ..writeByte(3)
+      ..write(obj.gender)
+      ..writeByte(4)
+      ..write(obj.latitude)
+      ..writeByte(5)
+      ..write(obj.longitude)
+      ..writeByte(6)
+      ..write(obj.budget)
+      ..writeByte(7)
+      ..write(obj.job)
+      ..writeByte(8)
       ..write(obj.allergies);
   }
 

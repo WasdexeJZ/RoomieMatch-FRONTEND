@@ -1,8 +1,8 @@
-import 'package:RoomieMatch/models/settings.dart';
-import 'package:RoomieMatch/services/db_service.dart';
-import 'package:RoomieMatch/services/hive_service.dart';
 import 'package:flutter/material.dart';
 
+import '../models/settings.dart';
+import '../services/db_service.dart';
+import '../services/hive_service.dart';
 import '../services/auth_service.dart';
 
 import 'swipe.dart';

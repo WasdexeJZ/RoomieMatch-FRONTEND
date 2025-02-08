@@ -1,12 +1,11 @@
-import 'package:RoomieMatch/models/settings.dart';
-import 'package:RoomieMatch/services/hive_service.dart';
 import 'package:flutter/material.dart';
 
+import '../models/settings.dart';
+import '../services/hive_service.dart';
 import '../services/auth_service.dart';
 import '../services/db_service.dart';
-import '../style.dart'; // Import the styles file
 
-import 'swipe.dart';
+import 'home.dart';
 import 'register.dart'; // Import the RegisterPage (if you have one)
 
 class LogInPage extends StatefulWidget {
@@ -35,7 +34,7 @@ class _LogInPageState extends State<LogInPage> {
 
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => SwipePage()),
+          MaterialPageRoute(builder: (context) => const HomePage()),
         );
       } else if (response["status"] == "ERROR") {
         _showErrorDialog(response["error"] ?? "An unknown error occurred.");
@@ -75,7 +74,7 @@ class _LogInPageState extends State<LogInPage> {
   void _goToRegisterPage() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => RegisterPage()), // Update with your actual RegisterPage
+      MaterialPageRoute(builder: (context) => const RegisterPage()), // Update with your actual RegisterPage
     );
   }
 
@@ -105,9 +104,13 @@ class _LogInPageState extends State<LogInPage> {
     // Clear any existing SnackBars before showing the new one
     ScaffoldMessenger.of(context).clearSnackBars();
 
-    // Display a new SnackBar with the platform name
-    final snackBar = SnackBar(content: Text('Logging in via $platform'));
-    ScaffoldMessenger.of(context).showSnackBar(snackBar); // Show SnackBar
+    // Display a new SnackBar with the platform name and set a custom duration
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Logging in via $platform'),
+        duration: const Duration(seconds: 1), // Set the duration to 2 seconds
+      ),
+    );
   }
 
   @override
@@ -119,128 +122,175 @@ class _LogInPageState extends State<LogInPage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Add the RoomieMatch logo at the top
-            Image.asset(
-              'assets/RoomieMatch_logo.png', // Ensure the image is in the 'assets' folder
-              height: 100, // Set the height of the image
-              width: 100, // Set the width of the image
-            ),
-            const SizedBox(height: 40), // Add some space below the image
+            // Spacer to push the logo higher
+            const Spacer(flex: 2),
 
-            // Username field with shadow and white background
+            // Add the RoomieMatch logo
+            Image.asset(
+              'assets/RoomieMatch_logo.png',
+              height: 120,
+              width: 120,
+            ),
+            const SizedBox(height: 30),
+
+            // Username field with shadow only at the bottom
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 10,
-                    spreadRadius: 2,
-                    offset: const Offset(0, 4),
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 15,
+                    spreadRadius: 3,
+                    offset: const Offset(0, 5), // Shadow only at the bottom
                   ),
                 ],
               ),
               child: TextField(
                 controller: _usernameController,
-                decoration: AppTextStyles.textFieldDecoration.copyWith(
-                  labelText: 'Username', // Customize label if needed
+                decoration: const InputDecoration(
+                  hintText: 'Username',
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16),
                 ),
               ),
             ),
             const SizedBox(height: 16),
 
-            // Password field with shadow and white background
+            // Password field with shadow only at the bottom
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(30),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 10,
-                    spreadRadius: 2,
-                    offset: const Offset(0, 4),
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 15,
+                    spreadRadius: 3,
+                    offset: const Offset(0, 5), // Shadow only at the bottom
                   ),
                 ],
               ),
               child: TextField(
                 controller: _passwordController,
                 obscureText: true,
-                decoration: AppTextStyles.passwordFieldDecoration.copyWith(
-                  labelText: 'Password', // Customize label if needed
+                decoration: const InputDecoration(
+                  hintText: 'Password',
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+
+            // Green Log In button with white bold text
+            ElevatedButton(
+              onPressed: _logIn,
+              style: ElevatedButton.styleFrom(
+                backgroundColor:
+                    const Color.fromARGB(255, 27, 110, 96), // Green background
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+              ),
+              child: const Text(
+                'Log In',
+                style: TextStyle(
+                  color: Colors.white, // White text
+                  fontWeight: FontWeight.bold, // Bold font
+                  fontSize: 16,
                 ),
               ),
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _logIn,
-              child: const Text('Log In'),
+
+            // Separator text
+            const Text(
+              '─────────  or log in with  ─────────',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
+              ),
             ),
             const SizedBox(height: 20),
+
+            // Social media login buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Google login button with square border
+                // Google button
                 GestureDetector(
                   onTap: () => _logInWithSocialMedia('Google'),
                   child: Container(
-                    width: 40, // Set the width of the container
-                    height: 40, // Set the height of the container
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 2), // Add border
-                      borderRadius: BorderRadius.circular(10), // Make the border square with rounded corners
+                      border: Border.all(
+                        color: Colors.grey, // Light gray border
+                        width: 1.5,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Image.asset(
                       'assets/google_logo.png',
-                      width: 30, // Adjust the size of the image
-                      height: 30, // Adjust the size of the image
+                      width: 30,
+                      height: 30,
                     ),
                   ),
                 ),
-                const SizedBox(width: 20), // Add spacing between buttons
+                const SizedBox(width: 20),
 
-                // Facebook login button with smaller size and square border
+                // Facebook button
                 GestureDetector(
                   onTap: () => _logInWithSocialMedia('Facebook'),
                   child: Container(
-                    width: 40, // Set the width of the container
-                    height: 40, // Set the height of the container
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 2), // Add border
-                      borderRadius: BorderRadius.circular(10), // Square with rounded corners
+                      border: Border.all(
+                        color: Colors.grey, // Light gray border
+                        width: 1.5,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Image.asset(
                       'assets/facebook_logo.png',
-                      width: 30, // Adjust the size of the image
-                      height: 30, // Adjust the size of the image
+                      width: 30,
+                      height: 30,
                     ),
                   ),
                 ),
-                const SizedBox(width: 20), // Add spacing between buttons
+                const SizedBox(width: 20),
 
-                // Apple login button with smaller size and square border
+                // Apple button
                 GestureDetector(
                   onTap: () => _logInWithSocialMedia('Apple'),
                   child: Container(
-                    width: 40, // Set the width of the container
-                    height: 40, // Set the height of the container
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 2), // Add border
-                      borderRadius: BorderRadius.circular(10), // Square with rounded corners
+                      border: Border.all(
+                        color: Colors.grey, // Light gray border
+                        width: 1.5,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Image.asset(
                       'assets/apple_logo.png',
-                      width: 30, // Adjust the size of the image
-                      height: 30, // Adjust the size of the image
+                      width: 30,
+                      height: 30,
                     ),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 20),
+
+            // Spacer for layout balance
+            const Spacer(),
+
             // TextButton to navigate to the Register Page
             TextButton(
               onPressed: _goToRegisterPage,

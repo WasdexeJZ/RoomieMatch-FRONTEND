@@ -1,6 +1,7 @@
-import 'package:RoomieMatch/models/user.dart';
-import 'package:RoomieMatch/services/hive_service.dart';
 import 'package:flutter/material.dart';
+
+import '../models/user.dart';
+import '../services/hive_service.dart';
 
 import 'notifications.dart';
 import '../filter_page.dart';
@@ -78,19 +79,19 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
       case 1:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => ChatPage()),
+          MaterialPageRoute(builder: (context) => const ChatPage()),
         );
         break;
       case 2:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => NotificationsPage()),
+          MaterialPageRoute(builder: (context) => const NotificationsPage()),
         );
         break;
       case 3:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => SettingsPage()),
+          MaterialPageRoute(builder: (context) => const SettingsPage()),
         );
         break;
     }

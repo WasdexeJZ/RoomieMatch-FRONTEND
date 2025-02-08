@@ -5,34 +5,31 @@ part 'profile.g.dart'; // Generated file
 @HiveType(typeId: 2)
 class Profile {
   @HiveField(0)
-  final String userId;
-
-  @HiveField(1)
   String firstName = "";
 
-  @HiveField(2)
+  @HiveField(1)
   String lastName = "";
 
-  @HiveField(3)
+  @HiveField(2)
   int age = 0;
 
-  @HiveField(4)
+  @HiveField(3)
   String gender = "";
 
-  @HiveField(5)
+  @HiveField(4)
   String latitude = "";
 
-  @HiveField(6)
+  @HiveField(5)
   String longitude = "";
 
-  @HiveField(7)
+  @HiveField(6)
   int budget = 0;
   
-  @HiveField(8)
+  @HiveField(7)
   String job = "";
   
-  @HiveField(9)
+  @HiveField(8)
   String allergies = "";
   
-  Profile({required this.userId, });
+  Profile();
 }

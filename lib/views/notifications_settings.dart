@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-import 'sleep_mode_page.dart'; 
+import '../models/settings.dart';
+import '../services/hive_service.dart';
+import '../services/db_service.dart';
+
+import 'sleep_mode.dart'; 
 import 'chat.dart';
 import 'swipe.dart';
 import 'settings.dart';
 import 'notifications.dart';
-
-import '../models/settings.dart';
-import '../services/hive_service.dart';
-import '../services/db_service.dart';
 
 class NotificationSettingsPage extends StatefulWidget {
   const NotificationSettingsPage({super.key});
