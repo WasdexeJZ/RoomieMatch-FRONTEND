@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../models/user.dart';
-import '../services/hive_service.dart';
-
 import 'notifications.dart';
 import '../filter_page.dart';
 import '../info_page.dart';
@@ -32,11 +29,6 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
   @override
   void initState() {
     super.initState();
-
-    User temp = HiveService.getUser() ?? User(userId: 'hi', username: 'hi', email: 'hi');
-    print(temp.userId);
-    print(temp.email);
-    print(temp.username);
 
     _swipeController = AnimationController(
       duration: const Duration(milliseconds: 500),

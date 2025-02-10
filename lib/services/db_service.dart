@@ -6,7 +6,7 @@ class DBService {
   DBService();
 
   static Future<Map<String, dynamic>> getAllSettings() async {
-    Map<String, dynamic> apiResponse = await apiService.get('utils/get-all-settings/');
+    Map<String, dynamic> apiResponse = await apiService.get('db/get-all-settings/');
 
     if (apiResponse['status'] == 'ERROR') {
       return {"status": "ERROR", "error": apiResponse["message"]};
@@ -23,7 +23,7 @@ class DBService {
     settingsMap['field'] = field;
     settingsMap['value'] = value;
 
-    Map<String, dynamic> apiResponse = await apiService.post('utils/update-settings/', settingsMap);
+    Map<String, dynamic> apiResponse = await apiService.post('db/update-settings/', settingsMap);
 
     if (apiResponse['status'] == 'ERROR') {
       return {"status": "ERROR", "error": apiResponse["message"]};

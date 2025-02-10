@@ -31,7 +31,7 @@ class AuthService {
       return {"status": "ERROR", "error": "The input email and password combination is incorrect."};
     } else if (apiResponse['status'] == "OK") {
       AuthBoxHelper.setIsAuthenticated(true);
-      HiveService.setUser(User(userId: apiResponse["user"]["id"], username: "TEMP", email: "TEMP"));
+      HiveService.setUser(User(userId: apiResponse["user"]["id"], username: apiResponse["user"]["emails"][1], email: apiResponse["user"]["emails"][0]));
 
       return {"status": "OK"};
     } else {
@@ -61,7 +61,7 @@ class AuthService {
       return {"status": "ERROR", "error": apiResponse["formFields"][0]["error"]};
     } else if (apiResponse['status'] == "OK") {
       AuthBoxHelper.setIsAuthenticated(true);
-      HiveService.setUser(User(userId: apiResponse["user"]["id"], username: "TEMP", email: "TEMP"));
+      HiveService.setUser(User(userId: apiResponse["user"]["id"], username: username, email: email));
 
       return {"status": "OK"};
     } else {
@@ -86,7 +86,6 @@ class AuthService {
 
     HiveService.deleteUser();
     HiveService.deleteSettings();
-    print(HiveService.getSettings().toString());
     AuthBoxHelper.setIsAuthenticated(false);
   }
 }
