@@ -21,11 +21,12 @@ class _WelcomePageState extends State<WelcomePage> {
 
     // Start a 3-second delay before navigating to the Login Page
     Future.delayed(const Duration(seconds: 3), () {
-      if (HiveService.getAuth()?.isAuthenticated ?? false) {
-        _goToSwipePage(context);
-      } else {
+      // if (HiveService.getAuth()?.isAuthenticated ?? false) {
+      //   _goToSwipePage(context);
+      // } else {
+      //   _goToLoginPage(context);
+      // }
         _goToLoginPage(context);
-      }
     });
   }
 

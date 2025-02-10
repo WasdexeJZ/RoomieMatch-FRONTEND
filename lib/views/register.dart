@@ -27,18 +27,18 @@ class _RegisterPageState extends State<RegisterPage> {
     if (username.isEmpty || email.isEmpty || password.isEmpty) {
       _showErrorDialog('Please fill in all the required information.');
     } else {
-      Map<String, String> response = await AuthService.signup(email, password, username);
+      // Map<String, String> response = await AuthService.signup(email, password, username);
 
-      if (response["status"] == "OK") {
-        _updateSettings("notifPauseAll", "F");
+      // if (response["status"] == "OK") {
+      //   _updateSettings("notifPauseAll", "F");
 
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const HomePage()),
         );
-      } else if (response["status"] == "ERROR") {
-        _showErrorDialog(response["error"] ?? "An unknown error occurred.");
-      }
+      // } else if (response["status"] == "ERROR") {
+      //   _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+      // }
     }
   }
 
