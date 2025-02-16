@@ -4,6 +4,7 @@ import '../models/settings.dart';
 import '../services/hive_service.dart';
 import '../services/auth_service.dart';
 import '../services/db_service.dart';
+import '../services/main_init_service.dart';
 
 import 'home.dart';
 import 'register.dart'; // Import the RegisterPage (if you have one)
@@ -30,6 +31,10 @@ class _LogInPageState extends State<LogInPage> {
       Map<String, String> response = await AuthService.login(username, password);
 
       if (response["status"] == "OK") {
+        await MainInitService.requestPermissions();
+        MainInitService.initService();
+        await MainInitService.startService();
+
         _getAllSettings();
 
         Navigator.push(

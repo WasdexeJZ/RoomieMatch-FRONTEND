@@ -19,6 +19,8 @@ import '../models/settings.dart';
 import '../models/auth.dart';
 import '../models/user.dart';
 
+import '../helpers/auth_box_helper.dart';
+
 import '../main.dart';
 
 class MainInitService {
@@ -97,8 +99,8 @@ class MainInitService {
       return FlutterForegroundTask.restartService();
     } else {
       return FlutterForegroundTask.startService(
-        notificationTitle: '',
-        notificationText: 'RoomieMatch Notification is Running',
+        notificationTitle: 'RoomieMatch Notification is Running',
+        notificationText: '',
         callback: startCallback,
       );
     }
@@ -108,28 +110,34 @@ class MainInitService {
     return FlutterForegroundTask.stopService();
   }
 
-  static Future<void> initNtfy(FlutterLocalNotificationsPlugin notificationsPlugin, NotificationDetails notificationDetails) async {
+  static Future<void> initNtfy(FlutterLocalNotificationsPlugin notificationsPlugin, NotificationDetails notificationDetails, NotificationDetails summaryNotificationDetails) async {
     final String topic = 'test';
     final NtfyClient ntfyClient = NtfyClient(basePath: Uri.parse("http://localhost:9980"));
 
     // Subscribe to the topic(s), receiving the MessageResponses right as they are published
-    // final Stream<MessageResponse> ntfyStream = (await ntfyClient.getMessageStream([topic],filters: FilterOptions(id: "")));
     final Stream<MessageResponse> ntfyStream = (await ntfyClient.getMessageStream([topic]));
 
-    print("asdf");
     int counter = 0;
+
     // listen to our stream for messages sent to the topic, instantaneous update
     final StreamSubscription<MessageResponse> ntfyListen = ntfyStream.listen((event) async {
       if (event.event == EventTypes.message) {
-        //  again note other event types will periodically be sent here, but will be empty
-        // print(event.title);
-        // print(event.message);
-        Map<String, dynamic> notification = jsonDecode(event.message ?? '{"userId": "", "message":""}');
+        Map<String, dynamic> notification = jsonDecode(event.message ?? '{"userId": "", "title":"", "message":""}');
         print(notification['userId']);
+        print(notification['title']);
         print(notification['message']);
 
-        await notificationsPlugin.show(counter, notification['userId'], notification['message'], notificationDetails);
+        // if (notification['userId'] == AuthBoxHelper.getUserId) {
+        // do rsa decryption here if it is our notification
+
+        await notificationsPlugin.show(counter, notification['title'], notification['message'], notificationDetails);
         counter++;
+
+        if ((await notificationsPlugin.getActiveNotifications()).length == 2) {
+          await notificationsPlugin.show(counter, "", "", summaryNotificationDetails);
+        }
+        counter++;
+        // }
       }
     });
   }
@@ -142,17 +150,26 @@ class MainInitService {
     await notificationsPlugin.initialize(initSettings);
 
     const AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
-      'channel_id',
-      'channel_name',
+      'RoomieMatch',
+      'RoomieMatch',
       importance: Importance.high,
       priority: Priority.high,
-      ticker: 'ticker',
+      groupKey: "RoomieMatch",
     );
+
+    const AndroidNotificationDetails summaryAndroidNotificationDetails = AndroidNotificationDetails(
+      'RoomieMatch',
+      'RoomieMatch',
+      importance: Importance.high,
+      priority: Priority.high,
+      groupKey: "RoomieMatch",
+      setAsGroupSummary: true,
+    );
+
     const NotificationDetails notificationDetails = NotificationDetails(android: androidNotificationDetails);
+    const NotificationDetails summaryNotificationDetails = NotificationDetails(android: summaryAndroidNotificationDetails);
 
-    print("ahi");
-
-    await initNtfy(notificationsPlugin, notificationDetails);
+    await initNtfy(notificationsPlugin, notificationDetails, summaryNotificationDetails);
   }
 }
 
@@ -160,10 +177,6 @@ class MyTaskHandler extends TaskHandler {
   // Called when the task is started.
   @override
   Future<void> onStart(DateTime timestamp, TaskStarter starter) async {
-    print('onStart(starter: ${starter.name})');
-
-    print('ehehe');
-
     await MainInitService.initNotification();
   }
 

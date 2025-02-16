@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../services/auth_service.dart';
 import '../services/db_service.dart';
+import '../services/main_init_service.dart';
 
 import 'home.dart'; // Import the HomePage to navigate to it
 
@@ -30,6 +31,10 @@ class _RegisterPageState extends State<RegisterPage> {
       Map<String, String> response = await AuthService.signup(email, password, username);
 
       if (response["status"] == "OK") {
+        await MainInitService.requestPermissions();
+        MainInitService.initService();
+        await MainInitService.startService();
+
         _updateSettings("notifPauseAll", "F");
 
         Navigator.pushReplacement(
@@ -89,10 +94,7 @@ class _RegisterPageState extends State<RegisterPage> {
               children: [
                 const Text(
                   'Create Your Account',
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 27, 110, 96)),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color.fromARGB(255, 27, 110, 96)),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20),
@@ -123,8 +125,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     if (value == null || value.isEmpty) {
                       return 'Email is required.';
                     }
-                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                        .hasMatch(value)) {
+                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
                       return 'Enter a valid email.';
                     }
                     return null;
@@ -139,11 +140,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     border: const OutlineInputBorder(),
                     prefixIcon: const Icon(Icons.lock),
                     suffixIcon: IconButton(
-                      icon: Icon(
-                          _isPasswordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                          color: Colors.grey),
+                      icon: Icon(_isPasswordVisible ? Icons.visibility : Icons.visibility_off, color: Colors.grey),
                       onPressed: () {
                         setState(() {
                           _isPasswordVisible = !_isPasswordVisible;
@@ -165,8 +162,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ElevatedButton(
                   onPressed: _register,
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 16, horizontal: 40),
+                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 40),
                   ),
                   child: const Text('Register', style: TextStyle(fontSize: 18)),
                 ),

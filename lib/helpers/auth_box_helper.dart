@@ -1,5 +1,7 @@
-import '../models/auth.dart';
 import '../services/hive_service.dart';
+
+import '../models/auth.dart';
+import '../models/user.dart';
 
 class AuthBoxHelper {
   static void setIsAuthenticated(bool isAuthenticated) {
@@ -8,5 +10,11 @@ class AuthBoxHelper {
     temp.isAuthenticated = isAuthenticated;
 
     HiveService.setAuth(temp);
+  }
+
+  static String getUserId() {
+    User temp = HiveService.getUser() ?? User(userId: "", username: "", email: "");
+
+    return temp.userId;
   }
 }

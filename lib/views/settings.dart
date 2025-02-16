@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../models/settings.dart';
+
 import '../services/db_service.dart';
 import '../services/hive_service.dart';
 import '../services/auth_service.dart';
+import '../services/main_init_service.dart';
 
 import 'swipe.dart';
 import 'chat.dart';
@@ -233,6 +235,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     title: const Text('Logout'),
                     onTap: () async {
                       await AuthService.signOut();
+                      await MainInitService.stopService();
 
                       Navigator.pushReplacement(
                         context,

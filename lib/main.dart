@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 
 import 'services/main_init_service.dart';
+import 'services/hive_service.dart';
 
 import 'views/welcome.dart';
 
@@ -12,9 +13,12 @@ void main() async {
   MainInitService.initSupertoken();
   await MainInitService.initHive();
   await MainInitService.initAuth();
-  await MainInitService.requestPermissions();
-  MainInitService.initService();
-  await MainInitService.startService();
+
+  if (HiveService.getAuth()?.isAuthenticated ?? false) {
+    await MainInitService.requestPermissions();
+    MainInitService.initService();
+    await MainInitService.startService();
+  } 
 
   runApp(const MyApp());
 }

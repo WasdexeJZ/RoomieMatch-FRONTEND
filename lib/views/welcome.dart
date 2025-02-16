@@ -19,8 +19,8 @@ class _WelcomePageState extends State<WelcomePage> {
   void initState() {
     super.initState();
 
-    // Start a 3-second delay before navigating to the Login Page
-    Future.delayed(const Duration(seconds: 3), () {
+    // Start a 1-second delay before navigating to the Login Page
+    Future.delayed(const Duration(seconds: 1), () {
       if (HiveService.getAuth()?.isAuthenticated ?? false) {
         _goToSwipePage(context);
       } else {
