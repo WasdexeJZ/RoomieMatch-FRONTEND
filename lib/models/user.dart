@@ -8,10 +8,10 @@ class User {
   final String userId;
 
   @HiveField(1)
-  String username;
-
-  @HiveField(2)
   String email;
 
-  User({required this.userId, required this.username, required this.email});
+  @HiveField(2)
+  String username;
+
+  User({required this.userId, required this.email, required this.username});
 }

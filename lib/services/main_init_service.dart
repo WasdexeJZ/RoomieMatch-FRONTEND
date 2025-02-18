@@ -23,7 +23,11 @@ import '../helpers/auth_box_helper.dart';
 
 import '../main.dart';
 
+
 class MainInitService {
+
+  MainInitService();
+
   static void initSupertoken() {
     SuperTokens.init(
       apiDomain: "http://localhost:8000",
@@ -111,7 +115,7 @@ class MainInitService {
   }
 
   static Future<void> initNtfy(FlutterLocalNotificationsPlugin notificationsPlugin, NotificationDetails notificationDetails, NotificationDetails summaryNotificationDetails) async {
-    final String topic = 'test';
+    final String topic = 'notifications';
     final NtfyClient ntfyClient = NtfyClient(basePath: Uri.parse("http://localhost:9980"));
 
     // Subscribe to the topic(s), receiving the MessageResponses right as they are published
