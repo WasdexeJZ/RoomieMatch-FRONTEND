@@ -1,45 +1,32 @@
-import 'package:RoomieMatch/models/profile.dart';
-import 'package:RoomieMatch/models/settings.dart';
-import 'package:supertokens_flutter/supertokens.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 
-import 'services/auth_service.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
+
+import 'services/main_init_service.dart';
 import 'services/hive_service.dart';
-
-import 'models/auth.dart';
-import 'models/user.dart';
 
 import 'views/welcome.dart';
 
 void main() async {
-  SuperTokens.init(
-    apiDomain: "http://localhost:8000",
-    apiBasePath: "/api/v1/auth",
-  );
-
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Hive
-  final appDocumentDirectory = await getApplicationDocumentsDirectory();
-  await Hive.initFlutter(appDocumentDirectory.path);
+  MainInitService.initSupertoken();
+  await MainInitService.initHive();
+  await MainInitService.initAuth();
 
-  // Register Hive adapter for data Model
-  Hive.registerAdapter(AuthAdapter());
-  Hive.registerAdapter(UserAdapter());
-  Hive.registerAdapter(ProfileAdapter());
-  Hive.registerAdapter(SettingsAdapter());
+  if (HiveService.getAuth()?.isAuthenticated ?? false) {
+    await MainInitService.requestPermissions();
+    MainInitService.initService();
+    await MainInitService.startService();
+  } 
 
-  // Open Hive Boxes
-  await Hive.openBox('authBox');
-  await Hive.openBox('appBox');
+  runApp(const MyApp());
+}
 
-  // Set default Auth Model and update if Authentication True
-  HiveService.setAuth(Auth());
-  await AuthService.checkAuth();
-
-  runApp(MyApp());
+// The callback function should always be a top-level or static function.
+@pragma('vm:entry-point')
+void startCallback() {
+  FlutterForegroundTask.setTaskHandler(MyTaskHandler());
 }
 
 class MyApp extends StatelessWidget {

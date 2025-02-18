@@ -30,12 +30,26 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
   supertokens_flutter: 0.6.2
-  provider: ^6.0.0
-  # http: ^1.2.0
+
   hive: 2.2.3
   hive_flutter: 1.1.0
   path_provider: 2.1.5 # For getting the storage directory
+
+  ntfy_dart:
+    git:
+      url: https://github.com/jr1221/ntfy_dart.git
+  flutter_foreground_task: ^8.16.0
+  flutter_local_notifications: ^18.0.0
+
+  pointycastle: ^3.9.0
+  flutter_secure_storage: ^9.2.2
+  basic_utils: ^5.7.0
+
+
+  # workmanager: ^0.5.2
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -94,8 +108,6 @@ flutter:
     - assets/icons/profile.png
     - assets/faq_header.png
     - assets/homepage_landing.png
-
-
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
