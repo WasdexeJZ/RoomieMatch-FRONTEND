@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-
 import 'settings.dart'; // Import the settings page
+import 'chat.dart';
+import 'swipe.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -17,8 +18,60 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class RoomieMatchHomePage extends StatelessWidget {
+class RoomieMatchHomePage extends StatefulWidget {
   const RoomieMatchHomePage({Key? key}) : super(key: key);
+
+  @override
+  _RoomieMatchHomePageState createState() => _RoomieMatchHomePageState();
+}
+
+class _RoomieMatchHomePageState extends State<RoomieMatchHomePage> {
+  int _selectedIndex = 0; // Home page is selected by default
+
+  void _onItemTapped(int index) {
+    if (_selectedIndex == index) return; // Do nothing if already selected
+
+    setState(() {
+      _selectedIndex = index;
+    });
+
+    if (index == 1) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const ChatPage()),
+      );
+    } else if (index == 2) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const SwipePage()),
+      );
+    } else if (index == 3) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const SettingsPage()),
+      );
+    }
+  }
+
+  Widget _buildIcon(String assetPath, int index) {
+    bool isSelected = _selectedIndex == index;
+
+    return Container(
+      width: 50,
+      height: 50,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: isSelected ? Colors.white : Colors.transparent,
+      ),
+      child: Center(
+        child: ImageIcon(
+          AssetImage(assetPath),
+          size: 35,
+          color: isSelected ? Colors.grey : Colors.grey,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,38 +81,37 @@ class RoomieMatchHomePage extends StatelessWidget {
           children: [
             Image.asset(
               'assets/RoomieMatch_logo.png',
-              height: 50, // Logo size
+              height: 50,
             ),
             const SizedBox(width: 12),
             Text(
               'RoomieMatch',
               style: TextStyle(
-                fontSize: 28, // Title font size
+                fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color:
-                    Colors.teal[900], // Adjust this to match your logo's color
+                color: Colors.teal[900],
               ),
             ),
           ],
         ),
-        centerTitle: false, // Keeps title aligned to the left
+        centerTitle: false,
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Photo Verified Section with Aspect Ratio
+            // Photo Verified Section
             Container(
               margin: const EdgeInsets.all(16.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 image: const DecorationImage(
                   image: AssetImage('assets/homepage_landing.png'),
-                  fit: BoxFit.contain, // Ensures the full image is visible
+                  fit: BoxFit.contain,
                 ),
               ),
               child: AspectRatio(
-                aspectRatio: 1034 / 713, // Matches the dimensions of the image
+                aspectRatio: 1034 / 713,
                 child: Stack(
                   children: [
                     Align(
@@ -68,7 +120,7 @@ class RoomieMatchHomePage extends StatelessWidget {
                         padding: const EdgeInsets.all(16.0),
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black, // Black button
+                            backgroundColor: Colors.black,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
@@ -91,24 +143,18 @@ class RoomieMatchHomePage extends StatelessWidget {
             const SizedBox(height: 16),
 
             // Recommendations Section
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: const Text(
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
                 'For You',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: const Text(
-                'Roomates Wanted!',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                'Roommates Wanted!',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
             ),
             const SizedBox(height: 16),
@@ -124,7 +170,7 @@ class RoomieMatchHomePage extends StatelessWidget {
                 mainAxisSpacing: 16,
                 children: List.generate(10, (index) {
                   return _buildGridItem(
-                    icon: Icons.circle, // Replace with actual icons or images
+                    icon: Icons.circle,
                     title: 'Option ${index + 1}',
                     subtitle: 'Details',
                   );
@@ -132,6 +178,57 @@ class RoomieMatchHomePage extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFFC7FBD2),
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              spreadRadius: 2,
+              blurRadius: 10,
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+          child: BottomNavigationBar(
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+            backgroundColor: const Color(0xFFC7FBD2),
+            elevation: 0,
+            selectedItemColor: Colors.grey,
+            unselectedItemColor: Colors.grey,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            type: BottomNavigationBarType.fixed,
+            items: [
+              BottomNavigationBarItem(
+                icon: _buildIcon('assets/icons/homebutton.png', 0),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIcon('assets/icons/chatbutton.png', 1),
+                label: 'Chats',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIcon('assets/icons/swipepage.png', 2),
+                label: 'Swipe',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIcon('assets/icons/settingsbutton.png', 3),
+                label: 'Settings',
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -151,7 +248,7 @@ class RoomieMatchHomePage extends StatelessWidget {
             color: Colors.grey.withOpacity(0.2),
             spreadRadius: 2,
             blurRadius: 4,
-            offset: const Offset(0, 2), // Shadow position
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -163,18 +260,12 @@ class RoomieMatchHomePage extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const Spacer(),
           Text(
             subtitle,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
-            ),
+            style: const TextStyle(fontSize: 14, color: Colors.grey),
           ),
         ],
       ),

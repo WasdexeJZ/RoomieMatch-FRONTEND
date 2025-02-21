@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'notifications.dart';
+import 'home.dart';
 import '../filter_page.dart';
 import '../info_page.dart';
 import 'chat.dart';
@@ -14,7 +14,7 @@ class SwipePage extends StatefulWidget {
 }
 
 class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMixin {
-  int _selectedIndex = 0;
+  int _selectedIndex = 2;
 
   final List<Map<String, String>> _photoData = [
     {'image': 'assets/profile/8.png', 'name': 'Ahmad', 'age': '24', 'distance': '1km'},
@@ -68,18 +68,20 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
     });
 
     switch (index) {
+      case 0:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+        break;
+
       case 1:
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const ChatPage()),
         );
         break;
-      case 2:
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const NotificationsPage()),
-        );
-        break;
+
       case 3:
         Navigator.pushReplacement(
           context,
@@ -134,6 +136,7 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
     _swipeController.forward();
   }
 
+
   Widget _buildIcon(String assetPath, int index) {
     bool isSelected = _selectedIndex == index;
 
@@ -176,72 +179,81 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
       body: Stack(
         children: [
           Center(
-            child: SlideTransition(
-              position: _swipeAnimation,
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.85,
-                height: MediaQuery.of(context).size.height * 0.5,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      spreadRadius: 2,
-                      blurRadius: 10,
-                    ),
-                  ],
-                ),
-                child: Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Image.asset(
-                        _photoData[_currentPhotoIndex]['image']!,
-                        width: double.infinity,
-                        height: MediaQuery.of(context).size.height * 0.5,
-                        fit: BoxFit.cover,
+            child: GestureDetector(
+              onPanUpdate: (details) {
+                if (details.delta.dx > 10) {
+                  _swipePhoto(true); // Swipe right
+                } else if (details.delta.dx < -10) {
+                  _swipePhoto(false); // Swipe left
+                }
+              },
+              child: SlideTransition(
+                position: _swipeAnimation,
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.85,
+                  height: MediaQuery.of(context).size.height * 0.5,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        spreadRadius: 2,
+                        blurRadius: 10,
                       ),
-                    ),
-                    Positioned(
-                      bottom: 70,
-                      left: 16,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${_photoData[_currentPhotoIndex]['name']}, ${_photoData[_currentPhotoIndex]['age']}',
-                            style: const TextStyle(
-                              fontSize: 35,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              shadows: [
-                                Shadow(
-                                  offset: Offset(0, 1),
-                                  blurRadius: 5,
-                                  color: Colors.black,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Text(
-                            '${_photoData[_currentPhotoIndex]['distance']}',
-                            style: const TextStyle(
-                              fontSize: 24,
-                              color: Colors.white,
-                              shadows: [
-                                Shadow(
-                                  offset: Offset(0, 1),
-                                  blurRadius: 5,
-                                  color: Colors.black,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                    ],
+                  ),
+                  child: Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: Image.asset(
+                          _photoData[_currentPhotoIndex]['image']!,
+                          width: double.infinity,
+                          height: MediaQuery.of(context).size.height * 0.5,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
-                  ],
+                      Positioned(
+                        bottom: 70,
+                        left: 16,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${_photoData[_currentPhotoIndex]['name']}, ${_photoData[_currentPhotoIndex]['age']}',
+                              style: const TextStyle(
+                                fontSize: 35,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                shadows: [
+                                  Shadow(
+                                    offset: Offset(0, 1),
+                                    blurRadius: 5,
+                                    color: Colors.black,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Text(
+                              '${_photoData[_currentPhotoIndex]['distance']}',
+                              style: const TextStyle(
+                                fontSize: 24,
+                                color: Colors.white,
+                                shadows: [
+                                  Shadow(
+                                    offset: Offset(0, 1),
+                                    blurRadius: 5,
+                                    color: Colors.black,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -369,8 +381,8 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
                 label: 'Chats',
               ),
               BottomNavigationBarItem(
-                icon: _buildIcon('assets/icons/notificationbutton.png', 2),
-                label: 'Notifications',
+                icon: _buildIcon('assets/icons/swipepage.png', 2),
+                label: 'Swipe',
               ),
               BottomNavigationBarItem(
                 icon: _buildIcon('assets/icons/settingsbutton.png', 3),

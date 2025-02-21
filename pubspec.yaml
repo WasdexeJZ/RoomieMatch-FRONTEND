@@ -99,6 +99,7 @@ flutter:
     - assets/icons/filter.png
     - assets/icons/homebutton.png
     - assets/icons/notificationbutton.png
+    - assets/icons/swipepage.png
     - assets/icons/sendbutton.png
     - assets/icons/settingsbutton.png
     - assets/icons/faq.png

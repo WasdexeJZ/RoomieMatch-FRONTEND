@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../chat_detail_page.dart';
-import 'notifications.dart';
 import 'swipe.dart';
 import 'settings.dart';
+import 'home.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -26,13 +26,13 @@ class _ChatPageState extends State<ChatPage> {
         case 0:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => SwipePage()),
+            MaterialPageRoute(builder: (context) => HomePage()),
           );
           break;
         case 2:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => NotificationsPage()),
+            MaterialPageRoute(builder: (context) => SwipePage()),
           );
           break;
         case 3:
@@ -167,8 +167,8 @@ class _ChatPageState extends State<ChatPage> {
                 label: 'Chats',
               ),
               BottomNavigationBarItem(
-                icon: _buildIcon('assets/icons/notificationbutton.png', 2),
-                label: 'Notifications',
+                icon: _buildIcon('assets/icons/swipepage.png', 2),
+                label: 'Swipe',
               ),
               BottomNavigationBarItem(
                 icon: _buildIcon('assets/icons/settingsbutton.png', 3),

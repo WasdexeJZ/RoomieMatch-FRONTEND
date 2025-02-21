@@ -1,3 +1,4 @@
+import 'package:RoomieMatch/views/home.dart';
 import 'package:flutter/material.dart';
 
 import '../models/settings.dart';
@@ -8,7 +9,6 @@ import 'sleep_mode.dart';
 import 'chat.dart';
 import 'swipe.dart';
 import 'settings.dart';
-import 'notifications.dart';
 
 class NotificationSettingsPage extends StatefulWidget {
   const NotificationSettingsPage({super.key});
@@ -36,7 +36,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
         case 0:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => SwipePage()),
+            MaterialPageRoute(builder: (context) => HomePage()),
           );
           break;
         case 1:
@@ -48,7 +48,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
         case 2: // Navigate to Notifications Page
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => NotificationsPage()),
+            MaterialPageRoute(builder: (context) => SwipePage()),
           );
           break;
         case 3:
@@ -290,8 +290,8 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                 label: 'Chats',
               ),
               BottomNavigationBarItem(
-                icon: _buildIcon('assets/icons/notificationbutton.png', _selectedIndex == 2),
-                label: 'Notifications',
+                icon: _buildIcon('assets/icons/swipepage.png', _selectedIndex == 2),
+                label: 'Swipe',
               ),
               BottomNavigationBarItem(
                 icon: _buildIcon('assets/icons/settingsbutton.png', _selectedIndex == 3),
