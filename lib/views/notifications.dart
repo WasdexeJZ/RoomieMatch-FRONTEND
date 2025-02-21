@@ -12,24 +12,24 @@ class NotificationsPage extends StatefulWidget {
 }
 
 class _NotificationsPageState extends State<NotificationsPage> {
-  int _selectedIndex = 2; // Default to "Notifications" tab
+  int _selectedIndex = 0; // Default to "Notifications" tab
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
 
-    if (index == 0) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => SwipePage()),
-      );
-    }
-
     if (index == 1) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => ChatPage()),
+      );
+    }
+
+    if (index == 2) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => SwipePage()),
       );
     }
 
@@ -211,8 +211,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 label: 'Chats',
               ),
               BottomNavigationBarItem(
-                icon: _buildIcon('assets/icons/notificationbutton.png', 2),
-                label: 'Notifications',
+                icon: _buildIcon('assets/icons/swipepage.png', 2),
+                label: 'Swipe',
               ),
               BottomNavigationBarItem(
                 icon: _buildIcon('assets/icons/settingsbutton.png', 3),
