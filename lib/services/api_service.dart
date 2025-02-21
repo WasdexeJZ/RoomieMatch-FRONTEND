@@ -24,8 +24,11 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
+      print("post done");
       return json.decode(response.body);
     } else {
+      print(response.statusCode);
+      print("post fail");
       throw Exception('Failed to post');
     }
   }
