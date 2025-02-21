@@ -3,9 +3,7 @@ import 'dart:typed_data';
 import 'dart:math';
 
 import 'package:pointycastle/export.dart';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
 import 'package:basic_utils/basic_utils.dart';
 
 import 'api_service.dart';
@@ -13,17 +11,16 @@ import 'api_service.dart';
 class CryptographyService {
   static final ApiService apiService = ApiService();
 
-  static void initRSA() {
+  static Future<void> initRSA() async {
     AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> keyPair = generateRSAKeyPair();
 
     // Convert RSAPrivateKey to PEM format and store to secureStorage
     String privateKeyPEM = CryptoUtils.encodeRSAPrivateKeyToPem(keyPair.privateKey);
-    print(privateKeyPEM);
-    secureWrite("private_key", privateKeyPEM);
+    await secureWrite("private_key", privateKeyPEM);
 
     // Send public key to backend to encrypt
     String publicKeyPEM = CryptoUtils.encodeRSAPublicKeyToPem(keyPair.publicKey);
-    sendPublicKey(publicKeyPEM);
+    await sendPublicKey(publicKeyPEM);
   }
 
   static AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> generateRSAKeyPair() {
@@ -34,7 +31,7 @@ class CryptographyService {
     FortunaRandom secureRandom = FortunaRandom();
     secureRandom.seed(KeyParameter(Uint8List.fromList(seeds)));
 
-    // Generate key pair with RSAKeyGenerator and secureRandom object 
+    // Generate key pair with RSAKeyGenerator and secureRandom object
     RSAKeyGenerator keyGen = RSAKeyGenerator()..init(ParametersWithRandom(RSAKeyGeneratorParameters(BigInt.parse('65537'), 2048, 64), secureRandom));
 
     final AsymmetricKeyPair<PublicKey, PrivateKey> keyPair = keyGen.generateKeyPair();
@@ -47,7 +44,7 @@ class CryptographyService {
   }
 
   // Securely write to SecureStorage using storageKey
-  static void secureWrite(String storageKey, String value) async {
+  static Future<void> secureWrite(String storageKey, String value) async {
     final storage = FlutterSecureStorage();
 
     await storage.write(key: storageKey, value: value);
@@ -61,8 +58,9 @@ class CryptographyService {
   }
 
   // Repeatedly try to send public key to backend to save to database
-  static void sendPublicKey(String publicKey) async {
+  static Future<void> sendPublicKey(String publicKey) async {
     String apiResponseStatus;
+    bool isIteration = false;
 
     do {
       Map<String, dynamic> publicKeyMap = {"value": ""};
@@ -73,7 +71,11 @@ class CryptographyService {
 
       apiResponseStatus = apiResponse['status'];
 
-      print('sendpublickey');
+      if (isIteration) {
+        await Future.delayed(Duration(seconds: 30));
+      }
+
+      isIteration = true;
     } while (apiResponseStatus == 'ERROR' || apiResponseStatus == 'UNKNOWN');
   }
 

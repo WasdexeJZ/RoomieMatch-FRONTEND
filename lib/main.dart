@@ -18,7 +18,7 @@ void main() async {
     await MainInitService.requestPermissions();
     MainInitService.initService();
     await MainInitService.startService();
-  } 
+  }
 
   runApp(const MyApp());
 }

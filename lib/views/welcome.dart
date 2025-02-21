@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../services/hive_service.dart';
+import '../services/api_service.dart';
+import '../services/main_init_service.dart';
 
 import 'swipe.dart';
 import 'login.dart';
@@ -20,13 +22,44 @@ class _WelcomePageState extends State<WelcomePage> {
     super.initState();
 
     // Start a 1-second delay before navigating to the Login Page
-    Future.delayed(const Duration(seconds: 1), () {
-      // if (HiveService.getAuth()?.isAuthenticated ?? false) {
-        // _goToSwipePage(context);
-      // } else {
+    Future.delayed(const Duration(seconds: 1), () async {
+      await initBackendConnection();
+
+      if (HiveService.getAuth()?.isAuthenticated ?? false) {
+        _goToSwipePage(context);
+      } else {
         _goToLoginPage(context);
-      // }
+      }
     });
+  }
+
+  Future<void> initBackendConnection() async {
+    String apiResponseStatus;
+    bool isIteration = false;
+    List<bool> hasErrorDialog = [false];
+
+    do {
+      ApiService apiService = ApiService();
+
+      Map<String, dynamic> apiResponse = await apiService.get('utils/frontend-connection-check/');
+      apiResponseStatus = apiResponse['status'];
+
+      if (isIteration) {
+        if (!hasErrorDialog[0]) {
+          _showErrorDialog("Connection to Backend Failed. Please ensure you have Internet Connection.", hasErrorDialog);
+          hasErrorDialog[0] = true;
+        }
+        await Future.delayed(Duration(seconds: 30));
+      }
+
+      isIteration = true;
+    } while (apiResponseStatus != "OK");
+
+    if (hasErrorDialog[0]) {
+      Navigator.of(context).pop();
+    }
+
+    await MainInitService.initAuth();
   }
 
   void _goToLoginPage(BuildContext context) {
@@ -40,6 +73,28 @@ class _WelcomePageState extends State<WelcomePage> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => SwipePage()),
+    );
+  }
+
+  // Show error dialog
+  void _showErrorDialog(String message, List<bool> hasErrorDialog) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                hasErrorDialog[0] = false;
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
