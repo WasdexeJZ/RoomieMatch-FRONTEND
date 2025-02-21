@@ -9,7 +9,7 @@ import '../services/main_init_service.dart';
 
 import 'swipe.dart';
 import 'chat.dart';
-import 'notifications.dart';
+import 'home.dart';
 import 'faq.dart';
 import 'notifications_settings.dart';
 import 'login.dart';
@@ -36,7 +36,7 @@ class _SettingsPageState extends State<SettingsPage> {
         case 0:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => SwipePage()),
+            MaterialPageRoute(builder: (context) => HomePage()),
           );
           break;
         case 1:
@@ -48,7 +48,7 @@ class _SettingsPageState extends State<SettingsPage> {
         case 2:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => NotificationsPage()),
+            MaterialPageRoute(builder: (context) => SwipePage()),
           );
           break;
       }
@@ -291,8 +291,8 @@ class _SettingsPageState extends State<SettingsPage> {
                 label: 'Chats',
               ),
               BottomNavigationBarItem(
-                icon: _buildIcon('assets/icons/notificationbutton.png', 2),
-                label: 'Notifications',
+                icon: _buildIcon('assets/icons/swipepage.png', 2),
+                label: 'Swipe',
               ),
               BottomNavigationBarItem(
                 icon: _buildIcon('assets/icons/settingsbutton.png', 3),
