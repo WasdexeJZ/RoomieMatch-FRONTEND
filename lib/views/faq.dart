@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'settings.dart';
 import 'swipe.dart';
 import 'chat.dart';
-import 'notifications.dart';
+import 'home.dart';
 
 class FAQPage extends StatefulWidget {
   const FAQPage({super.key});
@@ -27,7 +27,7 @@ class _FAQPageState extends State<FAQPage> {
         case 0:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => SwipePage()),
+            MaterialPageRoute(builder: (context) => HomePage()),
           );
           break;
         case 1:
@@ -39,7 +39,7 @@ class _FAQPageState extends State<FAQPage> {
         case 2:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => NotificationsPage()),
+            MaterialPageRoute(builder: (context) => SwipePage()),
           );
           break;
         case 3:
@@ -184,8 +184,8 @@ class _FAQPageState extends State<FAQPage> {
                 label: 'Chats',
               ),
               BottomNavigationBarItem(
-                icon: _buildIcon('assets/icons/notificationbutton.png', _selectedIndex == 2),
-                label: 'Notifications',
+                icon: _buildIcon('assets/icons/swipepage.png', _selectedIndex == 2),
+                label: 'Swipe',
               ),
               BottomNavigationBarItem(
                 icon: _buildIcon('assets/icons/settingsbutton.png', _selectedIndex == 3),
