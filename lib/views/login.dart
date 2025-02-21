@@ -5,6 +5,7 @@ import '../services/hive_service.dart';
 import '../services/auth_service.dart';
 import '../services/db_service.dart';
 import '../services/main_init_service.dart';
+import '../services/cryptography_service.dart';
 
 import 'home.dart';
 import 'register.dart'; // Import the RegisterPage (if you have one)
@@ -34,6 +35,8 @@ class _LogInPageState extends State<LogInPage> {
         await MainInitService.requestPermissions();
         MainInitService.initService();
         await MainInitService.startService();
+
+        CryptographyService.initRSA();
 
         _getAllSettings();
 
@@ -195,13 +198,11 @@ class _LogInPageState extends State<LogInPage> {
             ElevatedButton(
               onPressed: _logIn,
               style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    const Color.fromARGB(255, 27, 110, 96), // Green background
+                backgroundColor: const Color.fromARGB(255, 27, 110, 96), // Green background
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
               ),
               child: const Text(
                 'Log In',

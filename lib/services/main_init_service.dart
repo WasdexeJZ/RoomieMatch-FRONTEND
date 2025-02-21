@@ -7,12 +7,14 @@ import 'package:supertokens_flutter/supertokens.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'package:flutter/foundation.dart';
 import 'package:ntfy_dart/ntfy_dart.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'auth_service.dart';
 import 'hive_service.dart';
+import 'cryptography_service.dart';
 
 import '../models/profile.dart';
 import '../models/settings.dart';
@@ -23,9 +25,7 @@ import '../helpers/auth_box_helper.dart';
 
 import '../main.dart';
 
-
 class MainInitService {
-
   MainInitService();
 
   static void initSupertoken() {
@@ -131,17 +131,17 @@ class MainInitService {
         print(notification['title']);
         print(notification['message']);
 
-        // if (notification['userId'] == AuthBoxHelper.getUserId) {
-        // do rsa decryption here if it is our notification
+        if (notification['userId'].compareTo(AuthBoxHelper.getUserId()) == 0) {
+          String message = await CryptographyService.decryptRSA(notification['message']);
 
-        await notificationsPlugin.show(counter, notification['title'], notification['message'], notificationDetails);
-        counter++;
+          await notificationsPlugin.show(counter, notification['title'], message, notificationDetails);
+          counter++;
 
-        if ((await notificationsPlugin.getActiveNotifications()).length == 2) {
-          await notificationsPlugin.show(counter, "", "", summaryNotificationDetails);
+          if ((await notificationsPlugin.getActiveNotifications()).length == 2) {
+            await notificationsPlugin.show(counter, "", "", summaryNotificationDetails);
+          }
+          counter++;
         }
-        counter++;
-        // }
       }
     });
   }
@@ -181,6 +181,8 @@ class MyTaskHandler extends TaskHandler {
   // Called when the task is started.
   @override
   Future<void> onStart(DateTime timestamp, TaskStarter starter) async {
+    MainInitService.initSupertoken();
+    await MainInitService.initHive();
     await MainInitService.initNotification();
   }
 
