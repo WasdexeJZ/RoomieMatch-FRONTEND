@@ -11,7 +11,6 @@ import 'package:ntfy_dart/ntfy_dart.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-import 'api_service.dart';
 import 'auth_service.dart';
 import 'cryptography_service.dart';
 import 'hive_service.dart';
