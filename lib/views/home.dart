@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'settings.dart'; // Import the settings page
+import 'settings/settings.dart'; // Import the settings page
 import 'chat.dart';
 import 'swipe.dart';
 
