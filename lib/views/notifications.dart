@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'chat.dart';
 import 'swipe.dart';
-import 'settings.dart';
+import 'settings/settings.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
@@ -12,7 +12,7 @@ class NotificationsPage extends StatefulWidget {
 }
 
 class _NotificationsPageState extends State<NotificationsPage> {
-  int _selectedIndex = 0; // Default to "Notifications" tab
+  int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
     setState(() {
