@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../chat_detail_page.dart';
 import 'swipe.dart';
-import 'settings.dart';
+import 'settings/settings.dart';
 import 'home.dart';
+import 'new_home.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -26,7 +27,7 @@ class _ChatPageState extends State<ChatPage> {
         case 0:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => HomePage()),
+            MaterialPageRoute(builder: (context) => NewHomePage()),
           );
           break;
         case 2:
@@ -68,7 +69,9 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         title: const Text('Chats'),
       ),
@@ -78,7 +81,7 @@ class _ChatPageState extends State<ChatPage> {
           ListTile(
             leading: CircleAvatar(
               radius: 25,
-              backgroundImage: const AssetImage('assets/profile/1.png'), // Load from local file
+              backgroundImage: const AssetImage('assets/profile/1.jpg'), // Load from local file
             ),
             title: const Text('Emily'),
             subtitle: const Text('Nice to meet you too :)'),
@@ -89,7 +92,7 @@ class _ChatPageState extends State<ChatPage> {
                 MaterialPageRoute(
                   builder: (context) => ChatDetailPage(
                     userName: 'Emily',
-                    profileImageAsset: 'assets/profile/1.png', // Pass the correct local file path
+                    profileImageAsset: 'assets/profile/1.jpg', // Pass the correct local file path
                     messages: [
                       {'content': 'Hi Emily!', 'timestamp': '12:00 PM', 'isSender': true},
                       {'content': 'Nice to meet you too :)', 'timestamp': '1:00 PM', 'isSender': false},
@@ -103,7 +106,7 @@ class _ChatPageState extends State<ChatPage> {
           ListTile(
             leading: CircleAvatar(
               radius: 25,
-              backgroundImage: const AssetImage('assets/profile/2.png'), // Load from local file
+              backgroundImage: const AssetImage('assets/profile/2.jpg'), // Load from local file
             ),
             title: const Text('Bruno'),
             subtitle: const Text('Hello!'),
@@ -114,7 +117,7 @@ class _ChatPageState extends State<ChatPage> {
                 MaterialPageRoute(
                   builder: (context) => ChatDetailPage(
                     userName: 'Bruno',
-                    profileImageAsset: 'assets/profile/2.png', // Pass the correct local file path
+                    profileImageAsset: 'assets/profile/2.jpg', // Pass the correct local file path
                     messages: [
                       {'content': 'Hello Bruno!', 'timestamp': '11:30 PM', 'isSender': true},
                       {'content': 'Hey there!', 'timestamp': '12:00 AM', 'isSender': false},
