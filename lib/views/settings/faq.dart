@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'settings.dart';
-import 'swipe.dart';
-import 'chat.dart';
-import 'home.dart';
+import '../swipe.dart';
+import '../chat.dart';
+import '../home.dart';
+import '../new_home.dart';
 
 class FAQPage extends StatefulWidget {
   const FAQPage({super.key});
@@ -27,7 +28,7 @@ class _FAQPageState extends State<FAQPage> {
         case 0:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => HomePage()),
+            MaterialPageRoute(builder: (context) => NewHomePage()),
           );
           break;
         case 1:
@@ -134,9 +135,9 @@ class _FAQPageState extends State<FAQPage> {
                     title: 'Terms of use',
                     preview: 'Swipe to Match\nOn the main swipe page, you can swipe ri...',
                     content:
-                        'Swipe to Match\nOn the main swipe page, you can swipe right on profiles you’re interested in and left on profiles you’re not. When both you and another user swipe right on each other’s profiles, a match is created, and you’ll receive a notification to start chatting!\n\n'
-                        'Customize Your Preferences and Filters\nTailor your roommate matches by adjusting your preferences and filters directly on the swipe page. This allows you to see profiles that best fit your needs.\n\n'
-                        'Manage Notifications\nControl your notifications to suit your schedule. In the settings, you can mute notifications altogether or set specific days and times for notifications to be paused using the Sleep mode.',
+                        'Swipe to Match:\nOn the main swipe page, you can swipe right on profiles you’re interested in and left on profiles you’re not. When both you and another user swipe right on each other’s profiles, a match is created, and you’ll receive a notification to start chatting!\n\n'
+                        'Customize Your Preferences and Filters:\nTailor your roommate matches by adjusting your preferences and filters directly on the swipe page. This allows you to see profiles that best fit your needs.\n\n'
+                        'Manage Notifications:\nControl your notifications to suit your schedule. In the settings, you can mute notifications altogether or set specific days and times for notifications to be paused using the Sleep mode.',
                   ),
                 ],
               ),
