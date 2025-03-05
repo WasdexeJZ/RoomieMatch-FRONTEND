@@ -7,7 +7,8 @@ import '../services/db_service.dart';
 import '../services/main_init_service.dart';
 
 import 'home.dart';
-import 'register.dart'; // Import the RegisterPage (if you have one)
+import 'register.dart';
+import 'new_home.dart';
 
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
@@ -39,7 +40,7 @@ class _LogInPageState extends State<LogInPage> {
 
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
+          MaterialPageRoute(builder: (context) => const NewHomePage()),
         );
       // } else if (response["status"] == "ERROR") {
       //   _showErrorDialog(response["error"] ?? "An unknown error occurred.");
@@ -104,204 +105,109 @@ class _LogInPageState extends State<LogInPage> {
     );
   }
 
-  // Login via social media with SnackBar message
-  void _logInWithSocialMedia(String platform) {
-    // Clear any existing SnackBars before showing the new one
-    ScaffoldMessenger.of(context).clearSnackBars();
-
-    // Display a new SnackBar with the platform name and set a custom duration
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Logging in via $platform'),
-        duration: const Duration(seconds: 1), // Set the duration to 2 seconds
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(' '),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Spacer to push the logo higher
-            const Spacer(flex: 2),
-
-            // Add the RoomieMatch logo
-            Image.asset(
-              'assets/RoomieMatch_logo.png',
-              height: 120,
-              width: 120,
-            ),
-            const SizedBox(height: 30),
-
-            // Username field with shadow only at the bottom
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(30),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
-                    blurRadius: 15,
-                    spreadRadius: 3,
-                    offset: const Offset(0, 5), // Shadow only at the bottom
-                  ),
-                ],
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min, //the column only take as much space as needed
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/RoomieMatch_logo.png',
+                height: 120,
+                width: 120,
               ),
-              child: TextField(
-                controller: _usernameController,
-                decoration: const InputDecoration(
-                  hintText: 'Username',
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
+              const SizedBox(height: 30),
 
-            // Password field with shadow only at the bottom
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(30),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
-                    blurRadius: 15,
-                    spreadRadius: 3,
-                    offset: const Offset(0, 5), // Shadow only at the bottom
-                  ),
-                ],
-              ),
-              child: TextField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: const InputDecoration(
-                  hintText: 'Password',
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                ),
-              ),
-            ),
-            const SizedBox(height: 30),
-
-            // Green Log In button with white bold text
-            ElevatedButton(
-              onPressed: _logIn,
-              style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    const Color.fromARGB(255, 27, 110, 96), // Green background
-                shape: RoundedRectangleBorder(
+              // Username field
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(30),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-              ),
-              child: const Text(
-                'Log In',
-                style: TextStyle(
-                  color: Colors.white, // White text
-                  fontWeight: FontWeight.bold, // Bold font
-                  fontSize: 16,
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Separator text
-            const Text(
-              '─────────  or log in with  ─────────',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Social media login buttons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Google button
-                GestureDetector(
-                  onTap: () => _logInWithSocialMedia('Google'),
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.grey, // Light gray border
-                        width: 1.5,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 15,
+                      spreadRadius: 3,
+                      offset: const Offset(0, 5),
                     ),
-                    child: Image.asset(
-                      'assets/google_logo.png',
-                      width: 30,
-                      height: 30,
-                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: _usernameController,
+                  decoration: const InputDecoration(
+                    hintText: 'Username',
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16),
                   ),
                 ),
-                const SizedBox(width: 20),
+              ),
+              const SizedBox(height: 16),
 
-                // Facebook button
-                GestureDetector(
-                  onTap: () => _logInWithSocialMedia('Facebook'),
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.grey, // Light gray border
-                        width: 1.5,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
+              // Password field
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3),
+                      blurRadius: 15,
+                      spreadRadius: 3,
+                      offset: const Offset(0, 5),
                     ),
-                    child: Image.asset(
-                      'assets/facebook_logo.png',
-                      width: 30,
-                      height: 30,
-                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: _passwordController,
+                  obscureText: true,
+                  decoration: const InputDecoration(
+                    hintText: 'Password',
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16),
                   ),
                 ),
-                const SizedBox(width: 20),
+              ),
+              const SizedBox(height: 30),
 
-                // Apple button
-                GestureDetector(
-                  onTap: () => _logInWithSocialMedia('Apple'),
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.grey, // Light gray border
-                        width: 1.5,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Image.asset(
-                      'assets/apple_logo.png',
-                      width: 30,
-                      height: 30,
-                    ),
+              // Log In button
+              ElevatedButton(
+                onPressed: _logIn,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 27, 110, 96),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                ),
+                child: const Text(
+                  'Log In',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 20),
+              ),
+              const SizedBox(height: 20),
 
-            // Spacer for layout balance
-            const Spacer(),
-
-            // TextButton to navigate to the Register Page
-            TextButton(
-              onPressed: _goToRegisterPage,
-              child: const Text('Don\'t have an account? Register here.'),
-            ),
-          ],
+              // Register text link
+              TextButton(
+                onPressed: _goToRegisterPage,
+                child: const Text('Don\'t have an account? Register here.'),
+              ),
+            ],
+          ),
         ),
       ),
     );
