@@ -4,7 +4,8 @@ import 'home.dart';
 import '../filter_page.dart';
 import '../info_page.dart';
 import 'chat.dart';
-import 'settings.dart';
+import 'settings/settings.dart';
+import 'new_home.dart';
 
 class SwipePage extends StatefulWidget {
   const SwipePage({super.key});
@@ -14,17 +15,17 @@ class SwipePage extends StatefulWidget {
 }
 
 class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMixin {
-  int _selectedIndex = 2;
-
   final List<Map<String, String>> _photoData = [
     {'image': 'assets/profile/8.png', 'name': 'Ahmad', 'age': '24', 'distance': '1km'},
     {'image': 'assets/profile/9.png', 'name': 'Alex', 'age': '22', 'distance': '5km'},
     {'image': 'assets/profile/10.png', 'name': 'John', 'age': '27', 'distance': '8km'},
   ];
-  int _currentPhotoIndex = 0;
 
+  int _currentPhotoIndex = 0;
   late AnimationController _swipeController;
   late Animation<Offset> _swipeAnimation;
+
+  int _selectedIndex = 2; // Default to "Swipe" tab
 
   @override
   void initState() {
@@ -48,7 +49,6 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
         setState(() {
           _currentPhotoIndex = (_currentPhotoIndex + 1) % _photoData.length;
         });
-
         _swipeController.reset();
       }
     });
@@ -71,7 +71,7 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
       case 0:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
+          MaterialPageRoute(builder: (context) => const NewHomePage()),
         );
         break;
 
@@ -136,7 +136,6 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
     _swipeController.forward();
   }
 
-
   Widget _buildIcon(String assetPath, int index) {
     bool isSelected = _selectedIndex == index;
 
@@ -160,7 +159,9 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         title: const Text('Welcome User!'),
         actions: [
@@ -182,9 +183,9 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
             child: GestureDetector(
               onPanUpdate: (details) {
                 if (details.delta.dx > 10) {
-                  _swipePhoto(true); // Swipe right
+                  _swipePhoto(true);
                 } else if (details.delta.dx < -10) {
-                  _swipePhoto(false); // Swipe left
+                  _swipePhoto(false);
                 }
               },
               child: SlideTransition(
