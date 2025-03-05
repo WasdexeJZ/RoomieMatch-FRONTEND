@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../models/settings.dart';
-import '../services/hive_service.dart';
-import '../services/db_service.dart';
+import '../../models/settings.dart';
+import '../../services/hive_service.dart';
+import '../../services/db_service.dart';
 
 class SleepModePage extends StatefulWidget {
   const SleepModePage({super.key});

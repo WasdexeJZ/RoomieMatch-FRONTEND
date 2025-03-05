@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 
-import '../models/settings.dart';
+import '../../models/settings.dart';
 
-import '../services/db_service.dart';
-import '../services/hive_service.dart';
-import '../services/auth_service.dart';
-import '../services/main_init_service.dart';
+import '../../services/db_service.dart';
+import '../../services/hive_service.dart';
+import '../../services/auth_service.dart';
+import '../../services/main_init_service.dart';
 
-import 'swipe.dart';
-import 'chat.dart';
-import 'home.dart';
+import '../swipe.dart';
+import '../chat.dart';
+import '../home.dart';
 import 'faq.dart';
 import 'notifications_settings.dart';
-import 'login.dart';
+import '../login.dart';
+import '../new_home.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -36,7 +37,7 @@ class _SettingsPageState extends State<SettingsPage> {
         case 0:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => HomePage()),
+            MaterialPageRoute(builder: (context) => NewHomePage()),
           );
           break;
         case 1:
@@ -237,11 +238,10 @@ class _SettingsPageState extends State<SettingsPage> {
                       await AuthService.signOut();
                       await MainInitService.stopService();
 
-                      Navigator.pushReplacement(
+                      Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => LogInPage(),
-                        ),
+                        MaterialPageRoute(builder: (context) => const LogInPage()),
+                            (route) => false,
                       );
                     },
                   ),
