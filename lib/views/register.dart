@@ -4,7 +4,9 @@ import '../services/auth_service.dart';
 import '../services/db_service.dart';
 import '../services/main_init_service.dart';
 
-import 'home.dart'; // Import the HomePage to navigate to it
+import 'home.dart';
+import 'new_home.dart';
+import 'registation/phone_number.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -39,7 +41,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
+          MaterialPageRoute(builder: (context) => PhoneNumberPage()),
         );
       // } else if (response["status"] == "ERROR") {
       //   _showErrorDialog(response["error"] ?? "An unknown error occurred.");
