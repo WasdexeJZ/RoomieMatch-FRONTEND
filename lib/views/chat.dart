@@ -50,8 +50,8 @@ class _ChatPageState extends State<ChatPage> {
     bool isSelected = _selectedIndex == index;
 
     return Container(
-      width: 50,
-      height: 50,
+      width: 45,
+      height: 45,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: isSelected ? Colors.white : Colors.transparent, // White background for selected icon
@@ -59,7 +59,7 @@ class _ChatPageState extends State<ChatPage> {
       child: Center(
         child: ImageIcon(
           AssetImage(assetPath),
-          size: 35, // Ensure all icons use the same size
+          size: 30, // Ensure all icons use the same size
           color: isSelected ? Colors.grey : Colors.grey, // Color stays grey
         ),
       ),
@@ -145,39 +145,42 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
-          ),
-          child: BottomNavigationBar(
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
-            backgroundColor: const Color(0xFFC7FBD2),
-            elevation: 0,
-            selectedItemColor: Colors.grey,
-            unselectedItemColor: Colors.grey,
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-            type: BottomNavigationBarType.fixed,
-            items: [
-              BottomNavigationBarItem(
-                icon: _buildIcon('assets/icons/homebutton.png', 0),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: _buildIcon('assets/icons/chatbutton.png', 1),
-                label: 'Chats',
-              ),
-              BottomNavigationBarItem(
-                icon: _buildIcon('assets/icons/swipepage.png', 2),
-                label: 'Swipe',
-              ),
-              BottomNavigationBarItem(
-                icon: _buildIcon('assets/icons/settingsbutton.png', 3),
-                label: 'Settings',
-              ),
-            ],
+        child: SizedBox(
+          height: 80, // Change this value to make it thinner or thicker
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(30),
+              topRight: Radius.circular(30),
+            ),
+            child: BottomNavigationBar(
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+              backgroundColor: const Color(0xFFC7FBD2),
+              elevation: 0,
+              selectedItemColor: Colors.grey,
+              unselectedItemColor: Colors.grey,
+              showSelectedLabels: false,
+              showUnselectedLabels: false,
+              type: BottomNavigationBarType.fixed,
+              items: [
+                BottomNavigationBarItem(
+                  icon: _buildIcon('assets/icons/homebutton.png', 0),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: _buildIcon('assets/icons/chatbutton.png', 1),
+                  label: 'Chats',
+                ),
+                BottomNavigationBarItem(
+                  icon: _buildIcon('assets/icons/swipepage.png', 2),
+                  label: 'Swipe',
+                ),
+                BottomNavigationBarItem(
+                  icon: _buildIcon('assets/icons/settingsbutton.png', 3),
+                  label: 'Settings',
+                ),
+              ],
+            ),
           ),
         ),
       ),

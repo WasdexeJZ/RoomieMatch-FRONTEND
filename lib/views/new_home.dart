@@ -223,8 +223,8 @@ class _NewHomePageState extends State<NewHomePage> {
     bool isSelected = _selectedIndex == index;
 
     return Container(
-      width: 50,
-      height: 50,
+      width: 45,
+      height: 45,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: isSelected ? Colors.white : Colors.transparent,
@@ -232,7 +232,7 @@ class _NewHomePageState extends State<NewHomePage> {
       child: Center(
         child: ImageIcon(
           AssetImage(assetPath),
-          size: 35,
+          size: 30,
           color: Colors.grey,
         ),
       ),
@@ -240,54 +240,57 @@ class _NewHomePageState extends State<NewHomePage> {
   }
 
   Widget _buildBottomNavBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFC7FBD2),
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            spreadRadius: 2,
-            blurRadius: 10,
+    return SizedBox(
+      height: 80,  // This is your target height
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFFC7FBD2),
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
           ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
-          backgroundColor: const Color(0xFFC7FBD2),
-          elevation: 0,
-          selectedItemColor: Colors.grey,
-          unselectedItemColor: Colors.grey,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          type: BottomNavigationBarType.fixed,
-          items: [
-            BottomNavigationBarItem(
-              icon: _buildIcon('assets/icons/homebutton.png', 0),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: _buildIcon('assets/icons/chatbutton.png', 1),
-              label: 'Chats',
-            ),
-            BottomNavigationBarItem(
-              icon: _buildIcon('assets/icons/swipepage.png', 2),
-              label: 'Swipe',
-            ),
-            BottomNavigationBarItem(
-              icon: _buildIcon('assets/icons/settingsbutton.png', 3),
-              label: 'Settings',
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              spreadRadius: 2,
+              blurRadius: 10,
             ),
           ],
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+          child: BottomNavigationBar(
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+            backgroundColor: const Color(0xFFC7FBD2),
+            elevation: 0,
+            selectedItemColor: Colors.grey,
+            unselectedItemColor: Colors.grey,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            type: BottomNavigationBarType.fixed,
+            items: [
+              BottomNavigationBarItem(
+                icon: _buildIcon('assets/icons/homebutton.png', 0),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIcon('assets/icons/chatbutton.png', 1),
+                label: 'Chats',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIcon('assets/icons/swipepage.png', 2),
+                label: 'Swipe',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIcon('assets/icons/settingsbutton.png', 3),
+                label: 'Settings',
+              ),
+            ],
+          ),
         ),
       ),
     );
