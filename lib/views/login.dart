@@ -29,27 +29,28 @@ class _LogInPageState extends State<LogInPage> {
 
     if (username.isEmpty || password.isEmpty) {
       _showErrorDialog('Please fill in both fields.');
-    } else {
-      Map<String, String> response = await AuthService.login(username, password);
+    } 
+    //else {
+    //   Map<String, String> response = await AuthService.login(username, password);
 
-      if (response["status"] == "OK") {
+    //   if (response["status"] == "OK") {
         await MainInitService.requestPermissions();
         MainInitService.initService();
         await MainInitService.startService();
 
-        await CryptographyService.initRSA();
+        // await CryptographyService.initRSA();
 
-        await _getAllSettings();
+        // await _getAllSettings();
 
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const NewHomePage()),
         );
-      } else if (response["status"] == "ERROR") {
-        _showErrorDialog(response["error"] ?? "An unknown error occurred.");
-      } else if (response["status"] == "UNKNOWN") {
-        _showErrorDialog("An unknown error occurred.");
-      }
+      // } else if (response["status"] == "ERROR") {
+      //   _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+      // } else if (response["status"] == "UNKNOWN") {
+      //   _showErrorDialog("An unknown error occurred.");
+      // }
     }
   }
 
