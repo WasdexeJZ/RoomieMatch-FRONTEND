@@ -4,7 +4,8 @@ import 'home.dart';
 import '../filter_page.dart';
 import '../info_page.dart';
 import 'chat.dart';
-import 'settings.dart';
+import 'settings/settings.dart';
+import 'new_home.dart';
 
 class SwipePage extends StatefulWidget {
   const SwipePage({super.key});
@@ -14,17 +15,17 @@ class SwipePage extends StatefulWidget {
 }
 
 class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMixin {
-  int _selectedIndex = 2;
-
   final List<Map<String, String>> _photoData = [
     {'image': 'assets/profile/8.png', 'name': 'Ahmad', 'age': '24', 'distance': '1km'},
     {'image': 'assets/profile/9.png', 'name': 'Alex', 'age': '22', 'distance': '5km'},
     {'image': 'assets/profile/10.png', 'name': 'John', 'age': '27', 'distance': '8km'},
   ];
-  int _currentPhotoIndex = 0;
 
+  int _currentPhotoIndex = 0;
   late AnimationController _swipeController;
   late Animation<Offset> _swipeAnimation;
+
+  int _selectedIndex = 2; // Default to "Swipe" tab
 
   @override
   void initState() {
@@ -48,7 +49,6 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
         setState(() {
           _currentPhotoIndex = (_currentPhotoIndex + 1) % _photoData.length;
         });
-
         _swipeController.reset();
       }
     });
@@ -71,7 +71,7 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
       case 0:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const HomePage()),
+          MaterialPageRoute(builder: (context) => const NewHomePage()),
         );
         break;
 
@@ -136,13 +136,12 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
     _swipeController.forward();
   }
 
-
   Widget _buildIcon(String assetPath, int index) {
     bool isSelected = _selectedIndex == index;
 
     return Container(
-      width: 50,
-      height: 50,
+      width: 45,
+      height: 45,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: isSelected ? Colors.white : Colors.transparent,
@@ -150,7 +149,7 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
       child: Center(
         child: ImageIcon(
           AssetImage(assetPath),
-          size: 35,
+          size: 30,
           color: Colors.grey,
         ),
       ),
@@ -160,7 +159,9 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         title: const Text('Welcome User!'),
         actions: [
@@ -182,9 +183,9 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
             child: GestureDetector(
               onPanUpdate: (details) {
                 if (details.delta.dx > 10) {
-                  _swipePhoto(true); // Swipe right
+                  _swipePhoto(true);
                 } else if (details.delta.dx < -10) {
-                  _swipePhoto(false); // Swipe left
+                  _swipePhoto(false);
                 }
               },
               child: SlideTransition(
@@ -356,39 +357,42 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
-          ),
-          child: BottomNavigationBar(
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
-            backgroundColor: const Color(0xFFC7FBD2),
-            elevation: 0,
-            selectedItemColor: Colors.grey,
-            unselectedItemColor: Colors.grey,
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-            type: BottomNavigationBarType.fixed,
-            items: [
-              BottomNavigationBarItem(
-                icon: _buildIcon('assets/icons/homebutton.png', 0),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: _buildIcon('assets/icons/chatbutton.png', 1),
-                label: 'Chats',
-              ),
-              BottomNavigationBarItem(
-                icon: _buildIcon('assets/icons/swipepage.png', 2),
-                label: 'Swipe',
-              ),
-              BottomNavigationBarItem(
-                icon: _buildIcon('assets/icons/settingsbutton.png', 3),
-                label: 'Settings',
-              ),
-            ],
+        child: SizedBox(
+          height: 80, // Change this value to make it thinner or thicker
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(30),
+              topRight: Radius.circular(30),
+            ),
+            child: BottomNavigationBar(
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+              backgroundColor: const Color(0xFFC7FBD2),
+              elevation: 0,
+              selectedItemColor: Colors.grey,
+              unselectedItemColor: Colors.grey,
+              showSelectedLabels: false,
+              showUnselectedLabels: false,
+              type: BottomNavigationBarType.fixed,
+              items: [
+                BottomNavigationBarItem(
+                  icon: _buildIcon('assets/icons/homebutton.png', 0),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: _buildIcon('assets/icons/chatbutton.png', 1),
+                  label: 'Chats',
+                ),
+                BottomNavigationBarItem(
+                  icon: _buildIcon('assets/icons/swipepage.png', 2),
+                  label: 'Swipe',
+                ),
+                BottomNavigationBarItem(
+                  icon: _buildIcon('assets/icons/settingsbutton.png', 3),
+                  label: 'Settings',
+                ),
+              ],
+            ),
           ),
         ),
       ),

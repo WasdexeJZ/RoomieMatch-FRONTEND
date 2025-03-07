@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'info_page.dart'; // Import the InfoPage if it's in a separate file
+import 'info_page.dart';
 
 class ChatDetailPage extends StatelessWidget {
   final String userName; // Name of the person you are chatting with
@@ -16,7 +16,9 @@ class ChatDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {

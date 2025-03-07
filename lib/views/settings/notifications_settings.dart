@@ -1,14 +1,15 @@
 import 'package:RoomieMatch/views/home.dart';
 import 'package:flutter/material.dart';
 
-import '../models/settings.dart';
-import '../services/hive_service.dart';
-import '../services/db_service.dart';
+import '../../models/settings.dart';
+import '../../services/hive_service.dart';
+import '../../services/db_service.dart';
 
-import 'sleep_mode.dart'; 
-import 'chat.dart';
-import 'swipe.dart';
+import 'sleep_mode.dart';
+import '../chat.dart';
+import '../swipe.dart';
 import 'settings.dart';
+import '../new_home.dart';
 
 class NotificationSettingsPage extends StatefulWidget {
   const NotificationSettingsPage({super.key});
@@ -36,7 +37,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
         case 0:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => HomePage()),
+            MaterialPageRoute(builder: (context) => NewHomePage()),
           );
           break;
         case 1:
@@ -63,8 +64,8 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
 
   Widget _buildIcon(String assetPath, bool isSelected) {
     return Container(
-      width: 50,
-      height: 50,
+      width: 45,
+      height: 45,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: isSelected ? Colors.white : Colors.transparent,
@@ -260,44 +261,47 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.1),
-              spreadRadius: 4,
+              spreadRadius: 2,
               blurRadius: 10,
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
-          ),
-          child: BottomNavigationBar(
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
-            backgroundColor: const Color(0xFFC7FBD2),
-            elevation: 0,
-            selectedItemColor: Colors.grey,
-            unselectedItemColor: Colors.grey,
-            showSelectedLabels: false,
-            showUnselectedLabels: false,
-            type: BottomNavigationBarType.fixed,
-            items: [
-              BottomNavigationBarItem(
-                icon: _buildIcon('assets/icons/homebutton.png', _selectedIndex == 0),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: _buildIcon('assets/icons/chatbutton.png', _selectedIndex == 1),
-                label: 'Chats',
-              ),
-              BottomNavigationBarItem(
-                icon: _buildIcon('assets/icons/swipepage.png', _selectedIndex == 2),
-                label: 'Swipe',
-              ),
-              BottomNavigationBarItem(
-                icon: _buildIcon('assets/icons/settingsbutton.png', _selectedIndex == 3),
-                label: 'Settings',
-              ),
-            ],
+        child: SizedBox(
+          height: 80, // Change this value to make it thinner or thicker
+          child: ClipRRect(
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(30),
+              topRight: Radius.circular(30),
+            ),
+            child: BottomNavigationBar(
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+              backgroundColor: const Color(0xFFC7FBD2),
+              elevation: 0,
+              selectedItemColor: Colors.grey,
+              unselectedItemColor: Colors.grey,
+              showSelectedLabels: false,
+              showUnselectedLabels: false,
+              type: BottomNavigationBarType.fixed,
+              items: [
+                BottomNavigationBarItem(
+                  icon: _buildIcon('assets/icons/homebutton.png', _selectedIndex==0),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: _buildIcon('assets/icons/chatbutton.png', _selectedIndex==1),
+                  label: 'Chats',
+                ),
+                BottomNavigationBarItem(
+                  icon: _buildIcon('assets/icons/swipepage.png', _selectedIndex==2),
+                  label: 'Swipe',
+                ),
+                BottomNavigationBarItem(
+                  icon: _buildIcon('assets/icons/settingsbutton.png', _selectedIndex==3),
+                  label: 'Settings',
+                ),
+              ],
+            ),
           ),
         ),
       ),

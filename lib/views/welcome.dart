@@ -117,7 +117,7 @@ class _WelcomePageState extends State<WelcomePage> {
             ),
             // Logo image
             Image.asset(
-              'assets/RoomieMatch_logo.png', // Replace with your actual logo path
+              'assets/RoomieMatch_logo.png',
               width: 150, // Adjust the width as needed
               height: 150, // Adjust the height as needed
             ),
