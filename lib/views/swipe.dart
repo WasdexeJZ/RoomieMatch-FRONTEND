@@ -47,7 +47,8 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
     _swipeController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         setState(() {
-          _currentPhotoIndex = (_currentPhotoIndex + 1) % _photoData.length;
+          // _currentPhotoIndex = (_currentPhotoIndex + 1) % _photoData.length;
+          _currentPhotoIndex = _currentPhotoIndex + 1;
         });
         _swipeController.reset();
       }
@@ -58,15 +59,17 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
     Map<String, dynamic> response = await DBService.getAllMatches();
 
     if (response["status"] == "ERROR" && response["error"] == "No record found!") {
-      // Add in logic for no match
-      _photoData.add({'image': 'assets/profile/9.png', 'name': 'No Matches Found', 'age': '', 'distance': ''});
     } else if (response["status"] == "UNKNOWN") {
       _showErrorDialog("An unknown error occurred.");
     } else if (response["status"] == "OK") {
+      // Get all matches
       for (int i = 0; i < response['matches'].length; i++) {
         Map<String, dynamic> match = response['matches'][i];
         _photoData.add({'image': 'assets/profile/9.png', 'name': match['first_name'] ?? "", 'age': match['age'].toString(), "gender": match['gender'] ?? "", "distance": match['distance'].toString(), "budget": match['budget'].toString(), "match_score": match['match_score'] ?? ""});
       }
+
+      // Sort matches by match_score, higher first, descending order
+      _photoData.sort((a, b) => b['match_score'].compareTo(a['match_score']));
     }
 
     setState(() => _isLoading = false);
@@ -172,6 +175,8 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
       ));
     });
 
+    // send to backend here
+
     _swipeController.forward();
   }
 
@@ -219,74 +224,79 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : Stack(
-              children: [
-                Center(
-                  child: GestureDetector(
-                    onPanUpdate: (details) {
-                      if (details.delta.dx > 10) {
-                        _swipePhoto(true);
-                      } else if (details.delta.dx < -10) {
-                        _swipePhoto(false);
-                      }
-                    },
-                    child: SlideTransition(
-                      position: _swipeAnimation,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.85,
-                        height: MediaQuery.of(context).size.height * 0.5,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              spreadRadius: 2,
-                              blurRadius: 10,
-                            ),
-                          ],
-                        ),
-                        child: Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: Image.asset(
-                                _photoData[_currentPhotoIndex]['image']!,
-                                width: double.infinity,
-                                height: MediaQuery.of(context).size.height * 0.5,
-                                fit: BoxFit.cover,
+              children: _currentPhotoIndex >= _photoData.length
+                  ? [Center(child: CircularProgressIndicator())]
+                  : [
+                      Center(
+                        child: GestureDetector(
+                          onPanUpdate: (details) {
+                            if (details.delta.dx > 10) {
+                              _swipePhoto(true);
+                            } else if (details.delta.dx < -10) {
+                              _swipePhoto(false);
+                            }
+                          },
+                          child: SlideTransition(
+                            position: _swipeAnimation,
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.85,
+                              height: MediaQuery.of(context).size.height * 0.5,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    spreadRadius: 2,
+                                    blurRadius: 10,
+                                  ),
+                                ],
                               ),
-                            ),
-                            Positioned(
-                              bottom: 70,
-                              left: 16,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              child: Stack(
                                 children: [
-                                  Text(
-                                    '${_photoData[_currentPhotoIndex]['name']}, ${_photoData[_currentPhotoIndex]['age']}',
-                                    style: const TextStyle(
-                                      fontSize: 35,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                      shadows: [
-                                        Shadow(
-                                          offset: Offset(0, 1),
-                                          blurRadius: 5,
-                                          color: Colors.black,
-                                        ),
-                                      ],
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(16),
+                                    child: Image.asset(
+                                      _photoData[_currentPhotoIndex]['image']!,
+                                      width: double.infinity,
+                                      height: MediaQuery.of(context).size.height * 0.5,
+                                      fit: BoxFit.cover,
                                     ),
                                   ),
-                                  Text(
-                                    '${_photoData[_currentPhotoIndex]['distance']}',
-                                    style: const TextStyle(
-                                      fontSize: 24,
-                                      color: Colors.white,
-                                      shadows: [
-                                        Shadow(
-                                          offset: Offset(0, 1),
-                                          blurRadius: 5,
-                                          color: Colors.black,
+                                  Positioned(
+                                    bottom: 70,
+                                    left: 16,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          '${_photoData[_currentPhotoIndex]['name']}, ${_photoData[_currentPhotoIndex]['age']}',
+                                          style: const TextStyle(
+                                            fontSize: 35,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                            shadows: [
+                                              Shadow(
+                                                offset: Offset(0, 1),
+                                                blurRadius: 5,
+                                                color: Colors.black,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Text(
+                                          '${_photoData[_currentPhotoIndex]['distance']}',
+                                          style: const TextStyle(
+                                            fontSize: 24,
+                                            color: Colors.white,
+                                            shadows: [
+                                              Shadow(
+                                                offset: Offset(0, 1),
+                                                blurRadius: 5,
+                                                color: Colors.black,
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -294,94 +304,91 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
                                 ],
                               ),
                             ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  bottom: MediaQuery.of(context).size.height * 0.08,
-                  left: MediaQuery.of(context).size.width * 0.1,
-                  right: MediaQuery.of(context).size.width * 0.1,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.close, color: Colors.red, size: 40),
-                          onPressed: () {
-                            _swipePhoto(false); // Swipe left
-                          },
-                        ),
-                      ),
-                      Container(
-                        width: 60,
-                        height: 60,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFF1C8585),
-                          shape: BoxShape.circle,
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.info, color: Colors.white, size: 27),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => InfoPage(
-                                  name: _photoData[_currentPhotoIndex]['name']!,
-                                  age: _photoData[_currentPhotoIndex]['age']!,
-                                  imagePath: _photoData[_currentPhotoIndex]['image']!,
-                                  distance: _photoData[_currentPhotoIndex]['distance']!,
-                                  location: 'Sample Location',
-                                  about: 'Sample About Information',
-                                  preferences: ['Preference 1', 'Preference 2'],
-                                ),
+                      Positioned(
+                        bottom: MediaQuery.of(context).size.height * 0.08,
+                        left: MediaQuery.of(context).size.width * 0.1,
+                        right: MediaQuery.of(context).size.width * 0.1,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: 60,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
                               ),
-                            );
-                          },
-                        ),
-                      ),
-                      Container(
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              spreadRadius: 2,
-                              blurRadius: 5,
-                              offset: const Offset(0, 3),
+                              child: IconButton(
+                                icon: const Icon(Icons.close, color: Colors.red, size: 40),
+                                onPressed: () {
+                                  _swipePhoto(false); // Swipe left
+                                },
+                              ),
+                            ),
+                            Container(
+                              width: 60,
+                              height: 60,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF1C8585),
+                                shape: BoxShape.circle,
+                              ),
+                              child: IconButton(
+                                icon: const Icon(Icons.info, color: Colors.white, size: 27),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => InfoPage(
+                                        name: _photoData[_currentPhotoIndex]['name']!,
+                                        age: _photoData[_currentPhotoIndex]['age']!,
+                                        imagePath: _photoData[_currentPhotoIndex]['image']!,
+                                        distance: _photoData[_currentPhotoIndex]['distance']!,
+                                        location: 'Sample Location',
+                                        about: 'Sample About Information',
+                                        preferences: ['Preference 1', 'Preference 2'],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                            Container(
+                              width: 60,
+                              height: 60,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: IconButton(
+                                icon: const Icon(Icons.check, color: Colors.green, size: 40),
+                                onPressed: () {
+                                  _swipePhoto(true); // Swipe right
+                                },
+                              ),
                             ),
                           ],
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.check, color: Colors.green, size: 40),
-                          onPressed: () {
-                            _swipePhoto(true); // Swipe right
-                          },
                         ),
                       ),
                     ],
-                  ),
-                ),
-              ],
             ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
