@@ -51,7 +51,7 @@ class _LogInPageState extends State<LogInPage> {
       // } else if (response["status"] == "UNKNOWN") {
       //   _showErrorDialog("An unknown error occurred.");
       // }
-    }
+    // }
   }
 
   Future<void> _getAllSettings() async {
