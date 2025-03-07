@@ -48,7 +48,7 @@ class _RegisterPageState extends State<RegisterPage> {
     //     _showErrorDialog(response["error"] ?? "An unknown error occurred.");
     //   }
     // }
-  // }
+  }
 
   void _updateSettings(String field, String value) async {
     Map<String, String> response = await DBService.updateSettingsField(field, value);
