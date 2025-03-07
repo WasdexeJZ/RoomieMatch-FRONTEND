@@ -5,6 +5,7 @@ import '../services/hive_service.dart';
 import '../services/auth_service.dart';
 import '../services/db_service.dart';
 import '../services/main_init_service.dart';
+import '../services/cryptography_service.dart';
 
 import 'home.dart';
 import 'register.dart';
@@ -29,28 +30,30 @@ class _LogInPageState extends State<LogInPage> {
     if (username.isEmpty || password.isEmpty) {
       _showErrorDialog('Please fill in both fields.');
     } else {
-      // Map<String, String> response = await AuthService.login(username, password);
+      Map<String, String> response = await AuthService.login(username, password);
 
-      // if (response["status"] == "OK") {
-      //   await MainInitService.requestPermissions();
-      //   MainInitService.initService();
-      //   await MainInitService.startService();
+      if (response["status"] == "OK") {
+        await MainInitService.requestPermissions();
+        MainInitService.initService();
+        await MainInitService.startService();
 
-      //   _getAllSettings();
+        await CryptographyService.initRSA();
+
+        await _getAllSettings();
 
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const NewHomePage()),
         );
-      // } else if (response["status"] == "ERROR") {
-      //   _showErrorDialog(response["error"] ?? "An unknown error occurred.");
-      // } else if (response["status"] == "UNKNOWN") {
-      //   _showErrorDialog("An unknown error occurred.");
-      // }
+      } else if (response["status"] == "ERROR") {
+        _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+      } else if (response["status"] == "UNKNOWN") {
+        _showErrorDialog("An unknown error occurred.");
+      }
     }
   }
 
-  void _getAllSettings() async {
+  Future<void> _getAllSettings() async {
     Map<String, dynamic> response = await DBService.getAllSettings();
 
     if (response["status"] == "ERROR") {
@@ -142,6 +145,7 @@ class _LogInPageState extends State<LogInPage> {
                     ),
                   ],
                 ),
+
                 child: TextField(
                   controller: _usernameController,
                   decoration: const InputDecoration(
@@ -149,6 +153,7 @@ class _LogInPageState extends State<LogInPage> {
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(horizontal: 16),
                   ),
+
                 ),
               ),
               const SizedBox(height: 16),

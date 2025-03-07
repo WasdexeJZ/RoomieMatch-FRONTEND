@@ -5,28 +5,36 @@ class ApiService {
   final String baseUrl = 'http://localhost:8000/api/v1'; // Replace with your API base URL
 
   Future<Map<String, dynamic>> get(String endpoint) async {
-    final response = await http.get(Uri.parse('$baseUrl/$endpoint'));
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/$endpoint'));
 
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to get');
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        return {"status": "ERROR", "message": "Failed to get. Server Error."};
+      }
+    } catch (e) {
+      return {"status": "ERROR", "message": "Connection to Backend Failed. Please ensure you have Internet Connection."};
     }
   }
 
   Future<Map<String, dynamic>> post(String endpoint, Map<String, dynamic> data) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/$endpoint'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(data),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/$endpoint'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(data),
+      );
 
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to post');
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        return {"status": "ERROR", "message": "Failed to post. Server Error."};
+      }
+    } catch (e) {
+      return {"status": "ERROR", "message": "Connection to Backend Failed. Please ensure you have Internet Connection."};
     }
   }
 }

@@ -34,6 +34,8 @@ class AuthService {
       HiveService.setUser(User(userId: apiResponse["user"]["id"], username: apiResponse["user"]["emails"][1], email: apiResponse["user"]["emails"][0]));
 
       return {"status": "OK"};
+    } else if (apiResponse['status'] == "ERROR") {
+      return {"status": apiResponse['status'], "error": apiResponse['error']};
     } else {
       return {"status": "UNKNOWN"};
     }
@@ -64,6 +66,8 @@ class AuthService {
       HiveService.setUser(User(userId: apiResponse["user"]["id"], username: username, email: email));
 
       return {"status": "OK"};
+    } else if (apiResponse['status'] == "ERROR") {
+      return {"status": apiResponse['status'], "error": apiResponse['error']};
     } else {
       return {"status": "UNKNOWN"};
     }

@@ -12,20 +12,19 @@ import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'auth_service.dart';
+import 'cryptography_service.dart';
 import 'hive_service.dart';
 
+import '../models/auth.dart';
 import '../models/profile.dart';
 import '../models/settings.dart';
-import '../models/auth.dart';
 import '../models/user.dart';
 
 import '../helpers/auth_box_helper.dart';
 
 import '../main.dart';
 
-
 class MainInitService {
-
   MainInitService();
 
   static void initSupertoken() {
@@ -34,7 +33,7 @@ class MainInitService {
       apiBasePath: "/api/v1/auth",
     );
   }
-
+  
   static Future<void> initHive() async {
     // Initialize Hive
     final appDocumentDirectory = await getApplicationDocumentsDirectory();
@@ -115,35 +114,51 @@ class MainInitService {
   }
 
   static Future<void> initNtfy(FlutterLocalNotificationsPlugin notificationsPlugin, NotificationDetails notificationDetails, NotificationDetails summaryNotificationDetails) async {
-    final String topic = 'notifications';
-    final NtfyClient ntfyClient = NtfyClient(basePath: Uri.parse("http://localhost:9980"));
+    bool connectionEstablished = false;
+    bool isIteration = false;
 
-    // Subscribe to the topic(s), receiving the MessageResponses right as they are published
-    final Stream<MessageResponse> ntfyStream = (await ntfyClient.getMessageStream([topic]));
+    do {
+      try {
+        final String topic = 'notifications';
+        final NtfyClient ntfyClient = NtfyClient(basePath: Uri.parse("http://localhost:9980"));
 
-    int counter = 0;
+        // Subscribe to the topic(s), receiving the MessageResponses right as they are published
+        final Stream<MessageResponse> ntfyStream = (await ntfyClient.getMessageStream([topic]));
 
-    // listen to our stream for messages sent to the topic, instantaneous update
-    final StreamSubscription<MessageResponse> ntfyListen = ntfyStream.listen((event) async {
-      if (event.event == EventTypes.message) {
-        Map<String, dynamic> notification = jsonDecode(event.message ?? '{"userId": "", "title":"", "message":""}');
-        print(notification['userId']);
-        print(notification['title']);
-        print(notification['message']);
+        int counter = 0;
 
-        // if (notification['userId'] == AuthBoxHelper.getUserId) {
-        // do rsa decryption here if it is our notification
+        // listen to our stream for messages sent to the topic, instantaneous update
+        final StreamSubscription<MessageResponse> ntfyListen = ntfyStream.listen((event) async {
+          if (event.event == EventTypes.message) {
+            Map<String, dynamic> notification = jsonDecode(event.message ?? '{"userId": "", "title":"", "message":""}');
 
-        await notificationsPlugin.show(counter, notification['title'], notification['message'], notificationDetails);
-        counter++;
+            if (notification['userId'].compareTo(AuthBoxHelper.getUserId()) == 0) {
+              String message = await CryptographyService.decryptRSA(notification['message']);
 
-        if ((await notificationsPlugin.getActiveNotifications()).length == 2) {
-          await notificationsPlugin.show(counter, "", "", summaryNotificationDetails);
-        }
-        counter++;
-        // }
+              await notificationsPlugin.show(counter, notification['title'], message, notificationDetails);
+              counter++;
+
+              if ((await notificationsPlugin.getActiveNotifications()).length == 2) {
+                await notificationsPlugin.show(counter, "", "", summaryNotificationDetails);
+              }
+              counter++;
+            }
+          }
+        }, onError: (e) {
+          initNtfy(notificationsPlugin, notificationDetails, summaryNotificationDetails);
+        });
+
+        connectionEstablished = true;
+      } catch (c) {
+        connectionEstablished = false;
       }
-    });
+
+      if (isIteration) {
+        await Future.delayed(Duration(seconds: 30));
+      }
+
+      isIteration = true;
+    } while (!connectionEstablished);
   }
 
   static Future<void> initNotification() async {
@@ -181,6 +196,8 @@ class MyTaskHandler extends TaskHandler {
   // Called when the task is started.
   @override
   Future<void> onStart(DateTime timestamp, TaskStarter starter) async {
+    MainInitService.initSupertoken();
+    await MainInitService.initHive();
     await MainInitService.initNotification();
   }
 
