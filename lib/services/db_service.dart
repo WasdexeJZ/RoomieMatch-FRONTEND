@@ -37,4 +37,16 @@ class DBService {
   static Future<Map<String, String>> updateProfileField(String email, String password) async {
     return {"status": "UNKNOWN"};
   }
+
+  static Future<Map<String, dynamic>> getAllMatches() async {
+    Map<String, dynamic> apiResponse = await apiService.get('db/get-all-matches/');
+
+    if (apiResponse['status'] == 'ERROR') {
+      return {"status": "ERROR", "error": apiResponse["message"]};
+    } else if (apiResponse['status'] == "OK") {
+      return apiResponse;
+    } else {
+      return {"status": "UNKNOWN"};
+    }
+  }
 }
