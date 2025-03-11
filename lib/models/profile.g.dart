@@ -20,18 +20,19 @@ class ProfileAdapter extends TypeAdapter<Profile> {
       ..firstName = fields[0] as String
       ..lastName = fields[1] as String
       ..age = fields[2] as int
-      ..gender = fields[3] as String
-      ..latitude = fields[4] as String
-      ..longitude = fields[5] as String
-      ..budget = fields[6] as int
-      ..job = fields[7] as String
-      ..allergies = fields[8] as String;
+      ..birthday = fields[3] as String
+      ..gender = fields[4] as String
+      ..latitude = fields[5] as String
+      ..longitude = fields[6] as String
+      ..budget = fields[7] as int
+      ..job = fields[8] as String
+      ..allergies = fields[9] as String;
   }
 
   @override
   void write(BinaryWriter writer, Profile obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
       ..write(obj.firstName)
       ..writeByte(1)
@@ -39,16 +40,18 @@ class ProfileAdapter extends TypeAdapter<Profile> {
       ..writeByte(2)
       ..write(obj.age)
       ..writeByte(3)
-      ..write(obj.gender)
+      ..write(obj.birthday)
       ..writeByte(4)
-      ..write(obj.latitude)
+      ..write(obj.gender)
       ..writeByte(5)
-      ..write(obj.longitude)
+      ..write(obj.latitude)
       ..writeByte(6)
-      ..write(obj.budget)
+      ..write(obj.longitude)
       ..writeByte(7)
-      ..write(obj.job)
+      ..write(obj.budget)
       ..writeByte(8)
+      ..write(obj.job)
+      ..writeByte(9)
       ..write(obj.allergies);
   }
 

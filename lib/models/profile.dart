@@ -14,21 +14,24 @@ class Profile {
   int age = 0;
 
   @HiveField(3)
-  String gender = "";
+  String birthday = "00/00/0000";
 
   @HiveField(4)
-  String latitude = "";
+  String gender = "";
 
   @HiveField(5)
-  String longitude = "";
+  String latitude = "";
 
   @HiveField(6)
+  String longitude = "";
+
+  @HiveField(7)
   int budget = 0;
   
-  @HiveField(7)
+  @HiveField(8)
   String job = "";
   
-  @HiveField(8)
+  @HiveField(9)
   String allergies = "";
   
   Profile();

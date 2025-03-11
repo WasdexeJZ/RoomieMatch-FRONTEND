@@ -65,7 +65,8 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
       // Get all matches
       for (int i = 0; i < response['matches'].length; i++) {
         Map<String, dynamic> match = response['matches'][i];
-        _photoData.add({'image': 'assets/profile/9.png', 'name': match['first_name'] ?? "", 'age': match['age'].toString(), "gender": match['gender'] ?? "", "distance": match['distance'].toString(), "budget": match['budget'].toString(), "match_score": match['match_score'] ?? ""});
+        _photoData.add(
+            {'user_id': match['user_id'], 'image': 'assets/profile/9.png', 'name': match['first_name'] ?? "", 'age': match['age'].toString(), "gender": match['gender'] ?? "", "distance": match['distance'].toString(), "budget": match['budget'].toString(), "match_score": match['match_score'] ?? ""});
       }
 
       // Sort matches by match_score, higher first, descending order
@@ -94,6 +95,16 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
         );
       },
     );
+  }
+
+  void _updateMatch(String compare_user_id, int curr_match_type) async {
+    Map<String, String> response = await DBService.updateMatch(compare_user_id, curr_match_type);
+
+    if (response["status"] == "ERROR") {
+      _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+    } else if (response["status"] == "UNKNOWN") {
+      _showErrorDialog("An unknown error occurred.");
+    }
   }
 
   @override
@@ -175,7 +186,12 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
       ));
     });
 
-    // send to backend here
+    // Update database
+    if (toRight) {
+      _updateMatch(_photoData[_currentPhotoIndex]['user_id'], 1);
+    } else {
+      _updateMatch(_photoData[_currentPhotoIndex]['user_id'], 0);
+    }
 
     _swipeController.forward();
   }
