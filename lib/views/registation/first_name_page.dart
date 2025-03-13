@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'birthday_page.dart'; // Next page after this
+import 'last_name_page.dart'; // Next page after this
 
 class FirstNamePage extends StatefulWidget {
   @override
@@ -15,7 +15,7 @@ class _FirstNamePageState extends State<FirstNamePage> {
     } else {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => BirthdayPage()),
+        MaterialPageRoute(builder: (context) => LastNamePage()),
       );
     }
   }
@@ -80,6 +80,9 @@ class _FirstNamePageState extends State<FirstNamePage> {
                 onPressed: _validateAndNavigate,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF1C8585),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
                 child: Text(
                   "Next",
