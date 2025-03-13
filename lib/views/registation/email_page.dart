@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'rule_page.dart';
+import 'email_verification_page.dart';
 
 class EmailPage extends StatefulWidget {
   @override
@@ -21,7 +21,7 @@ class _EmailPageState extends State<EmailPage> {
     else {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => RulePage()),
+        MaterialPageRoute(builder: (context) => VerificationCodePage()),
       );
     }
   }
@@ -70,7 +70,7 @@ class _EmailPageState extends State<EmailPage> {
           children: [
             SizedBox(height: 20),
             Text(
-              "Could we also get\nyour email?",
+              "Could we get your email?",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -89,58 +89,30 @@ class _EmailPageState extends State<EmailPage> {
             ),
             SizedBox(height: 8),
             Text(
-              "Don't lose access to your account, verify your email.",
+              "Don't lose access to your account, verify with your email.",
               style: TextStyle(fontSize: 12, color: Colors.grey),
             ),
             Spacer(),
-            Column(
-              children: [
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _validateAndNavigate,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF1C8585),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: Text(
-                      "Next",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _validateAndNavigate,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF1C8585),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: () {
-                      // Handle Google Sign-In logic
-                    },
-                    icon: Image.asset(
-                      'assets/google_logo.png',
-                      height: 20,
-                    ),
-                    label: Text(
-                      "Sign in with Google",
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: Colors.grey),
-                      backgroundColor: Colors.grey[200],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
+                child: Text(
+                  "Next",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 32),
-              ],
-            )
+              ),
+            ),
+            SizedBox(height: 32),
           ],
         ),
       ),
