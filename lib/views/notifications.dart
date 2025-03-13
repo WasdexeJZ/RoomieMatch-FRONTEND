@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'chat.dart';
-import 'swipe.dart';
-import 'settings/settings.dart';
-
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
 
@@ -12,85 +8,35 @@ class NotificationsPage extends StatefulWidget {
 }
 
 class _NotificationsPageState extends State<NotificationsPage> {
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-
-    if (index == 1) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => ChatPage()),
-      );
-    }
-
-    if (index == 2) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => SwipePage()),
-      );
-    }
-
-    if (index == 3) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => SettingsPage()),
-      );
-    }
-  }
-
-  Widget _buildIcon(String assetPath, int index) {
-    bool isSelected = _selectedIndex == index;
-
-    return Container(
-      width: 45,
-      height: 45,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: isSelected ? Colors.white : Colors.transparent, // White background for selected icon
-      ),
-      child: Center(
-        child: ImageIcon(
-          AssetImage(assetPath),
-          size: 30,
-          color: isSelected ? Colors.grey : Colors.grey, // Change color for selected/unselected
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    // Updated notifications data with local asset images
     final List<Map<String, dynamic>> notifications = [
       {
-        'avatarPath': 'assets/profile/1.png', // Local asset image
+        'avatarPath': 'assets/profile/4.png',
         'title': 'Message',
         'description': 'You have a message from Emily!',
         'timestamp': '9:00 AM',
       },
       {
-        'avatarPath': 'assets/profile/4.png', // Local asset image
+        'avatarPath': 'assets/profile/4.png',
         'title': 'Message',
         'description': 'You have a message from Zack!',
         'timestamp': '3:00 PM',
       },
       {
-        'avatarPath': 'assets/profile/2.png', // Local asset image
+        'avatarPath': 'assets/profile/4.png',
         'title': 'Message',
         'description': 'You have a message from Bruno!',
         'timestamp': '5 Days Ago',
       },
       {
-        'avatarPath': 'assets/profile/3.png', // Local asset image
+        'avatarPath': 'assets/profile/3.png',
         'title': 'Message',
         'description': 'You have a message from Jasnie!',
         'timestamp': '5 Days Ago',
       },
       {
-        'avatarPath': 'assets/profile/6.png', // Local asset image
+        'avatarPath': 'assets/profile/6.png',
         'title': 'Message',
         'description': 'You have a message from Mimi!',
         'timestamp': '6 Days Ago',
@@ -98,22 +44,32 @@ class _NotificationsPageState extends State<NotificationsPage> {
     ];
 
     return Scaffold(
+      backgroundColor: Colors.white, // Background set to white
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text('Notifications'),
+        backgroundColor: Colors.white,
+        elevation: 0, // Remove shadow
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context); // Navigate back
+          },
+        ),
+        title: const Text(
+          'Notifications',
+          style: TextStyle(color: Colors.black), // Keep title text black
+        ),
+        centerTitle: true,
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(10),
         itemCount: notifications.length,
         itemBuilder: (context, index) {
           final notification = notifications[index];
-          final isAlternateRow = index % 2 == 0; // Alternate background color
-
           return Container(
             margin: const EdgeInsets.only(bottom: 10),
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: isAlternateRow ? const Color(0xFFE3EFEF) : Colors.white,
+              color: Colors.white, // Keep background white
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
@@ -129,7 +85,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
               children: [
                 CircleAvatar(
                   radius: 25,
-                  backgroundImage: AssetImage(notification['avatarPath']), // Use AssetImage for local images
+                  backgroundImage: AssetImage(notification['avatarPath']),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -170,60 +126,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
             ),
           );
         },
-      ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFFC7FBD2),
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              spreadRadius: 2,
-              blurRadius: 10,
-            ),
-          ],
-        ),
-        child: SizedBox(
-          height: 80, // Change this value to make it thinner or thicker
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(30),
-              topRight: Radius.circular(30),
-            ),
-            child: BottomNavigationBar(
-              currentIndex: _selectedIndex,
-              onTap: _onItemTapped,
-              backgroundColor: const Color(0xFFC7FBD2),
-              elevation: 0,
-              selectedItemColor: Colors.grey,
-              unselectedItemColor: Colors.grey,
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
-              type: BottomNavigationBarType.fixed,
-              items: [
-                BottomNavigationBarItem(
-                  icon: _buildIcon('assets/icons/homebutton.png', 0),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: _buildIcon('assets/icons/chatbutton.png', 1),
-                  label: 'Chats',
-                ),
-                BottomNavigationBarItem(
-                  icon: _buildIcon('assets/icons/swipepage.png', 2),
-                  label: 'Swipe',
-                ),
-                BottomNavigationBarItem(
-                  icon: _buildIcon('assets/icons/settingsbutton.png', 3),
-                  label: 'Settings',
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }
