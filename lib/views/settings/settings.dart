@@ -14,6 +14,8 @@ import 'faq.dart';
 import 'notifications_settings.dart';
 import '../login.dart';
 import '../new_home.dart';
+import '../notifications.dart';
+
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -107,16 +109,28 @@ class _SettingsPageState extends State<SettingsPage> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     Settings settings = HiveService.getSettings() ?? Settings();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings'),
         backgroundColor: const Color(0xFFE3EFEF),
         elevation: 0,
         automaticallyImplyLeading: false,
+        actions: [
+          // Notification Icon
+          IconButton(
+            icon: const Icon(Icons.notifications, color: Color(0xFF1C8585)), // Match homepage icon color
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const NotificationsPage()),
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
