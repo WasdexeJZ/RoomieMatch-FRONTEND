@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'verification_page.dart';
+import 'budget_preference_page.dart';
 
 class DistancePreferencePage extends StatefulWidget {
   @override
   State<DistancePreferencePage> createState() => _DistancePreferencePageState();
 }
+
 
 class _DistancePreferencePageState extends State<DistancePreferencePage> {
   double? _currentDistance;  // Set to null initially to detect if user changes it
@@ -13,9 +14,9 @@ class _DistancePreferencePageState extends State<DistancePreferencePage> {
     if (_currentDistance == null) {
       _showErrorDialog('Please choose your distance preference.');
     } else {
-      Navigator.pushReplacement(
+      Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => VerificationPage()),
+        MaterialPageRoute(builder: (context) => BudgetPreferencePage()),
       );
     }
   }
