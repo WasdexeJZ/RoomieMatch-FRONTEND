@@ -6,6 +6,7 @@ import '../info_page.dart';
 import 'chat.dart';
 import 'settings/settings.dart';
 import 'new_home.dart';
+import 'notifications.dart';
 
 class SwipePage extends StatefulWidget {
   const SwipePage({super.key});
@@ -165,6 +166,17 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
         automaticallyImplyLeading: false,
         title: const Text('Welcome User!'),
         actions: [
+          // Notification Icon
+          IconButton(
+            icon: const Icon(Icons.notifications, color: Color(0xFF1C8585)), // Match homepage icon color
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const NotificationsPage()),
+              );
+            },
+          ),
+          // Filter Icon
           IconButton(
             icon: Image.asset(
               'assets/icons/filter.png',
@@ -176,6 +188,7 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
             },
           ),
         ],
+
       ),
       body: Stack(
         children: [

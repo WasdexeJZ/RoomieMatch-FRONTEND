@@ -3,6 +3,8 @@ import 'settings/settings.dart';
 import 'chat.dart';
 import 'swipe.dart';
 import 'settings/faq.dart';
+import 'notifications.dart';
+
 
 class NewHomePage extends StatefulWidget {
   const NewHomePage({super.key});
@@ -84,6 +86,7 @@ class _NewHomePageState extends State<NewHomePage> {
 
   Widget _buildHeader() {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Ensures space between logo and icon
       children: [
         Expanded(
           child: Row(
@@ -96,6 +99,16 @@ class _NewHomePageState extends State<NewHomePage> {
               ),
             ],
           ),
+        ),
+        // Notification Icon
+        IconButton(
+          icon: const Icon(Icons.notifications, color: Color(0xFF1C8585)), // Icon color
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const NotificationsPage()),
+            );
+          },
         ),
       ],
     );

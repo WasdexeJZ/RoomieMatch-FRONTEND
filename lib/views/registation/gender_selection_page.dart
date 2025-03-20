@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'distance_preference_page.dart';
+import 'location_page.dart';
 
 class GenderSelectionPage extends StatefulWidget {
   @override
@@ -20,16 +20,20 @@ class _GenderSelectionPageState extends State<GenderSelectionPage> {
       },
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+        padding: EdgeInsets.symmetric(vertical: 24), // Increased padding for thicker button
         decoration: BoxDecoration(
-          color: isSelected ? Colors.teal.withOpacity(0.2) : Colors.grey[200],
-          borderRadius: BorderRadius.circular(8),
+          color: isSelected ? Color(0xFF1C8585).withOpacity(0.15) : Colors.grey[200], // Light green highlight when selected
+          borderRadius: BorderRadius.circular(16), // More rounded corners
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center, // Center content
           children: [
-            Icon(icon, color: Colors.black),
+            Icon(icon, color: Color(0xFF1C8585), size: 28), // Green icon
             SizedBox(width: 12),
-            Text(label, style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              label,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500), // Bigger text
+            ),
           ],
         ),
       ),
@@ -42,7 +46,7 @@ class _GenderSelectionPageState extends State<GenderSelectionPage> {
     } else {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => DistancePreferencePage()),
+        MaterialPageRoute(builder: (context) => LocationPage()),
       );
     }
   }
@@ -82,28 +86,36 @@ class _GenderSelectionPageState extends State<GenderSelectionPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 20),
+            // Question at the top
+            SizedBox(height: 16),
             Text(
               "What's your gender?",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
+
+            // Gender selection options (immediately below the question)
             _genderOption("Woman", Icons.female),
-            SizedBox(height: 12),
+            SizedBox(height: 16),
             _genderOption("Man", Icons.male),
-            SizedBox(height: 12),
-            _genderOption("More", Icons.more_horiz),
-            Spacer(),
+
+            Spacer(), // Pushes the Next button to the bottom
+
+            // "Next" button at the bottom
             SizedBox(
               width: double.infinity,
+              height: 56,
               child: ElevatedButton(
                 onPressed: _validateAndNavigate,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF1C8585),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
                 child: Text(
                   "Next",
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ),
             ),

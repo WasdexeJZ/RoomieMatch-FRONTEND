@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'last_name_page.dart'; // Next page after this
+import 'birthday_page.dart'; // Next page after this
 
-class FirstNamePage extends StatefulWidget {
+class LastNamePage extends StatefulWidget {
   @override
-  State<FirstNamePage> createState() => _FirstNamePageState();
+  State<LastNamePage> createState() => _LastNamePageState();
 }
 
-class _FirstNamePageState extends State<FirstNamePage> {
-  final TextEditingController firstNameController = TextEditingController();
+class _LastNamePageState extends State<LastNamePage> {
+  final TextEditingController lastNameController = TextEditingController();
 
   void _validateAndNavigate() {
-    if (firstNameController.text.trim().isEmpty) {
-      _showErrorDialog('Please enter your first name.');
+    if (lastNameController.text.trim().isEmpty) {
+      _showErrorDialog('Please enter your last name.');
     } else {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => LastNamePage()),
+        MaterialPageRoute(builder: (context) => BirthdayPage()),
       );
     }
   }
@@ -57,14 +57,14 @@ class _FirstNamePageState extends State<FirstNamePage> {
           children: [
             SizedBox(height: 20),
             Text(
-              "What's your first name?",
+              "What's your last name?",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 16),
             TextField(
-              controller: firstNameController,
+              controller: lastNameController,
               decoration: InputDecoration(
-                hintText: 'Enter first name',
+                hintText: 'Enter last name',
                 border: UnderlineInputBorder(),
               ),
             ),
