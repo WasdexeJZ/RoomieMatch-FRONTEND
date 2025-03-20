@@ -23,7 +23,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
     // Start a 1-second delay before navigating to the Login Page
     Future.delayed(const Duration(seconds: 1), () async {
-      //await initBackendConnection();
+      await initBackendConnection();
 
       if (HiveService.getAuth()?.isAuthenticated ?? false) {
         _goToSwipePage(context);
@@ -33,7 +33,7 @@ class _WelcomePageState extends State<WelcomePage> {
     });
   }
 
-  /*Future<void> initBackendConnection() async {
+  Future<void> initBackendConnection() async {
     String apiResponseStatus;
     bool isIteration = false;
     List<bool> hasErrorDialog = [false];
@@ -60,7 +60,7 @@ class _WelcomePageState extends State<WelcomePage> {
     }
 
     await MainInitService.initAuth();
-  }*/
+  }
 
   void _goToLoginPage(BuildContext context) {
     Navigator.pushReplacement(
