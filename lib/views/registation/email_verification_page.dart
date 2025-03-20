@@ -1,34 +1,24 @@
 import 'package:flutter/material.dart';
-import 'email_verification_page.dart';
+import 'package:pinput/pinput.dart';
+import 'first_name_page.dart'; // Replace with the actual next page
 
-class EmailPage extends StatefulWidget {
+class VerificationCodePage extends StatefulWidget {
   @override
-  State<EmailPage> createState() => _EmailPageState();
+  State<VerificationCodePage> createState() => _VerificationCodePageState();
 }
 
-class _EmailPageState extends State<EmailPage> {
-  final TextEditingController _emailController = TextEditingController();
+class _VerificationCodePageState extends State<VerificationCodePage> {
+  final TextEditingController _pinController = TextEditingController();
 
   void _validateAndNavigate() {
-    String email = _emailController.text.trim();
-
-    if (email.isEmpty) {
-      _showErrorDialog('Please enter your email address.');
-    }
-    else if (!_isValidEmail(email)) {
-      _showErrorDialog('Please enter a valid email address.');
-    }
-    else {
+    if (_pinController.text.length < 6) {
+      _showErrorDialog('Please enter a valid verification code.');
+    } else {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => VerificationCodePage()),
+        MaterialPageRoute(builder: (context) => FirstNamePage()),
       );
     }
-  }
-
-  bool _isValidEmail(String email) {
-    final emailRegex = RegExp(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
-    return emailRegex.hasMatch(email);
   }
 
   void _showErrorDialog(String message) {
@@ -58,9 +48,7 @@ class _EmailPageState extends State<EmailPage> {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Padding(
@@ -70,27 +58,48 @@ class _EmailPageState extends State<EmailPage> {
           children: [
             SizedBox(height: 20),
             Text(
-              "Could we get your email?",
+              "Enter your verification code",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 16),
-            TextField(
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                hintText: 'Enter email',
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey),
+            SizedBox(height: 24),
+            Center(
+              child: Pinput(
+                length: 6,
+                controller: _pinController,
+                defaultPinTheme: PinTheme(
+                  width: 40,
+                  height: 50,
+                  textStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  decoration: BoxDecoration(
+                    border: Border(bottom: BorderSide(width: 2, color: Colors.grey)),
+                  ),
                 ),
               ),
             ),
-            SizedBox(height: 8),
-            Text(
-              "Don't lose access to your account, verify with your email.",
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+            SizedBox(height: 16),
+            Center(
+              child: Column(
+                children: [
+                  Text(
+                    "Didn't get anything? Fret not, let's try again.",
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 8),
+                  GestureDetector(
+                    onTap: () {
+                      // Implement resend functionality here
+                    },
+                    child: Text(
+                      "Resend",
+                      style: TextStyle(fontSize: 14, color: Colors.blue, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
             ),
             Spacer(),
             SizedBox(
@@ -112,7 +121,7 @@ class _EmailPageState extends State<EmailPage> {
                 ),
               ),
             ),
-            SizedBox(height: 32),
+            SizedBox(height: 24),
           ],
         ),
       ),

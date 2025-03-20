@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import 'last_name_page.dart'; // Next page after this
+import 'username_password_page.dart';
 
-class FirstNamePage extends StatefulWidget {
+class BudgetPreferencePage extends StatefulWidget {
   @override
-  State<FirstNamePage> createState() => _FirstNamePageState();
+  State<BudgetPreferencePage> createState() => _BudgetPreferencePageState();
 }
 
-class _FirstNamePageState extends State<FirstNamePage> {
-  final TextEditingController firstNameController = TextEditingController();
+class _BudgetPreferencePageState extends State<BudgetPreferencePage> {
+  double? _currentBudget;  // Set to null initially to detect if user changes it
 
   void _validateAndNavigate() {
-    if (firstNameController.text.trim().isEmpty) {
-      _showErrorDialog('Please enter your first name.');
+    if (_currentBudget == null) {
+      _showErrorDialog('Please set your budget range.');
     } else {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => LastNamePage()),
+        MaterialPageRoute(builder: (context) => UsernamePasswordPage()),
       );
     }
   }
@@ -47,7 +47,9 @@ class _FirstNamePageState extends State<FirstNamePage> {
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pop(context); // Ensure it only goes back one step
+          },
         ),
       ),
       body: Padding(
@@ -57,21 +59,35 @@ class _FirstNamePageState extends State<FirstNamePage> {
           children: [
             SizedBox(height: 20),
             Text(
-              "What's your first name?",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16),
-            TextField(
-              controller: firstNameController,
-              decoration: InputDecoration(
-                hintText: 'Enter first name',
-                border: UnderlineInputBorder(),
+              "What's your budget?",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(height: 8),
             Text(
-              "This is how it'll appear on your profile.",
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+              "Drag the slider to set the budget range for your potential matches.",
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+            SizedBox(height: 24),
+            Text(
+              "Budget range",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8),
+            Slider(
+              value: _currentBudget ?? 500,
+              min: 100,
+              max: 5000,
+              divisions: 99, // Match distance preference page
+              label: "\$${(_currentBudget ?? 500).toInt()}",
+              activeColor: Colors.teal,
+              onChanged: (value) {
+                setState(() {
+                  _currentBudget = value;
+                });
+              },
             ),
             Spacer(),
             SizedBox(

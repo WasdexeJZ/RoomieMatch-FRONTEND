@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'first_name_page.dart';
+import 'email_page.dart';
 
 class RulePage extends StatelessWidget {
   @override
@@ -52,7 +52,7 @@ class RulePage extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => FirstNamePage()),
+                      MaterialPageRoute(builder: (context) => EmailPage()),
                     );
                   },
                   style: ElevatedButton.styleFrom(

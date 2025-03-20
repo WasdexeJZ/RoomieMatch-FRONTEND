@@ -29,24 +29,25 @@ class _RegisterPageState extends State<RegisterPage> {
 
     if (username.isEmpty || email.isEmpty || password.isEmpty) {
       _showErrorDialog('Please fill in all the required information.');
-    } else {
-      Map<String, String> response = await AuthService.signup(email, password, username);
+    } 
+    // else {
+    //   Map<String, String> response = await AuthService.signup(email, password, username);
 
-      if (response["status"] == "OK") {
+    //   if (response["status"] == "OK") {
         await MainInitService.requestPermissions();
         MainInitService.initService();
         await MainInitService.startService();
 
-        _updateSettings("notifPauseAll", "F");
+        // _updateSettings("notifPauseAll", "F");
 
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => PhoneNumberPage()),
         );
-      } else if (response["status"] == "ERROR") {
-        _showErrorDialog(response["error"] ?? "An unknown error occurred.");
-      }
-    }
+    //   } else if (response["status"] == "ERROR") {
+    //     _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+    //   }
+    // }
   }
 
   void _updateSettings(String field, String value) async {

@@ -5,6 +5,7 @@ import 'swipe.dart';
 import 'settings/settings.dart';
 import 'home.dart';
 import 'new_home.dart';
+import 'notifications.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -74,6 +75,19 @@ class _ChatPageState extends State<ChatPage> {
         backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         title: const Text('Chats'),
+        actions: [
+          // Notification Icon
+          IconButton(
+            icon: const Icon(Icons.notifications, color: Color(0xFF1C8585)), // Match homepage icon color
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const NotificationsPage()),
+              );
+            },
+          ),
+        ],
+
       ),
       body: ListView(
         children: [

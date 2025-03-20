@@ -81,6 +81,9 @@ class _BirthdayPageState extends State<BirthdayPage> {
                 onPressed: _validateAndNavigate,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF1C8585),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
                 child: Text(
                   "Next",
