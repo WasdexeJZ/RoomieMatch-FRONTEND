@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../new_home.dart';
+import '../home.dart';
 
 class VerificationPage extends StatelessWidget {
   @override
@@ -62,7 +62,7 @@ class VerificationPage extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => NewHomePage()),
+                    MaterialPageRoute(builder: (context) => HomePage()),
                   );                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF1C8585),

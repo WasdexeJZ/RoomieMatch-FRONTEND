@@ -4,7 +4,6 @@ import '../chat_detail_page.dart';
 import 'swipe.dart';
 import 'settings/settings.dart';
 import 'home.dart';
-import 'new_home.dart';
 import 'notifications.dart';
 
 class ChatPage extends StatefulWidget {
@@ -28,7 +27,7 @@ class _ChatPageState extends State<ChatPage> {
         case 0:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => NewHomePage()),
+            MaterialPageRoute(builder: (context) => HomePage()),
           );
           break;
         case 2:

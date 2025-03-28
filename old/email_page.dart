@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'email_verification_page.dart';
+
+import '../../services/hive_service.dart';
+
+import '../../models/user.dart';
 
 class EmailPage extends StatefulWidget {
   @override
@@ -14,11 +19,14 @@ class _EmailPageState extends State<EmailPage> {
 
     if (email.isEmpty) {
       _showErrorDialog('Please enter your email address.');
-    }
-    else if (!_isValidEmail(email)) {
+    } else if (!_isValidEmail(email)) {
       _showErrorDialog('Please enter a valid email address.');
-    }
-    else {
+    } else {
+      // enter email check to db herer
+
+      HiveService.deleteUser();
+      HiveService.setUser(User(email: email));
+
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => VerificationCodePage()),
@@ -77,16 +85,7 @@ class _EmailPageState extends State<EmailPage> {
               ),
             ),
             SizedBox(height: 16),
-            TextField(
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
-                hintText: 'Enter email',
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey),
-                ),
-              ),
-            ),
+            
             SizedBox(height: 8),
             Text(
               "Don't lose access to your account, verify with your email.",

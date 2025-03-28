@@ -19,6 +19,7 @@ import '../models/auth.dart';
 import '../models/profile.dart';
 import '../models/settings.dart';
 import '../models/user.dart';
+import '../models/preference.dart';
 
 import '../helpers/auth_box_helper.dart';
 
@@ -33,7 +34,7 @@ class MainInitService {
       apiBasePath: "/api/v1/auth",
     );
   }
-  
+
   static Future<void> initHive() async {
     // Initialize Hive
     final appDocumentDirectory = await getApplicationDocumentsDirectory();
@@ -44,6 +45,7 @@ class MainInitService {
     Hive.registerAdapter(UserAdapter());
     Hive.registerAdapter(ProfileAdapter());
     Hive.registerAdapter(SettingsAdapter());
+    Hive.registerAdapter(PreferenceAdapter());
 
     // Open Hive Boxes
     await Hive.openBox('authBox');

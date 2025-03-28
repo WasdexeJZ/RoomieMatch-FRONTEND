@@ -13,7 +13,7 @@ class AuthBoxHelper {
   }
 
   static String getUserId() {
-    User temp = HiveService.getUser() ?? User(userId: "", username: "", email: "");
+    User temp = HiveService.getUser();
 
     return temp.userId;
   }

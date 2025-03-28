@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
+
+import '../../services/db_service.dart';
+
 import 'first_name_page.dart'; // Replace with the actual next page
 
 class VerificationCodePage extends StatefulWidget {
@@ -14,10 +17,22 @@ class _VerificationCodePageState extends State<VerificationCodePage> {
     if (_pinController.text.length < 6) {
       _showErrorDialog('Please enter a valid verification code.');
     } else {
+      _updateStat("self", "registration", "1");
+
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => FirstNamePage()),
       );
+    }
+  }
+
+  void _updateStat(String userId, String key, String value) async {
+    Map<String, String> response = await DBService.updateStat(userId, key, value);
+
+    if (response["status"] == "ERROR") {
+      _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+    } else if (response["status"] == "UNKNOWN") {
+      _showErrorDialog("An unknown error occurred.");
     }
   }
 

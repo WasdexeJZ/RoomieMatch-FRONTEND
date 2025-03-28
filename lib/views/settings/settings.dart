@@ -9,13 +9,11 @@ import '../../services/main_init_service.dart';
 
 import '../swipe.dart';
 import '../chat.dart';
-import '../home.dart';
 import 'faq.dart';
 import 'notifications_settings.dart';
 import '../login.dart';
-import '../new_home.dart';
+import '../home.dart';
 import '../notifications.dart';
-
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -39,7 +37,7 @@ class _SettingsPageState extends State<SettingsPage> {
         case 0:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => NewHomePage()),
+            MaterialPageRoute(builder: (context) => HomePage()),
           );
           break;
         case 1:
@@ -108,7 +106,6 @@ class _SettingsPageState extends State<SettingsPage> {
       _showErrorDialog("An unknown error occurred.");
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -251,11 +248,12 @@ class _SettingsPageState extends State<SettingsPage> {
                     onTap: () async {
                       await AuthService.signOut();
                       await MainInitService.stopService();
+                      HiveService.deleteUser();
 
                       Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(builder: (context) => const LogInPage()),
-                            (route) => false,
+                        (route) => false,
                       );
                     },
                   ),

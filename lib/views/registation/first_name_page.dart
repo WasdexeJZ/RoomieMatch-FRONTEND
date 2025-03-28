@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'last_name_page.dart'; // Next page after this
+
+import '../../services/db_service.dart';
 
 class FirstNamePage extends StatefulWidget {
   @override
@@ -13,10 +16,34 @@ class _FirstNamePageState extends State<FirstNamePage> {
     if (firstNameController.text.trim().isEmpty) {
       _showErrorDialog('Please enter your first name.');
     } else {
+      _updateStat("self", "registration", "2");
+
+      _updateProfile("firstName", firstNameController.text.trim());
+
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => LastNamePage()),
       );
+    }
+  }
+
+  void _updateProfile(String field, String value) async {
+    Map<String, String> response = await DBService.updateProfileField(field, value);
+
+    _checkError(response);
+  }
+
+  void _updateStat(String userId, String key, String value) async {
+    Map<String, String> response = await DBService.updateStat(userId, key, value);
+
+    _checkError(response);
+  }
+
+  void _checkError(Map<String, String> response) {
+    if (response["status"] == "ERROR") {
+      _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+    } else if (response["status"] == "UNKNOWN") {
+      _showErrorDialog("An unknown error occurred.");
     }
   }
 

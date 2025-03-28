@@ -26,13 +26,19 @@ class Profile {
   String longitude = "";
 
   @HiveField(7)
-  int budget = 0;
-  
+  int distance = 0;
+
   @HiveField(8)
-  String job = "";
-  
+  int budget = 0;
+
   @HiveField(9)
+  String description = "";
+
+  @HiveField(10)
+  String schoolJob = "";
+
+  @HiveField(11)
   String allergies = "";
-  
+
   Profile();
 }

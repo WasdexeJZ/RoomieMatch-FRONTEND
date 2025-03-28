@@ -1,5 +1,14 @@
 import 'package:flutter/material.dart';
+
 import 'all_setup_page.dart';
+
+import '../../helpers/enum_helper.dart';
+
+import '../../models/settings.dart';
+import '../../models/profile.dart';
+
+import '../../services/db_service.dart';
+import '../../services/hive_service.dart';
 
 class YourInterestPage extends StatefulWidget {
   @override
@@ -13,18 +22,117 @@ class _YourInterestPageState extends State<YourInterestPage> {
   String? selectedCleaning;
   String? selectedSmoking;
 
-  void _validateAndNavigate() {
-    if (selectedGuests == null ||
-        selectedSocial == null ||
-        selectedNoise == null ||
-        selectedCleaning == null ||
-        selectedSmoking == null) {
+  // Convert string to enum
+  String stringToEnum<T extends Enum>(List<T> enumValues, String name) {
+    return enumValues
+        .firstWhere(
+          (enumInstance) => enumInstance.name == name,
+        )
+        .index
+        .toString();
+  }
+
+  Future<void> _validateAndNavigate() async {
+    if (selectedGuests == null || selectedSocial == null || selectedNoise == null || selectedCleaning == null || selectedSmoking == null) {
       _showErrorDialog('Please answer all questions before proceeding.');
     } else {
+      await _deleteStat("self", "registration");
+
+      await _updatePreference("guestsFeeling", stringToEnum(GuestsFeeling.values, selectedGuests ?? "Often"));
+      await _updatePreference("sociality", stringToEnum(Sociality.values, selectedSocial ?? "Social"));
+      await _updatePreference("loudTv", stringToEnum(LoudTv.values, selectedNoise ?? "Yes"));
+      await _updatePreference("contributeCleaning", stringToEnum(ContributeCleaning.values, selectedCleaning?.replaceAll(" ", "") ?? "NotImportant"));
+      await _updatePreference("roommateSmoke", stringToEnum(RoommateSmoke.values, selectedSmoking?.replaceAll(" ", "") ?? "Yes"));
+
+      await _triggerProcessMatch();
+
+      await _getAllSettings();
+      await _getAllProfile();
+
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => AllSetUpPage()),
       );
+    }
+  }
+
+  Future<void> _updatePreference(String field, String value) async {
+    Map<String, String> response = await DBService.updatePreferenceField(field, value);
+
+    await _checkError(response);
+  }
+
+  Future<void> _deleteStat(String userId, String key) async {
+    Map<String, String> response = await DBService.deleteStat(userId, key);
+
+    await _checkError(response);
+  }
+
+  Future<void> _triggerProcessMatch() async {
+    Map<String, String> response = await DBService.triggerProcessMatch();
+
+    await _checkError(response);
+  }
+
+  Future<void> _checkError(Map<String, String> response) async {
+    if (response["status"] == "ERROR") {
+      _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+    } else if (response["status"] == "UNKNOWN") {
+      _showErrorDialog("An unknown error occurred.");
+    }
+  }
+
+  Future<void> _getAllSettings() async {
+    Map<String, dynamic> response = await DBService.getAllSettings();
+
+    if (response["status"] == "ERROR") {
+      _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+    } else if (response["status"] == "UNKNOWN") {
+      _showErrorDialog("An unknown error occurred.");
+    } else if (response["status"] == "OK") {
+      HiveService.deleteSettings();
+
+      Settings settings = Settings();
+      settings.notifPauseAll = response["notifPauseAll"] == "T" ? true : false;
+      settings.notifMessages = response["notifMessages"] == "T" ? true : false;
+      settings.notifNewMatch = response["notifNewMatch"] == "T" ? true : false;
+      settings.sleepMode = response["sleepMode"] == "T" ? true : false;
+      settings.sleepStartTime = response["sleepStartTime"];
+      settings.sleepEndTime = response["sleepEndTime"];
+      for (int i = 0; i < 7; i++) {
+        settings.sleepChooseDays[i] = response["sleepChooseDays"][i] == "T" ? true : false;
+      }
+      settings.accountPrivacy = response["accountPrivacy"] == "T" ? true : false;
+
+      HiveService.setSettings(settings);
+    }
+  }
+
+  Future<void> _getAllProfile() async {
+    Map<String, dynamic> response = await DBService.getAllProfile();
+
+    if (response["status"] == "ERROR") {
+      _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+    } else if (response["status"] == "UNKNOWN") {
+      _showErrorDialog("An unknown error occurred.");
+    } else if (response["status"] == "OK") {
+      HiveService.deleteProfile();
+
+      Profile profile = Profile();
+      profile.firstName = response["firstName"] ?? "";
+      profile.lastName = response["lastName"] ?? "";
+      profile.age = response["age"] ?? 0;
+      profile.birthday = response["birthday"];
+      profile.gender = response["gender"] ?? "M";
+      profile.latitude = response["latitude"] ?? 0;
+      profile.longitude = response["longitude"] ?? 0;
+      profile.distance = response["distance"] ?? 0;
+      profile.budget = response["budget"];
+      profile.description = response["description"];
+      profile.schoolJob = response["schoolJob"];
+      profile.allergies = response["allergies"];
+
+      HiveService.setProfile(profile);
     }
   }
 
@@ -196,4 +304,3 @@ class _YourInterestPageState extends State<YourInterestPage> {
     );
   }
 }
-

@@ -3,9 +3,21 @@ import 'package:flutter/material.dart';
 import '../services/hive_service.dart';
 import '../services/api_service.dart';
 import '../services/main_init_service.dart';
+import '../services/db_service.dart';
 
 import 'swipe.dart';
 import 'login.dart';
+import 'registation/email_verification_page.dart';
+import 'registation/first_name_page.dart';
+import 'registation/last_name_page.dart';
+import 'registation/birthday_page.dart';
+import 'registation/gender_selection_page.dart';
+import 'registation/location_page.dart';
+import 'registation/distance_preference_page.dart';
+import 'registation/budget_preference_page.dart';
+import 'registation/about_you_page.dart';
+import 'registation/more_about_you.dart';
+import 'registation/your_interests_page.dart';
 
 class WelcomePage extends StatefulWidget {
   final String title;
@@ -26,7 +38,9 @@ class _WelcomePageState extends State<WelcomePage> {
       await initBackendConnection();
 
       if (HiveService.getAuth()?.isAuthenticated ?? false) {
-        _goToSwipePage(context);
+        if (await _getRegistrationStat()) {
+          _goToSwipePage(context);
+        }
       } else {
         _goToLoginPage(context);
       }
@@ -60,6 +74,27 @@ class _WelcomePageState extends State<WelcomePage> {
     }
 
     await MainInitService.initAuth();
+  }
+
+  Future<bool> _getRegistrationStat() async {
+    Map<String, dynamic> response = await DBService.getStat("self", "registration");
+
+    if (response["status"] == "ERROR") {
+      if (response["message"] != "No record found!") {
+        _showErrorDialog(response["error"] ?? "An unknown error occurred.", [false]);
+      }
+    } else if (response["status"] == "UNKNOWN") {
+      _showErrorDialog("An unknown error occurred.", [false]);
+    } else if (response["status"] == "OK") {
+      final List<dynamic> pageList = [VerificationCodePage(), FirstNamePage(), LastNamePage(), BirthdayPage(), GenderSelectionPage(), LocationPage(), DistancePreferencePage(), BudgetPreferencePage(), AboutYouPage(), MoreAboutYouPage(), YourInterestPage()];
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => pageList[int.parse(response["value"])]),
+      );
+      return false;
+    }
+    return true;
   }
 
   void _goToLoginPage(BuildContext context) {

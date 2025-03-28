@@ -4,7 +4,6 @@ import 'settings.dart';
 import '../swipe.dart';
 import '../chat.dart';
 import '../home.dart';
-import '../new_home.dart';
 
 class FAQPage extends StatefulWidget {
   const FAQPage({super.key});
@@ -28,7 +27,7 @@ class _FAQPageState extends State<FAQPage> {
         case 0:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => NewHomePage()),
+            MaterialPageRoute(builder: (context) => HomePage()),
           );
           break;
         case 1:

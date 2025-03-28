@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'more_about_you.dart';
+
+import '../../services/db_service.dart';
 
 class AboutYouPage extends StatefulWidget {
   @override
@@ -16,18 +19,39 @@ class _AboutYouPageState extends State<AboutYouPage> {
   bool? _hasAllergies;
 
   void _validateAndNavigate() {
-    if (_descriptionController.text.trim().isEmpty ||
-        _isStudent == null ||
-        (_isStudent == true && _schoolController.text.trim().isEmpty) ||
-        (_isStudent == false && _jobController.text.trim().isEmpty) ||
-        _hasAllergies == null ||
-        (_hasAllergies == true && _allergyController.text.trim().isEmpty)) {
+    if (_descriptionController.text.trim().isEmpty || _isStudent == null || (_isStudent == true && _schoolController.text.trim().isEmpty) || (_isStudent == false && _jobController.text.trim().isEmpty) || _hasAllergies == null || (_hasAllergies == true && _allergyController.text.trim().isEmpty)) {
       _showErrorDialog('Please fill in all required fields.');
     } else {
+      _updateStat("self", "registration", "9");
+      
+      _updateProfile("description", _descriptionController.text.trim());
+      _updateProfile("schoolJob", _isStudent ?? false ? _schoolController.text.trim() : _jobController.text.trim());
+      _updateProfile("allergies", _hasAllergies ?? false ? _allergyController.text.trim() : "");
+
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => MoreAboutYouPage()),
       );
+    }
+  }
+
+  void _updateProfile(String field, String value) async {
+    Map<String, String> response = await DBService.updateProfileField(field, value);
+
+    _checkError(response);
+  }
+
+  void _updateStat(String userId, String key, String value) async {
+    Map<String, String> response = await DBService.updateStat(userId, key, value);
+
+    _checkError(response);
+  }
+
+  void _checkError(Map<String, String> response) {
+    if (response["status"] == "ERROR") {
+      _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+    } else if (response["status"] == "UNKNOWN") {
+      _showErrorDialog("An unknown error occurred.");
     }
   }
 

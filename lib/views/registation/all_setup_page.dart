@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../new_home.dart';
+import '../home.dart';
 
 class AllSetUpPage extends StatelessWidget {
   @override
@@ -52,7 +52,7 @@ class AllSetUpPage extends StatelessWidget {
                   onPressed: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => NewHomePage()),
+                      MaterialPageRoute(builder: (context) => HomePage()),
                     );
                   },
                   style: ElevatedButton.styleFrom(

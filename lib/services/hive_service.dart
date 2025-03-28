@@ -4,6 +4,7 @@ import '../models/auth.dart';
 import '../models/user.dart';
 import '../models/profile.dart';
 import '../models/settings.dart';
+import '../models/preference.dart';
 
 class HiveService {
   static final authBox = Hive.box('authBox');
@@ -17,8 +18,8 @@ class HiveService {
     authBox.put('auth', auth);
   }
 
-  static User? getUser() {
-    return authBox.get('user');
+  static User getUser() {
+    return authBox.get('user') ?? User();
   }
 
   static void setUser(User user) {
@@ -33,16 +34,20 @@ class HiveService {
     authBox.clear();
   }
 
-  static Profile? getProfile() {
-    return appBox.get('profile');
+  static Profile getProfile() {
+    return appBox.get('profile') ?? Profile();
   }
 
   static void setProfile(Profile profile) {
     appBox.put('profile', profile);
   }
 
-  static Settings? getSettings() {
-    return appBox.get('settings');
+  static void deleteProfile() {
+    appBox.delete('profile');
+  }
+
+  static Settings getSettings() {
+    return appBox.get('settings') ?? Settings();
   }
 
   static void setSettings(Settings settings) {
@@ -51,5 +56,17 @@ class HiveService {
 
   static void deleteSettings() {
     appBox.delete('settings');
+  }
+
+  static Preference getPreference() {
+    return appBox.get('preference') ?? Preference();
+  }
+
+  static void setPreference(Preference preference) {
+    appBox.put('preference', preference);
+  }
+
+  static void deletePreference() {
+    appBox.delete('preference');
   }
 }

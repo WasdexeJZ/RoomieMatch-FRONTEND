@@ -1,6 +1,9 @@
+import 'package:RoomieMatch/models/profile.dart';
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../models/settings.dart';
+
 import '../services/hive_service.dart';
 import '../services/auth_service.dart';
 import '../services/db_service.dart';
@@ -9,7 +12,17 @@ import '../services/cryptography_service.dart';
 
 import 'home.dart';
 import 'registation/rule_page.dart';
-import 'new_home.dart';
+import 'registation/email_verification_page.dart';
+import 'registation/first_name_page.dart';
+import 'registation/last_name_page.dart';
+import 'registation/birthday_page.dart';
+import 'registation/gender_selection_page.dart';
+import 'registation/location_page.dart';
+import 'registation/distance_preference_page.dart';
+import 'registation/budget_preference_page.dart';
+import 'registation/about_you_page.dart';
+import 'registation/more_about_you.dart';
+import 'registation/your_interests_page.dart';
 
 class LogInPage extends StatefulWidget {
   const LogInPage({super.key});
@@ -29,29 +42,52 @@ class _LogInPageState extends State<LogInPage> {
 
     if (username.isEmpty || password.isEmpty) {
       _showErrorDialog('Please fill in both fields.');
-    }
-    else {
+    } else {
       Map<String, String> response = await AuthService.login(username, password);
 
       if (response["status"] == "OK") {
-    await MainInitService.requestPermissions();
-    MainInitService.initService();
-    await MainInitService.startService();
+        if (await _getRegistrationStat()) {
+          await MainInitService.requestPermissions();
+          MainInitService.initService();
+          await MainInitService.startService();
 
-    await CryptographyService.initRSA();
+          await CryptographyService.initRSA();
 
-    await _getAllSettings();
+          await _getAllSettings();
+          await _getAllProfile();
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const NewHomePage()),
-    );
-    } else if (response["status"] == "ERROR") {
-      _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+        }
+      } else if (response["status"] == "ERROR") {
+        _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+      } else if (response["status"] == "UNKNOWN") {
+        _showErrorDialog("An unknown error occurred.");
+      }
+    }
+  }
+
+  Future<bool> _getRegistrationStat() async {
+    Map<String, dynamic> response = await DBService.getStat("self", "registration");
+
+    if (response["status"] == "ERROR") {
+      if (response["error"] != "No record found!") {
+        _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+      }
     } else if (response["status"] == "UNKNOWN") {
       _showErrorDialog("An unknown error occurred.");
+    } else if (response["status"] == "OK") {
+      final List<dynamic> pageList = [VerificationCodePage(), FirstNamePage(), LastNamePage(), BirthdayPage(), GenderSelectionPage(), LocationPage(), DistancePreferencePage(), BudgetPreferencePage(), AboutYouPage(), MoreAboutYouPage(), YourInterestPage()];
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => pageList[int.parse(response["value"])]),
+      );
+      return false;
     }
-    }
+    return true;
   }
 
   Future<void> _getAllSettings() async {
@@ -80,6 +116,34 @@ class _LogInPageState extends State<LogInPage> {
     }
   }
 
+  Future<void> _getAllProfile() async {
+    Map<String, dynamic> response = await DBService.getAllProfile();
+
+    if (response["status"] == "ERROR") {
+      _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+    } else if (response["status"] == "UNKNOWN") {
+      _showErrorDialog("An unknown error occurred.");
+    } else if (response["status"] == "OK") {
+      HiveService.deleteProfile();
+
+      Profile profile = Profile();
+      profile.firstName = response["firstName"] ?? "";
+      profile.lastName = response["lastName"] ?? "";
+      profile.age = response["age"] ?? 0;
+      profile.birthday = response["birthday"];
+      profile.gender = response["gender"] ?? "M";
+      profile.latitude = response["latitude"] ?? 0;
+      profile.longitude = response["longitude"] ?? 0;
+      profile.distance = response["distance"] ?? 0;
+      profile.budget = response["budget"];
+      profile.description = response["description"];
+      profile.schoolJob = response["schoolJob"];
+      profile.allergies = response["allergies"];
+
+      HiveService.setProfile(profile);
+    }
+  }
+
   // Navigate to the Register Page
   void _goToRegisterPage() {
     Navigator.push(
@@ -90,6 +154,7 @@ class _LogInPageState extends State<LogInPage> {
 
   // Show error dialog
   void _showErrorDialog(String message) {
+    print("boom");
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -108,7 +173,6 @@ class _LogInPageState extends State<LogInPage> {
       },
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +210,6 @@ class _LogInPageState extends State<LogInPage> {
                     ),
                   ],
                 ),
-
                 child: TextField(
                   controller: _usernameController,
                   decoration: const InputDecoration(
@@ -154,7 +217,6 @@ class _LogInPageState extends State<LogInPage> {
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(horizontal: 16),
                   ),
-
                 ),
               ),
               const SizedBox(height: 16),
@@ -193,8 +255,7 @@ class _LogInPageState extends State<LogInPage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                 ),
                 child: const Text(
                   'Log In',

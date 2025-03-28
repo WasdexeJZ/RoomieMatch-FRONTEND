@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geocoding/geocoding.dart'; // Import geocoding package
-import 'distance_preference_page.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'distance_preference_page.dart';
+
+import '../../services/db_service.dart';
 
 class LocationPage extends StatefulWidget {
   @override
@@ -55,6 +58,7 @@ class _LocationPageState extends State<LocationPage> {
       _showErrorDialog("Network error. Please try again.");
     }
   }
+
   void _validateAndNavigate() {
     // Check if the user has moved the pin from the default location
     if (_currentLocation.latitude == 37.7749 && _currentLocation.longitude == -122.4194) {
@@ -62,11 +66,36 @@ class _LocationPageState extends State<LocationPage> {
       return;
     }
 
+    _updateStat("self", "registration", "6");
+
+    _updateProfile("latitude", _currentLocation.latitude.toStringAsFixed(6));
+    _updateProfile("longitude", _currentLocation.longitude.toStringAsFixed(6));
+
     // If a location is selected, proceed to the next page
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => DistancePreferencePage()),
     );
+  }
+
+  void _updateProfile(String field, String value) async {
+    Map<String, String> response = await DBService.updateProfileField(field, value);
+
+    _checkError(response);
+  }
+
+  void _updateStat(String userId, String key, String value) async {
+    Map<String, String> response = await DBService.updateStat(userId, key, value);
+
+    _checkError(response);
+  }
+
+  void _checkError(Map<String, String> response) {
+    if (response["status"] == "ERROR") {
+      _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+    } else if (response["status"] == "UNKNOWN") {
+      _showErrorDialog("An unknown error occurred.");
+    }
   }
 
   void _showErrorDialog(String message) {

@@ -1,23 +1,49 @@
 import 'package:flutter/material.dart';
+
 import 'budget_preference_page.dart';
+
+import '../../services/db_service.dart';
 
 class DistancePreferencePage extends StatefulWidget {
   @override
   State<DistancePreferencePage> createState() => _DistancePreferencePageState();
 }
 
-
 class _DistancePreferencePageState extends State<DistancePreferencePage> {
-  double? _currentDistance;  // Set to null initially to detect if user changes it
+  double? _currentDistance; // Set to null initially to detect if user changes it
 
   void _validateAndNavigate() {
     if (_currentDistance == null) {
       _showErrorDialog('Please choose your distance preference.');
     } else {
+      _updateStat("self", "registration", "7");
+      
+      _updateProfile("distance", (_currentDistance?.toInt() ?? 10).toString());
+
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => BudgetPreferencePage()),
       );
+    }
+  }
+
+  void _updateProfile(String field, String value) async {
+    Map<String, String> response = await DBService.updateProfileField(field, value);
+
+    _checkError(response);
+  }
+
+  void _updateStat(String userId, String key, String value) async {
+    Map<String, String> response = await DBService.updateStat(userId, key, value);
+
+    _checkError(response);
+  }
+
+  void _checkError(Map<String, String> response) {
+    if (response["status"] == "ERROR") {
+      _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+    } else if (response["status"] == "UNKNOWN") {
+      _showErrorDialog("An unknown error occurred.");
     }
   }
 

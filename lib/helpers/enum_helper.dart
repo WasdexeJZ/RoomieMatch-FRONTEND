@@ -1,142 +1,142 @@
-enum Personality { introverted, extroverted, ambivert }
+enum Personality { Introverted, Extroverted, Ambivert }
 
 extension PersonalityExtension on Personality {
   int get value {
     switch (this) {
-      case Personality.introverted:
+      case Personality.Introverted:
         return 0;
-      case Personality.ambivert:
+      case Personality.Ambivert:
         return 1;
-      case Personality.extroverted:
+      case Personality.Extroverted:
         return 2;
     }
   }
 }
 
-enum GuestsOver { often, sometimes, never }
+enum GuestsOver { Often, Sometimes, Never }
 
 extension GuestsOverExtension on GuestsOver {
   int get value {
     switch (this) {
-      case GuestsOver.often:
+      case GuestsOver.Often:
         return 0;
-      case GuestsOver.sometimes:
+      case GuestsOver.Sometimes:
         return 1;
-      case GuestsOver.never:
+      case GuestsOver.Never:
         return 2;
     }
   }
 }
 
-enum LoudNoise { yes, no }
+enum LoudNoise { Yes, No }
 
 extension LoudNoiseExtension on LoudNoise {
   int get value {
     switch (this) {
-      case LoudNoise.yes:
+      case LoudNoise.Yes:
         return 0;
-      case LoudNoise.no:
+      case LoudNoise.No:
         return 1;
     }
   }
 }
 
-enum Cleanliness { veryTidy, moderate, casual }
+enum Cleanliness { Verytidy, Moderate, Casual }
 
 extension CleanlinessExtension on Cleanliness {
   int get value {
     switch (this) {
-      case Cleanliness.veryTidy:
+      case Cleanliness.Verytidy:
         return 0;
-      case Cleanliness.moderate:
+      case Cleanliness.Moderate:
         return 1;
-      case Cleanliness.casual:
+      case Cleanliness.Casual:
         return 2;
     }
   }
 }
 
-enum Smoke { yes, no }
+enum Smoke { Yes, No }
 
 extension SmokeExtension on Smoke {
   int get value {
     switch (this) {
-      case Smoke.yes:
+      case Smoke.Yes:
         return 0;
-      case Smoke.no:
+      case Smoke.No:
         return 1;
     }
   }
 }
 
-enum GuestsFeeling { often, ocassionally, never }
+enum GuestsFeeling { Often, Occasionally, Never }
 
 extension GuestsFeelingExtension on GuestsFeeling {
   int get value {
     switch (this) {
-      case GuestsFeeling.often:
+      case GuestsFeeling.Often:
         return 0;
-      case GuestsFeeling.ocassionally:
+      case GuestsFeeling.Occasionally:
         return 1;
-      case GuestsFeeling.never:
+      case GuestsFeeling.Never:
         return 2;
     }
   }
 }
 
-enum Sociality { social, private, balanced }
+enum Sociality { Social, Private, Balanced }
 
 extension SocialityExtension on Sociality {
   int get value {
     switch (this) {
-      case Sociality.social:
+      case Sociality.Social:
         return 0;
-      case Sociality.balanced:
+      case Sociality.Balanced:
         return 1;
-      case Sociality.private:
+      case Sociality.Private:
         return 2;
     }
   }
 }
 
-enum LoudTv { yes, no }
+enum LoudTv { Yes, No }
 
 extension LoudTvExtension on LoudTv {
   int get value {
     switch (this) {
-      case LoudTv.yes:
+      case LoudTv.Yes:
         return 0;
-      case LoudTv.no:
+      case LoudTv.No:
         return 1;
     }
   }
 }
 
-enum ContributeCleaning { veryImportant, somewhat, notImportant }
+enum ContributeCleaning { Veryimportant, Somewhat, Notimportant }
 
 extension ContributeCleaningExtension on ContributeCleaning {
   int get value {
     switch (this) {
-      case ContributeCleaning.notImportant:
+      case ContributeCleaning.Notimportant:
         return 0;
-      case ContributeCleaning.somewhat:
+      case ContributeCleaning.Somewhat:
         return 1;
-      case ContributeCleaning.veryImportant:
+      case ContributeCleaning.Veryimportant:
         return 2;
     }
   }
 }
 
-enum RoommateSmoke { yes, no, onlyOutside }
+enum RoommateSmoke { Yes, No, Onlyoutside }
 
 extension RoommateSmokeExtension on RoommateSmoke {
   int get value {
     switch (this) {
-      case RoommateSmoke.yes:
+      case RoommateSmoke.Yes:
         return 0;
-      case RoommateSmoke.no:
+      case RoommateSmoke.No:
         return 1;
-      case RoommateSmoke.onlyOutside:
+      case RoommateSmoke.Onlyoutside:
         return 2;
     }
   }

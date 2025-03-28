@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'your_interests_page.dart';
+
+import '../../helpers/enum_helper.dart';
+
+import '../../services/db_service.dart';
 
 class MoreAboutYouPage extends StatefulWidget {
   @override
@@ -13,18 +18,52 @@ class _MoreAboutYouPageState extends State<MoreAboutYouPage> {
   String? selectedCleanliness;
   String? selectedSmoke;
 
+  // Convert string to enum
+  String stringToEnum<T extends Enum>(List<T> enumValues, String name) {
+    return enumValues
+        .firstWhere(
+          (enumInstance) => enumInstance.name == name,
+        )
+        .index
+        .toString();
+  }
+
   void _validateAndNavigate() {
-    if (selectedPersonality == null ||
-        selectedGuests == null ||
-        selectedNoise == null ||
-        selectedCleanliness == null ||
-        selectedSmoke == null) {
+    if (selectedPersonality == null || selectedGuests == null || selectedNoise == null || selectedCleanliness == null || selectedSmoke == null) {
       _showErrorDialog('Please answer all questions before proceeding.');
     } else {
+      _updateStat("self", "registration", "10");
+
+      _updatePreference("personality", stringToEnum(Personality.values, selectedPersonality ?? "Introverted"));
+      _updatePreference("guestsOver", stringToEnum(GuestsOver.values, selectedGuests ?? "Often"));
+      _updatePreference("loudNoise", stringToEnum(LoudNoise.values, selectedNoise ?? "Yes"));
+      _updatePreference("cleanliness", stringToEnum(Cleanliness.values, selectedCleanliness?.replaceAll(" ", "") ?? "VeryTidy"));
+      _updatePreference("smoke", stringToEnum(Smoke.values, selectedSmoke ?? "Yes"));
+
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => YourInterestPage()),
       );
+    }
+  }
+
+  void _updatePreference(String field, String value) async {
+    Map<String, String> response = await DBService.updatePreferenceField(field, value);
+
+    _checkError(response);
+  }
+
+  void _updateStat(String userId, String key, String value) async {
+    Map<String, String> response = await DBService.updateStat(userId, key, value);
+
+    _checkError(response);
+  }
+
+  void _checkError(Map<String, String> response) {
+    if (response["status"] == "ERROR") {
+      _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+    } else if (response["status"] == "UNKNOWN") {
+      _showErrorDialog("An unknown error occurred.");
     }
   }
 

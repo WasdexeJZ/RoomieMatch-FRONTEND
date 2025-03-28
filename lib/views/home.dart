@@ -1,56 +1,236 @@
 import 'package:flutter/material.dart';
-import 'settings/settings.dart'; // Import the settings page
+
+import 'settings/settings.dart';
+import 'settings/faq.dart';
 import 'chat.dart';
 import 'swipe.dart';
+import 'notifications.dart';
 
-class HomePage extends StatelessWidget {
+
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'RoomieMatch',
-      theme: ThemeData(
-        primarySwatch: Colors.teal,
-      ),
-      home: const RoomieMatchHomePage(),
-    );
-  }
+  _HomePageState createState() => _HomePageState();
 }
 
-class RoomieMatchHomePage extends StatefulWidget {
-  const RoomieMatchHomePage({Key? key}) : super(key: key);
-
-  @override
-  _RoomieMatchHomePageState createState() => _RoomieMatchHomePageState();
-}
-
-class _RoomieMatchHomePageState extends State<RoomieMatchHomePage> {
-  int _selectedIndex = 0; // Home page is selected by default
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
-    if (_selectedIndex == index) return; // Do nothing if already selected
+    if (_selectedIndex == index) return;
 
     setState(() {
       _selectedIndex = index;
     });
 
-    if (index == 1) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const ChatPage()),
-      );
-    } else if (index == 2) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const SwipePage()),
-      );
-    } else if (index == 3) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const SettingsPage()),
-      );
+    switch (index) {
+      case 1:
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const ChatPage()));
+        break;
+      case 2:
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SwipePage()));
+        break;
+      case 3:
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const SettingsPage()));
+        break;
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Column(
+        children: [
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+              child: _buildHeader(),
+            ),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildFeatureImage(),
+                  const SizedBox(height: 16),
+                  const Text(
+                    "Welcome to RoomieMatch!",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1C8585),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Explore your profile, find useful info, and get ready to meet your future roommate.",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildImageGrid(),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: _buildBottomNavBar(),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween, // Ensures space between logo and icon
+      children: [
+        Expanded(
+          child: Row(
+            children: [
+              Image.asset('assets/RoomieMatch_logo.png', height: 40),
+              const SizedBox(width: 8),
+              const Text(
+                'RoomieMatch',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF1C8585)),
+              ),
+            ],
+          ),
+        ),
+        // Notification Icon
+        IconButton(
+          icon: const Icon(Icons.notifications, color: Color(0xFF1C8585)), // Icon color
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const NotificationsPage()),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFeatureImage() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const SwipePage()),
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        height: 200,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          image: const DecorationImage(
+            image: AssetImage('assets/homepage3.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImageGrid() {
+    final List<Map<String, String>> items = [
+      {
+        'image': 'assets/homepage1.jpg',
+        'title': 'Modify your account here!',
+        'subtitle': '',
+        'route': 'account' // Placeholder action for account settings
+      },
+      {
+        'image': 'assets/homepage2.jpg',
+        'title': 'Having some questions?',
+        'subtitle': 'Click here',
+        'route': 'faq'
+      },
+    ];
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 0.75, // Lower value = taller cards
+      ),
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        final item = items[index];
+
+        return GestureDetector(
+          onTap: () {
+            if (item['route'] == 'account') {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Account Settings Page Coming Soon!')),
+              );
+            } else if (item['route'] == 'faq') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => FAQPage()),
+              );
+            }
+          },
+          child: Stack(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  image: DecorationImage(
+                    image: AssetImage(item['image']!),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1C8585),
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(16),
+                      bottomRight: Radius.circular(16),
+                    ),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        item['title']!,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                      if (item['subtitle']!.isNotEmpty)
+                        Text(
+                          item['subtitle']!,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildIcon(String assetPath, int index) {
@@ -67,120 +247,16 @@ class _RoomieMatchHomePageState extends State<RoomieMatchHomePage> {
         child: ImageIcon(
           AssetImage(assetPath),
           size: 30,
-          color: isSelected ? Colors.grey : Colors.grey,
+          color: Colors.grey,
         ),
       ),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          children: [
-            Image.asset(
-              'assets/RoomieMatch_logo.png',
-              height: 50,
-            ),
-            const SizedBox(width: 12),
-            Text(
-              'RoomieMatch',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.teal[900],
-              ),
-            ),
-          ],
-        ),
-        centerTitle: false,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Photo Verified Section
-            Container(
-              margin: const EdgeInsets.all(16.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                image: const DecorationImage(
-                  image: AssetImage('assets/homepage_landing.png'),
-                  fit: BoxFit.contain,
-                ),
-              ),
-              child: AspectRatio(
-                aspectRatio: 1034 / 713,
-                child: Stack(
-                  children: [
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const SettingsPage()),
-                            );
-                          },
-                          child: const Text('TRY NOW'),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Recommendations Section
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                'For You',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                'Roommates Wanted!',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Grid of Recommendations
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: GridView.count(
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisSpacing: 16,
-                mainAxisSpacing: 16,
-                children: List.generate(10, (index) {
-                  return _buildGridItem(
-                    icon: Icons.circle,
-                    title: 'Option ${index + 1}',
-                    subtitle: 'Details',
-                  );
-                }),
-              ),
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: Container(
+  Widget _buildBottomNavBar() {
+    return SizedBox(
+      height: 80,  // This is your target height
+      child: Container(
         decoration: BoxDecoration(
           color: const Color(0xFFC7FBD2),
           borderRadius: const BorderRadius.only(
@@ -195,82 +271,41 @@ class _RoomieMatchHomePageState extends State<RoomieMatchHomePage> {
             ),
           ],
         ),
-        child: SizedBox(
-          height: 80, // Change this value to make it thinner or thicker
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(30),
-              topRight: Radius.circular(30),
-            ),
-            child: BottomNavigationBar(
-              currentIndex: _selectedIndex,
-              onTap: _onItemTapped,
-              backgroundColor: const Color(0xFFC7FBD2),
-              elevation: 0,
-              selectedItemColor: Colors.grey,
-              unselectedItemColor: Colors.grey,
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
-              type: BottomNavigationBarType.fixed,
-              items: [
-                BottomNavigationBarItem(
-                  icon: _buildIcon('assets/icons/homebutton.png', 0),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: _buildIcon('assets/icons/chatbutton.png', 1),
-                  label: 'Chats',
-                ),
-                BottomNavigationBarItem(
-                  icon: _buildIcon('assets/icons/swipepage.png', 2),
-                  label: 'Swipe',
-                ),
-                BottomNavigationBarItem(
-                  icon: _buildIcon('assets/icons/settingsbutton.png', 3),
-                  label: 'Settings',
-                ),
-              ],
-            ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
+          ),
+          child: BottomNavigationBar(
+            currentIndex: _selectedIndex,
+            onTap: _onItemTapped,
+            backgroundColor: const Color(0xFFC7FBD2),
+            elevation: 0,
+            selectedItemColor: Colors.grey,
+            unselectedItemColor: Colors.grey,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            type: BottomNavigationBarType.fixed,
+            items: [
+              BottomNavigationBarItem(
+                icon: _buildIcon('assets/icons/homebutton.png', 0),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIcon('assets/icons/chatbutton.png', 1),
+                label: 'Chats',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIcon('assets/icons/swipepage.png', 2),
+                label: 'Swipe',
+              ),
+              BottomNavigationBarItem(
+                icon: _buildIcon('assets/icons/settingsbutton.png', 3),
+                label: 'Settings',
+              ),
+            ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildGridItem({
-    required IconData icon,
-    required String title,
-    required String subtitle,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 2,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 40, color: Colors.teal),
-          const SizedBox(height: 12),
-          Text(
-            title,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-          const Spacer(),
-          Text(
-            subtitle,
-            style: const TextStyle(fontSize: 14, color: Colors.grey),
-          ),
-        ],
       ),
     );
   }

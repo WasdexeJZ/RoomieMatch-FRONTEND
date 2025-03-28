@@ -5,11 +5,10 @@ import '../../models/settings.dart';
 import '../../services/hive_service.dart';
 import '../../services/db_service.dart';
 
+import 'settings.dart';
 import 'sleep_mode.dart';
 import '../chat.dart';
 import '../swipe.dart';
-import 'settings.dart';
-import '../new_home.dart';
 
 class NotificationSettingsPage extends StatefulWidget {
   const NotificationSettingsPage({super.key});
@@ -37,7 +36,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
         case 0:
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => NewHomePage()),
+            MaterialPageRoute(builder: (context) => HomePage()),
           );
           break;
         case 1:

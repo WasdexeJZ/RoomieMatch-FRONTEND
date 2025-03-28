@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'location_page.dart';
+
+import '../../services/db_service.dart';
 
 class GenderSelectionPage extends StatefulWidget {
   @override
@@ -44,10 +47,38 @@ class _GenderSelectionPageState extends State<GenderSelectionPage> {
     if (selectedGender == null) {
       _showErrorDialog('Please select your gender.');
     } else {
+      _updateStat("self", "registration", "5");
+
+      if (selectedGender == "Man") {
+        _updateProfile("gender", "M");
+      } else if (selectedGender == "Woman") {
+        _updateProfile("gender", "F");
+      }
+
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => LocationPage()),
       );
+    }
+  }
+
+  void _updateProfile(String field, String value) async {
+    Map<String, String> response = await DBService.updateProfileField(field, value);
+
+    _checkError(response);
+  }
+
+  void _updateStat(String userId, String key, String value) async {
+    Map<String, String> response = await DBService.updateStat(userId, key, value);
+
+    _checkError(response);
+  }
+
+  void _checkError(Map<String, String> response) {
+    if (response["status"] == "ERROR") {
+      _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+    } else if (response["status"] == "UNKNOWN") {
+      _showErrorDialog("An unknown error occurred.");
     }
   }
 

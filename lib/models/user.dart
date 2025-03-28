@@ -5,13 +5,13 @@ part 'user.g.dart'; // Generated file
 @HiveType(typeId: 0)
 class User {
   @HiveField(0)
-  final String userId;
+  String userId = "";
 
   @HiveField(1)
-  String email;
+  String email = " ";
 
   @HiveField(2)
-  String username;
+  String username = "";
 
-  User({required this.userId, required this.email, required this.username});
+  User({this.userId = "", this.email = "", this.username = ""});
 }

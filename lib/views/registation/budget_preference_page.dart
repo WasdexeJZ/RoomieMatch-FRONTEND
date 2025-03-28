@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'username_password_page.dart';
+
+import 'about_you_page.dart';
+
+import '../../services/db_service.dart';
 
 class BudgetPreferencePage extends StatefulWidget {
   @override
@@ -7,16 +10,40 @@ class BudgetPreferencePage extends StatefulWidget {
 }
 
 class _BudgetPreferencePageState extends State<BudgetPreferencePage> {
-  double? _currentBudget;  // Set to null initially to detect if user changes it
+  double? _currentBudget; // Set to null initially to detect if user changes it
 
   void _validateAndNavigate() {
     if (_currentBudget == null) {
       _showErrorDialog('Please set your budget range.');
     } else {
+      _updateStat("self", "registration", "8");
+
+      _updateProfile("budget", (_currentBudget?.toInt() ?? 500).toString());
+
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => UsernamePasswordPage()),
+        MaterialPageRoute(builder: (context) => AboutYouPage()),
       );
+    }
+  }
+
+  void _updateProfile(String field, String value) async {
+    Map<String, String> response = await DBService.updateProfileField(field, value);
+
+    _checkError(response);
+  }
+
+  void _updateStat(String userId, String key, String value) async {
+    Map<String, String> response = await DBService.updateStat(userId, key, value);
+
+    _checkError(response);
+  }
+
+  void _checkError(Map<String, String> response) {
+    if (response["status"] == "ERROR") {
+      _showErrorDialog(response["error"] ?? "An unknown error occurred.");
+    } else if (response["status"] == "UNKNOWN") {
+      _showErrorDialog("An unknown error occurred.");
     }
   }
 

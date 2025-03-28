@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../services/db_service.dart';
-import 'home.dart';
+
 import '../filter_page.dart';
 import '../info_page.dart';
+import 'home.dart';
 import 'chat.dart';
 import 'settings/settings.dart';
-import 'new_home.dart';
 import 'notifications.dart';
 
 class SwipePage extends StatefulWidget {
@@ -125,7 +125,7 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
       case 0:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const NewHomePage()),
+          MaterialPageRoute(builder: (context) => const HomePage()),
         );
         break;
 
@@ -248,7 +248,6 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
             },
           ),
         ],
-
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())

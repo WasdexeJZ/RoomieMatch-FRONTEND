@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'email_page.dart';
+// import 'email_page.dart';
 
 class PhoneNumberPage extends StatefulWidget {
   @override
@@ -13,10 +13,10 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
     if (phoneNumberController.text.trim().isEmpty) {
       _showErrorDialog('Please enter your phone number.');
     } else {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => EmailPage()),
-      );
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(builder: (context) => EmailPage()),
+      // );
     }
   }
 
