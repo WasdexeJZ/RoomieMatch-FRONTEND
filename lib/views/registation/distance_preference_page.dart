@@ -6,9 +6,8 @@ class DistancePreferencePage extends StatefulWidget {
   State<DistancePreferencePage> createState() => _DistancePreferencePageState();
 }
 
-
 class _DistancePreferencePageState extends State<DistancePreferencePage> {
-  double? _currentDistance;  // Set to null initially to detect if user changes it
+  double _currentDistance = 10.0; // Default distance value
 
   void _validateAndNavigate() {
     if (_currentDistance == null) {
@@ -77,12 +76,32 @@ class _DistancePreferencePageState extends State<DistancePreferencePage> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "${_currentDistance.toInt()} km",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.teal,
+                  ),
+                ),
+                Text(
+                  "Min: 1 km   Max: 100 km",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
             Slider(
-              value: _currentDistance ?? 10.0, // Default 10 km but tracked as null initially
+              value: _currentDistance,
               min: 1,
               max: 100,
               divisions: 99,
-              label: "${(_currentDistance ?? 10.0).toInt()} km",
+              label: "${_currentDistance.toInt()} km",
               activeColor: Colors.teal,
               onChanged: (value) {
                 setState(() {
