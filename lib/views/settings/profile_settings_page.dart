@@ -152,6 +152,11 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
 
   // Opens a map + search bar bottom sheet to pick location
   void _showLocationPicker() {
+    LatLng currentLoc = _location; // <- Must be declared outside StatefulBuilder to persist
+
+    final mapController = MapController();
+    final searchController = TextEditingController();
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -159,126 +164,127 @@ class _ProfileSettingsPageState extends State<ProfileSettingsPage> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (BuildContext context) {
-        LatLng tempLoc = _location;
-        final mapController = MapController();
-        final searchController = TextEditingController();
-
         return StatefulBuilder(
-          builder: (BuildContext context, setModalState) => Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text("Pin your location", style: TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 12),
-                // Search Row
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: searchController,
-                        decoration: InputDecoration(
-                          hintText: "Search address...",
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+          builder: (BuildContext context, setModalState) {
+            void _searchAndMove(String query) async {
+              if (query.trim().isEmpty) return;
+
+              final url = "https://nominatim.openstreetmap.org/search?q=${Uri.encodeComponent(query)}&format=json&limit=1";
+              final response = await http.get(Uri.parse(url), headers: {'User-Agent': 'Flutter-App'});
+
+              if (response.statusCode == 200) {
+                final results = json.decode(response.body);
+                if (results.isNotEmpty) {
+                  final lat = double.parse(results[0]['lat']);
+                  final lon = double.parse(results[0]['lon']);
+                  final newLoc = LatLng(lat, lon);
+
+                  setModalState(() {
+                    currentLoc = newLoc;
+                  });
+
+                  // 👇 Move map center to the searched location
+                  mapController.move(newLoc, 14.0);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('No results found')),
+                  );
+                }
+              }
+            }
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text("Pin your location", style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 12),
+
+                  // Search Row
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: searchController,
+                          textInputAction: TextInputAction.search,
+                          onSubmitted: (value) => _searchAndMove(value),
+                          decoration: InputDecoration(
+                            hintText: "Search address...",
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 8),
-                    IconButton(
-                      icon: const Icon(Icons.search, color: Colors.teal),
-                      onPressed: () async {
-                        final query = searchController.text.trim();
-                        if (query.isEmpty) return;
-
-                        final url = "https://nominatim.openstreetmap.org/search?q=${Uri.encodeComponent(query)}&format=json&limit=1";
-                        final response = await http.get(Uri.parse(url), headers: {'User-Agent': 'Flutter-App'});
-                        if (!mounted) return; // in case modal is closed
-
-                        if (response.statusCode == 200) {
-                          final results = json.decode(response.body);
-                          if (results.isNotEmpty) {
-                            final lat = double.parse(results[0]['lat']);
-                            final lon = double.parse(results[0]['lon']);
-                            final newLoc = LatLng(lat, lon);
-
-                            // Move map + pin to newLoc
-                            setModalState(() {
-                              tempLoc = newLoc;
-                              mapController.move(newLoc, 14.0);
-                            });
-                          }
-                        }
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                // The Map
-                SizedBox(
-                  height: 300,
-                  child: FlutterMap(
-                    mapController: mapController,
-                    options: MapOptions(
-                      onMapReady: () {
-                        // Ensure map is fully initialized
-                        mapController.move(tempLoc, 14.0);
-                      },
-                      initialCenter: tempLoc,
-                      initialZoom: 14.0,
-                      onTap: (tapPosition, latLng) {
-                        setModalState(() {
-                          tempLoc = latLng;
-                          mapController.move(latLng, 14.0);
-                        });
-                      },
-                    ),
-                    children: [
-                      TileLayer(
-                        urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                        userAgentPackageName: 'com.example.app',
-                      ),
-                      MarkerLayer(
-                        markers: [
-                          Marker(
-                            point: tempLoc,
-                            width: 40,
-                            height: 40,
-                            child: Icon(Icons.location_pin, color: Colors.red, size: 40),
-                          ),
-                        ],
+                      const SizedBox(width: 8),
+                      IconButton(
+                        icon: const Icon(Icons.search, color: Colors.teal),
+                        onPressed: () => _searchAndMove(searchController.text),
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 16),
-                // Confirm Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (!mounted) return;
-                      setState(() {
-                        _location = tempLoc;
-                        _resolveAddress(tempLoc);
-                      });
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF1C8585),
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      minimumSize: const Size.fromHeight(48),
-                    ),
-                    child: const Text(
-                      "Confirm",
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  const SizedBox(height: 12),
+
+                  // The Map
+                  SizedBox(
+                    height: 300,
+                    child: FlutterMap(
+                      mapController: mapController,
+                      options: MapOptions(
+                        initialCenter: currentLoc,
+                        initialZoom: 14.0,
+                        onTap: (tapPosition, latLng) {
+                          setModalState(() {
+                            currentLoc = latLng;
+                          });
+                        },
+                      ),
+                      children: [
+                        TileLayer(
+                          urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                          userAgentPackageName: 'com.example.app',
+                        ),
+                        MarkerLayer(
+                          markers: [
+                            Marker(
+                              point: currentLoc,
+                              width: 40,
+                              height: 40,
+                              child: const Icon(Icons.location_pin, color: Colors.red, size: 40),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
+
+                  const SizedBox(height: 16),
+                  // Confirm Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _location = currentLoc;
+                          _resolveAddress(currentLoc);
+                        });
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1C8585),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        minimumSize: const Size.fromHeight(48),
+                      ),
+                      child: const Text(
+                        "Confirm",
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         );
       },
     );
