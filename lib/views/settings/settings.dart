@@ -15,6 +15,7 @@ import 'notifications_settings.dart';
 import '../login.dart';
 import '../new_home.dart';
 import '../notifications.dart';
+import 'profile_settings_page.dart';
 
 
 class SettingsPage extends StatefulWidget {
@@ -181,7 +182,12 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                     title: const Text('Profile'),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ProfileSettingsPage()),
+                      );
+                    },
                   ),
                   const SizedBox(height: 32),
                   ListTile(
