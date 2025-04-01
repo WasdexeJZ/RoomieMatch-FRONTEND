@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'account_setup_page.dart';
+import 'about_you_page.dart';
 
 class BudgetPreferencePage extends StatefulWidget {
   @override
@@ -12,7 +12,7 @@ class _BudgetPreferencePageState extends State<BudgetPreferencePage> {
   void _validateAndNavigate() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => AccountSetupPage()),
+      MaterialPageRoute(builder: (context) => AboutYouPage()),
     );
   }
 

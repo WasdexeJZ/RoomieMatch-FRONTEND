@@ -4,6 +4,7 @@ import 'chat.dart';
 import 'swipe.dart';
 import 'settings/faq.dart';
 import 'notifications.dart';
+import 'settings/profile_settings_page.dart';
 
 
 class NewHomePage extends StatefulWidget {
@@ -168,8 +169,9 @@ class _NewHomePageState extends State<NewHomePage> {
         return GestureDetector(
           onTap: () {
             if (item['route'] == 'account') {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Account Settings Page Coming Soon!')),
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ProfileSettingsPage()),
               );
             } else if (item['route'] == 'faq') {
               Navigator.push(
