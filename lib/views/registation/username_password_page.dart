@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../services/auth_service.dart';
 import '../../services/db_service.dart';
+import '../../services/cryptography_service.dart';
 import '../../services/main_init_service.dart';
 
 import 'email_verification_page.dart';
@@ -45,6 +46,8 @@ class _UsernamePasswordPageState extends State<UsernamePasswordPage> {
         await MainInitService.requestPermissions();
         MainInitService.initService();
         await MainInitService.startService();
+
+        await CryptographyService.initRSA();
 
         _updateStat("self", "registration", "0");
         _updateSettings("notifPauseAll", "F");

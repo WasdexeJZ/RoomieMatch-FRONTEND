@@ -104,6 +104,7 @@ class _ChatPageState extends State<ChatPage> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => ChatDetailPage(
+                    userId: 'd33e1860-cb4a-40dd-a968-c5c6661b3bfe',
                     userName: 'Emily',
                     profileImageAsset: 'assets/profile/1.jpg', // Pass the correct local file path
                     messages: [
@@ -129,6 +130,7 @@ class _ChatPageState extends State<ChatPage> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => ChatDetailPage(
+                    userId: 'd33e1860-cb4a-40dd-a968-c5c6661b3bfe',
                     userName: 'Bruno',
                     profileImageAsset: 'assets/profile/2.jpg', // Pass the correct local file path
                     messages: [

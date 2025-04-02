@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'info_page.dart';
 
 class ChatDetailPage extends StatelessWidget {
+  final String userId;
   final String userName; // Name of the person you are chatting with
   final String profileImageAsset; // Local asset image for the profile
   final List<Map<String, dynamic>> messages; // List of messages (content and sender info)
 
   const ChatDetailPage({
     super.key,
+    required this.userId,
     required this.userName,
     required this.profileImageAsset, // Required local asset image
     required this.messages, // Messages specific to the user
@@ -69,8 +71,7 @@ class ChatDetailPage extends StatelessWidget {
                 final isSender = message['isSender']; // Check if the message is sent by the user
 
                 return Column(
-                  crossAxisAlignment:
-                  isSender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                  crossAxisAlignment: isSender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
                   children: [
                     Container(
                       margin: const EdgeInsets.symmetric(vertical: 5),
@@ -85,9 +86,7 @@ class ChatDetailPage extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: isSender
-                          ? const EdgeInsets.only(right: 8, bottom: 10)
-                          : const EdgeInsets.only(left: 8, bottom: 10),
+                      padding: isSender ? const EdgeInsets.only(right: 8, bottom: 10) : const EdgeInsets.only(left: 8, bottom: 10),
                       child: Text(
                         message['timestamp'],
                         style: const TextStyle(fontSize: 12, color: Colors.grey),

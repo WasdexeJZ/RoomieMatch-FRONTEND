@@ -93,10 +93,10 @@ class DBService {
   }
 
   static Future<Map<String, String>> updateMatch(String compareUserId, int currMatchType) async {
-    Map<String, dynamic> matchMap = {"compare_user_id": "", "curr_match_type": 2};
+    Map<String, dynamic> matchMap = {"compareUserId": "", "currMatchType": 2};
 
-    matchMap['compare_user_id'] = compareUserId;
-    matchMap['curr_match_type'] = currMatchType;
+    matchMap['compareUserId'] = compareUserId;
+    matchMap['currMatchType'] = currMatchType;
 
     Map<String, dynamic> apiResponse = await apiService.post('db/update-match/', matchMap);
 
@@ -122,9 +122,9 @@ class DBService {
   }
 
   static Future<Map<String, String>> updateStat(String userId, String key, String value) async {
-    Map<String, dynamic> statMap = {"user_id": "", "key": "", "value": ""};
+    Map<String, dynamic> statMap = {"userId": "", "key": "", "value": ""};
 
-    statMap['user_id'] = userId;
+    statMap['userId'] = userId;
     statMap['key'] = key;
     statMap['value'] = value;
 
