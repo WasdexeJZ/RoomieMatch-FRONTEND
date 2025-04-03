@@ -28,17 +28,17 @@ class _MoreAboutYouPageState extends State<MoreAboutYouPage> {
         .toString();
   }
 
-  void _validateAndNavigate() {
+  void _validateAndNavigate() async {
     if (selectedPersonality == null || selectedGuests == null || selectedNoise == null || selectedCleanliness == null || selectedSmoke == null) {
       _showErrorDialog('Please answer all questions before proceeding.');
     } else {
       _updateStat("self", "registration", "10");
 
-      _updatePreference("personality", stringToEnum(Personality.values, selectedPersonality ?? "Introverted"));
-      _updatePreference("guestsOver", stringToEnum(GuestsOver.values, selectedGuests ?? "Often"));
-      _updatePreference("loudNoise", stringToEnum(LoudNoise.values, selectedNoise ?? "Yes"));
-      _updatePreference("cleanliness", stringToEnum(Cleanliness.values, selectedCleanliness?.replaceAll(" ", "") ?? "VeryTidy"));
-      _updatePreference("smoke", stringToEnum(Smoke.values, selectedSmoke ?? "Yes"));
+      await _updatePreference("personality", stringToEnum(Personality.values, selectedPersonality ?? "Introverted"));
+      await _updatePreference("guestsOver", stringToEnum(GuestsOver.values, selectedGuests ?? "Often"));
+      await _updatePreference("loudNoise", stringToEnum(LoudNoise.values, selectedNoise ?? "Yes"));
+      await _updatePreference("cleanliness", stringToEnum(Cleanliness.values, selectedCleanliness?.replaceAll(" ", "") ?? "VeryTidy"));
+      await _updatePreference("smoke", stringToEnum(Smoke.values, selectedSmoke ?? "Yes"));
 
       Navigator.push(
         context,
@@ -47,7 +47,7 @@ class _MoreAboutYouPageState extends State<MoreAboutYouPage> {
     }
   }
 
-  void _updatePreference(String field, String value) async {
+  Future<void> _updatePreference(String field, String value) async {
     Map<String, String> response = await DBService.updatePreferenceField(field, value);
 
     _checkError(response);

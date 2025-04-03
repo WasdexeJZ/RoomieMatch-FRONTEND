@@ -135,12 +135,11 @@ class MainInitService {
             Map<String, dynamic> notification = jsonDecode(event.message ?? '{"userId": "", "title":"", "message":""}');
 
             // check for message incoming here
-
             if (notification['userId'].compareTo(AuthBoxHelper.getUserId()) == 0) {
               String title = await CryptographyService.decryptRSA(notification['title']);
               String message = await CryptographyService.decryptRSA(notification['message']);
 
-              if (notification['title'].compareTo("New Match!") == 0) {
+              if (title.compareTo("New Match!") == 0) {
                 await notificationsPlugin.show(counter, title, message, notificationDetails);
                 counter++;
 
@@ -150,7 +149,7 @@ class MainInitService {
                 counter++;
               }
 
-              if (notification['title'].compareTo("New Message!") == 0) {
+              if (title.compareTo("New Message!") == 0) {
                 await notificationsPlugin.show(counter, title, message, notificationDetails);
                 counter++;
 
