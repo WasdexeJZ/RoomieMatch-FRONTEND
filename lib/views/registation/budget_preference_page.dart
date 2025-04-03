@@ -10,21 +10,18 @@ class BudgetPreferencePage extends StatefulWidget {
 }
 
 class _BudgetPreferencePageState extends State<BudgetPreferencePage> {
-  double? _currentBudget; // Set to null initially to detect if user changes it
+  double _currentBudget = 500; // Default starting value
 
   void _validateAndNavigate() {
-    if (_currentBudget == null) {
-      _showErrorDialog('Please set your budget range.');
-    } else {
       _updateStat("self", "registration", "8");
 
-      _updateProfile("budget", (_currentBudget?.toInt() ?? 500).toString());
+      _updateProfile("budget", (_currentBudget.toInt()).toString());
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => AboutYouPage()),
-      );
-    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AboutYouPage()),
+    );
   }
 
   void _updateProfile(String field, String value) async {
@@ -75,7 +72,7 @@ class _BudgetPreferencePageState extends State<BudgetPreferencePage> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            Navigator.pop(context); // Ensure it only goes back one step
+            Navigator.pop(context);
           },
         ),
       ),
@@ -103,18 +100,42 @@ class _BudgetPreferencePageState extends State<BudgetPreferencePage> {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 8),
-            Slider(
-              value: _currentBudget ?? 500,
-              min: 100,
-              max: 5000,
-              divisions: 99, // Match distance preference page
-              label: "\$${(_currentBudget ?? 500).toInt()}",
-              activeColor: Colors.teal,
-              onChanged: (value) {
-                setState(() {
-                  _currentBudget = value;
-                });
-              },
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "\$${_currentBudget.toInt()}",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.teal,
+                  ),
+                ),
+                Text(
+                  "Min: \$100   Max: \$5000",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+            SliderTheme(
+              data: SliderTheme.of(context).copyWith(
+                showValueIndicator: ShowValueIndicator.always, // <- force tooltip
+              ),
+              child: Slider(
+                value: _currentBudget,
+                min: 100,
+                max: 5000,
+                label: "\$${_currentBudget.toInt()}",
+                activeColor: Colors.teal,
+                onChanged: (value) {
+                  setState(() {
+                    _currentBudget = (value / 100).round() * 100;
+                  });
+                },
+              ),
             ),
             Spacer(),
             SizedBox(

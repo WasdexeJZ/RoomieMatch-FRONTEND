@@ -1,22 +1,20 @@
 import 'package:flutter/material.dart';
-
 import 'settings/settings.dart';
-import 'settings/faq.dart';
-import 'settings/profile_settings_page.dart';
-
 import 'chat.dart';
 import 'swipe.dart';
+import 'settings/faq.dart';
 import 'notifications.dart';
+import 'settings/profile_settings_page.dart';
 
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class NewHomePage extends StatefulWidget {
+  const NewHomePage({super.key});
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _NewHomePageState createState() => _NewHomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _NewHomePageState extends State<NewHomePage> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index) {
