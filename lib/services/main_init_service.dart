@@ -14,6 +14,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'auth_service.dart';
 import 'cryptography_service.dart';
 import 'hive_service.dart';
+import 'db_service.dart';
 
 import '../models/auth.dart';
 import '../models/profile.dart';
@@ -150,6 +151,8 @@ class MainInitService {
               }
 
               if (title.compareTo("New Message!") == 0) {
+                await DBService.getAllMessages();
+
                 await notificationsPlugin.show(counter, title, message, notificationDetails);
                 counter++;
 

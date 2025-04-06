@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+import '../services/chat_db_service.dart';
+import '../services/db_service.dart';
+
+import '../helpers/auth_box_helper.dart';
 
 import '../chat_detail_page.dart';
-import 'swipe.dart';
 import 'settings/settings.dart';
+import 'swipe.dart';
 import 'home.dart';
 import 'notifications.dart';
 
@@ -15,6 +21,26 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   int _selectedIndex = 1; // Default to "Chats" tab
+  List<Map<String, dynamic>> chats = [];
+
+  bool _isLoadingChats = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    getChats();
+  }
+
+  Future<void> getChats() async {
+    await DBService.getAllChats();
+
+    chats = await ChatDBService().getChatsByUserId(AuthBoxHelper.getUserId());
+
+    await DBService.getAllMessages();
+
+    setState(() => _isLoadingChats = false);
+  }
 
   void _onItemTapped(int index) {
     if (_selectedIndex != index) {
@@ -86,64 +112,67 @@ class _ChatPageState extends State<ChatPage> {
             },
           ),
         ],
+      ),
+      body: _isLoadingChats
+          ? Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: chats.length,
+              itemBuilder: (context, index) {
+                final chat = chats[index];
+                DateTime localTime = DateTime.fromMillisecondsSinceEpoch(chat['latest_time'] * 1000, isUtc: false);
+                String formattedTime = DateFormat('dd-MM-yyyy HH:mm').format(localTime);
 
-      ),
-      body: ListView(
-        children: [
-          // Chat with Emily
-          ListTile(
-            leading: CircleAvatar(
-              radius: 25,
-              backgroundImage: const AssetImage('assets/profile/1.jpg'), // Load from local file
-            ),
-            title: const Text('Emily'),
-            subtitle: const Text('Nice to meet you too :)'),
-            trailing: const Text('1:00 PM'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChatDetailPage(
-                    userId: 'd33e1860-cb4a-40dd-a968-c5c6661b3bfe',
-                    userName: 'Emily',
-                    profileImageAsset: 'assets/profile/1.jpg', // Pass the correct local file path
-                    messages: [
-                      {'content': 'Hi Emily!', 'timestamp': '12:00 PM', 'isSender': true},
-                      {'content': 'Nice to meet you too :)', 'timestamp': '1:00 PM', 'isSender': false},
-                    ],
+                return ListTile(
+                  leading: CircleAvatar(
+                    radius: 25,
+                    backgroundImage: const AssetImage('assets/profile/1.jpg'), // Load from local file
                   ),
-                ),
-              );
-            },
-          ),
-          // Chat with Bruno
-          ListTile(
-            leading: CircleAvatar(
-              radius: 25,
-              backgroundImage: const AssetImage('assets/profile/2.jpg'), // Load from local file
-            ),
-            title: const Text('Bruno'),
-            subtitle: const Text('Hello!'),
-            trailing: const Text('12:00 AM'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChatDetailPage(
-                    userId: 'd33e1860-cb4a-40dd-a968-c5c6661b3bfe',
-                    userName: 'Bruno',
-                    profileImageAsset: 'assets/profile/2.jpg', // Pass the correct local file path
-                    messages: [
-                      {'content': 'Hello Bruno!', 'timestamp': '11:30 PM', 'isSender': true},
-                      {'content': 'Hey there!', 'timestamp': '12:00 AM', 'isSender': false},
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
+                  title: Text(chat['first_name'].toString()),
+                  // subtitle: const Text('Nice to meet you too :)'),
+                  trailing: Text(formattedTime),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ChatDetailPage(
+                          userId: chat['chat_user_id'],
+                          firstName: chat['first_name'],
+                          profileImageAsset: 'assets/profile/1.jpg', // Pass the correct local file path
+                    
+                        ),
+                      ),
+                    );
+                  },
+                );
+              }
+              // Chat with Bruno
+              // ListTile(
+              //   leading: CircleAvatar(
+              //     radius: 25,
+              //     backgroundImage: const AssetImage('assets/profile/2.jpg'), // Load from local file
+              //   ),
+              //   title: const Text('Bruno'),
+              //   subtitle: const Text('Hello!'),
+              //   trailing: const Text('12:00 AM'),
+              //   onTap: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //         builder: (context) => ChatDetailPage(
+              //           userId: 'd33e1860-cb4a-40dd-a968-c5c6661b3bfe',
+              //           userName: 'Bruno',
+              //           profileImageAsset: 'assets/profile/2.jpg', // Pass the correct local file path
+              //           messages: [
+              //             {'content': 'Hello Bruno!', 'timestamp': '11:30 PM', 'isSender': true},
+              //             {'content': 'Hey there!', 'timestamp': '12:00 AM', 'isSender': false},
+              //           ],
+              //         ),
+              //       ),
+              //     );
+              //   },
+              // ),
+              // ],
+              ),
       // BottomNavigationBar in build method
       bottomNavigationBar: Container(
         decoration: BoxDecoration(

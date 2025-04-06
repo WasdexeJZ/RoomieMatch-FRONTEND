@@ -1,19 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
 import 'info_page.dart';
+import './services/message_db_service.dart';
+import './helpers/auth_box_helper.dart';
 
-class ChatDetailPage extends StatelessWidget {
+class ChatDetailPage extends StatefulWidget {
   final String userId;
-  final String userName; // Name of the person you are chatting with
+  final String firstName; // Name of the person you are chatting with
   final String profileImageAsset; // Local asset image for the profile
-  final List<Map<String, dynamic>> messages; // List of messages (content and sender info)
+  List<Map<String, dynamic>> messages = []; // List of messages (content and sender info)
 
-  const ChatDetailPage({
-    super.key,
-    required this.userId,
-    required this.userName,
-    required this.profileImageAsset, // Required local asset image
-    required this.messages, // Messages specific to the user
-  });
+  ChatDetailPage({super.key, required this.userId, required this.firstName, required this.profileImageAsset // Required local asset image
+      // required this.messages, // Messages specific to the user
+      });
+
+  @override
+  _ChatDetailPageState createState() => _ChatDetailPageState();
+}
+
+class _ChatDetailPageState extends State<ChatDetailPage> {
+  bool _isLoadingMessages = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    getMessages();
+  }
+
+  Future<void> getMessages() async {
+    final List<Map<String, dynamic>> temp = await MessageDBService().getMessagesByUserId(AuthBoxHelper.getUserId(), widget.userId);
+
+    DateFormat format = DateFormat('yyyy-MM-ddTHH:mm:SS');
+
+    for (int i = 0; i < temp.length; i++) {
+      Map<String, dynamic> mes = {'content': "", "timestamp": "", "isSender": true};
+      mes["content"] = temp[i]["plain_text"];
+
+      DateTime dateTime = format.parse(temp[i]["timestamp"]);
+      mes["timestamp"] = DateFormat('dd-MM-yyyy HH:mm').format(dateTime);
+
+      if (temp[i]["sender_user_id"] == AuthBoxHelper.getUserId()) {
+        mes["isSender"] = true;
+      } else {
+        mes["isSender"] = false;
+      }
+
+      widget.messages.add(mes);
+    }
+
+    setState(() => _isLoadingMessages = false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,9 +74,9 @@ class ChatDetailPage extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => InfoPage(
-                      name: userName,
+                      name: widget.firstName,
                       age: '25', // Provide the age dynamically if available
-                      imagePath: profileImageAsset,
+                      imagePath: widget.profileImageAsset,
                       distance: '5km', // Provide the distance dynamically if available
                       location: 'Sample Location',
                       about: 'Sample About Information',
@@ -49,12 +87,12 @@ class ChatDetailPage extends StatelessWidget {
               },
               child: CircleAvatar(
                 radius: 25,
-                backgroundImage: AssetImage(profileImageAsset), // Use local asset image
+                backgroundImage: AssetImage(widget.profileImageAsset), // Use local asset image
               ),
             ),
             const SizedBox(width: 10),
             Text(
-              userName,
+              widget.firstName,
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ],
@@ -63,39 +101,41 @@ class ChatDetailPage extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: messages.length,
-              itemBuilder: (context, index) {
-                final message = messages[index];
-                final isSender = message['isSender']; // Check if the message is sent by the user
+            child: _isLoadingMessages
+                ? Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: widget.messages.length,
+                    itemBuilder: (context, index) {
+                      final message = widget.messages[index];
+                      final isSender = message['isSender']; // Check if the message is sent by the user
 
-                return Column(
-                  crossAxisAlignment: isSender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.symmetric(vertical: 5),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: isSender ? const Color(0xFFE3EFEF) : Colors.grey[200],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        message['content'],
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ),
-                    Padding(
-                      padding: isSender ? const EdgeInsets.only(right: 8, bottom: 10) : const EdgeInsets.only(left: 8, bottom: 10),
-                      child: Text(
-                        message['timestamp'],
-                        style: const TextStyle(fontSize: 12, color: Colors.grey),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
+                      return Column(
+                        crossAxisAlignment: isSender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.symmetric(vertical: 5),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: isSender ? const Color(0xFFE3EFEF) : Colors.grey[200],
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              message['content'],
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ),
+                          Padding(
+                            padding: isSender ? const EdgeInsets.only(right: 8, bottom: 10) : const EdgeInsets.only(left: 8, bottom: 10),
+                            child: Text(
+                              message['timestamp'],
+                              style: const TextStyle(fontSize: 12, color: Colors.grey),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
           ),
           // Input field for new messages
           Padding(

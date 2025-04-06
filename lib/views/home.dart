@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'package:intl/intl.dart';
+// import 'package:pointycastle/export.dart';
+import 'package:basic_utils/basic_utils.dart';
+
+import '../services/message_key_db_service.dart';
+import '../services/cryptography_service.dart';
+
 import 'settings/settings.dart';
 import 'settings/faq.dart';
 import 'settings/profile_settings_page.dart';
@@ -7,7 +14,6 @@ import 'settings/profile_settings_page.dart';
 import 'chat.dart';
 import 'swipe.dart';
 import 'notifications.dart';
-
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -18,6 +24,55 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  @override
+  void initState() {
+    super.initState();
+
+    // Do checking for public key pair whether it exists or not
+    // if not create and send
+    // if expire create and send
+
+    // getChats();
+    initMessagesKey();
+  }
+
+  void initMessagesKey() async {
+    final response = await MessageKeyDBService().getLatestMessagesKey();
+    print(response[0]['key_id']);
+    print(response[0]['init_timestamp']);
+
+    int keyId = -1;
+    int secondsElapsed = -1;
+
+    if (response.isNotEmpty) {
+      DateFormat format = DateFormat('yyyy-MM-dd HH:mm:SS');
+      DateTime initTimestamp = format.parse(response[0]['init_timestamp']);
+      DateTime now = DateTime.now();
+
+      secondsElapsed = now.difference(initTimestamp).inSeconds;
+    }
+
+    if (response.isEmpty) {
+      keyId = 0;
+    }
+    // Refereshes every 7 days in seconds
+    else if (secondsElapsed > 604800) {
+      keyId = response[0]['key_id'] + 1;
+    }
+
+    if (keyId != -1) {
+      print("boom");
+      AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> keyPair = CryptographyService.generateRSAKeyPair();
+
+      // Convert RSAPrivateKey to PEM format and store to secureStorage
+      String privateKeyPEM = CryptoUtils.encodeRSAPrivateKeyToPem(keyPair.privateKey);
+      await MessageKeyDBService().insertMessageKey(keyId, privateKeyPEM);
+
+      // Send public key to backend to encrypt
+      String publicKeyPEM = CryptoUtils.encodeRSAPublicKeyToPem(keyPair.publicKey);
+      await CryptographyService.sendPublicMessageKey(publicKeyPEM, keyId);
+    }
+  }
 
   void _onItemTapped(int index) {
     if (_selectedIndex == index) return;
@@ -147,12 +202,7 @@ class _HomePageState extends State<HomePage> {
         'subtitle': '',
         'route': 'account' // Placeholder action for account settings
       },
-      {
-        'image': 'assets/homepage2.jpg',
-        'title': 'Having some questions?',
-        'subtitle': 'Click here',
-        'route': 'faq'
-      },
+      {'image': 'assets/homepage2.jpg', 'title': 'Having some questions?', 'subtitle': 'Click here', 'route': 'faq'},
     ];
 
     return GridView.builder(
@@ -258,7 +308,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildBottomNavBar() {
     return SizedBox(
-      height: 80,  // This is your target height
+      height: 80, // This is your target height
       child: Container(
         decoration: BoxDecoration(
           color: const Color(0xFFC7FBD2),

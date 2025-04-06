@@ -79,6 +79,28 @@ class CryptographyService {
     } while (apiResponseStatus == 'ERROR' || apiResponseStatus == 'UNKNOWN');
   }
 
+  static Future<void> sendPublicMessageKey(String publicKey, int keyId) async {
+    String apiResponseStatus;
+    bool isIteration = false;
+
+    do {
+      Map<String, dynamic> publicKeyMap = {"publicKey": "", "keyId": -1};
+
+      publicKeyMap['publicKey'] = publicKey;
+      publicKeyMap['keyId'] = keyId;
+
+      Map<String, dynamic> apiResponse = await apiService.post('messaging/update-messaging-public-key/', publicKeyMap);
+
+      apiResponseStatus = apiResponse['status'];
+
+      if (isIteration) {
+        await Future.delayed(Duration(seconds: 30));
+      }
+
+      isIteration = true;
+    } while (apiResponseStatus == 'ERROR' || apiResponseStatus == 'UNKNOWN');
+  }
+
   static Future<String> decryptRSA(String cipherText) async {
     // Get private key from secure storage
     RSAPrivateKey privateKey = CryptoUtils.rsaPrivateKeyFromPem(await secureRead("private_key"));

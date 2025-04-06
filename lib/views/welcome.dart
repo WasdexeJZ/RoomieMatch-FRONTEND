@@ -5,7 +5,7 @@ import '../services/api_service.dart';
 import '../services/main_init_service.dart';
 import '../services/db_service.dart';
 
-import 'swipe.dart';
+import 'home.dart';
 import 'login.dart';
 import 'registation/email_verification_page.dart';
 import 'registation/first_name_page.dart';
@@ -39,7 +39,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
       if (HiveService.getAuth()?.isAuthenticated ?? false) {
         if (await _getRegistrationStat()) {
-          _goToSwipePage(context);
+          _goToHomePage(context);
         }
       } else {
         _goToLoginPage(context);
@@ -104,10 +104,10 @@ class _WelcomePageState extends State<WelcomePage> {
     );
   }
 
-  void _goToSwipePage(BuildContext context) {
+  void _goToHomePage(BuildContext context) {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => SwipePage()),
+      MaterialPageRoute(builder: (context) => HomePage()),
     );
   }
 

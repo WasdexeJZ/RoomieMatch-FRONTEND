@@ -1,4 +1,8 @@
 import './api_service.dart';
+import './chat_db_service.dart';
+import './message_db_service.dart';
+
+import '../helpers/auth_box_helper.dart';
 
 class DBService {
   static final ApiService apiService = ApiService();
@@ -160,6 +164,34 @@ class DBService {
       return {"status": "OK"};
     } else {
       return {"status": "UNKNOWN"};
+    }
+  }
+
+  static Future<void> getAllChats() async {
+    Map<String, dynamic> apiResponse = await apiService.get('messaging/get-all-chats/');
+
+    if (apiResponse['status'] == "OK") {
+      for (int i = 0; i < apiResponse['matched'].length; i++) {
+        await ChatDBService().insertChat(apiResponse['matched'][i]["userId"], apiResponse['matched'][i]["chatUserId"], apiResponse['matched'][i]['firstName'], apiResponse['matched'][i]["latestTime"].toInt());
+      }
+    }
+  }
+
+  static Future<void> getAllMessages() async {
+    getAllChats();
+
+    Map<String, dynamic> apiResponse = await apiService.get('messaging/get-messages/');
+    String currUserId = AuthBoxHelper.getUserId();
+
+    // 
+    // 
+    // Do decryption later here 
+
+
+    if (apiResponse['status'] == "OK") {
+      for (int i = 0; i < apiResponse['messages'].length; i++) {
+        await MessageDBService().insertMessage(apiResponse['messages'][i]["senderUserId"], currUserId, apiResponse['messages'][i]['cipherText'], apiResponse['messages'][i]["timestamp"]);
+      }
     }
   }
 }
