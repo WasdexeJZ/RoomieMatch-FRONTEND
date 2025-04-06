@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 import './api_service.dart';
 import './chat_db_service.dart';
 import './message_db_service.dart';
@@ -177,21 +179,64 @@ class DBService {
     }
   }
 
-  static Future<void> getAllMessages() async {
+  static Future<List<Map<String, dynamic>>> getAllMessages() async {
     getAllChats();
 
     Map<String, dynamic> apiResponse = await apiService.get('messaging/get-messages/');
     String currUserId = AuthBoxHelper.getUserId();
-
-    // 
-    // 
-    // Do decryption later here 
-
+    List<Map<String, dynamic>> result = [];
 
     if (apiResponse['status'] == "OK") {
       for (int i = 0; i < apiResponse['messages'].length; i++) {
+        //
+        //
+        // Do decryption later here
         await MessageDBService().insertMessage(apiResponse['messages'][i]["senderUserId"], currUserId, apiResponse['messages'][i]['cipherText'], apiResponse['messages'][i]["timestamp"]);
+        result.add({
+          "senderUserId": apiResponse['messages'][i]["senderUserId"],
+          "plainText": apiResponse['messages'][i]['cipherText'],
+          "timestamp": apiResponse['messages'][i]["timestamp"],
+        });
+
       }
     }
+
+    return result;
+  }
+
+  static Future<void> sendMessage(String recipientUserId, String plainText) async {
+    String cipherText = plainText;
+    int keyId = 0;
+
+//
+//
+// Do encryption later here
+// Get public key also
+
+    Map<String, dynamic> messageMap = {"recipientUserId": "", "cipherText": "", "keyId": -1};
+
+    messageMap['recipientUserId'] = recipientUserId;
+    messageMap['cipherText'] = cipherText;
+    messageMap['keyId'] = keyId;
+
+    String apiResponseStatus;
+    bool isIteration = false;
+
+    do {
+      Map<String, dynamic> apiResponse = await apiService.post('messaging/send-messages/', messageMap);
+
+      apiResponseStatus = apiResponse['status'];
+
+      if (isIteration) {
+        await Future.delayed(Duration(seconds: 30));
+      }
+
+      isIteration = true;
+    } while (apiResponseStatus == 'ERROR' || apiResponseStatus == 'UNKNOWN');
+
+    String currUserId = AuthBoxHelper.getUserId();
+    String timestamp = DateFormat('yyyy-MM-ddTHH:mm:SS').format(DateTime.now()).toString();
+
+    await MessageDBService().insertMessage(currUserId, recipientUserId, plainText, timestamp);
   }
 }

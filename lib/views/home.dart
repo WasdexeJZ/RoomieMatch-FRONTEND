@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
-// import 'package:pointycastle/export.dart';
 import 'package:basic_utils/basic_utils.dart';
 
 import '../services/message_key_db_service.dart';
@@ -28,18 +27,11 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    // Do checking for public key pair whether it exists or not
-    // if not create and send
-    // if expire create and send
-
-    // getChats();
     initMessagesKey();
   }
 
   void initMessagesKey() async {
     final response = await MessageKeyDBService().getLatestMessagesKey();
-    print(response[0]['key_id']);
-    print(response[0]['init_timestamp']);
 
     int keyId = -1;
     int secondsElapsed = -1;
@@ -61,7 +53,6 @@ class _HomePageState extends State<HomePage> {
     }
 
     if (keyId != -1) {
-      print("boom");
       AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> keyPair = CryptographyService.generateRSAKeyPair();
 
       // Convert RSAPrivateKey to PEM format and store to secureStorage

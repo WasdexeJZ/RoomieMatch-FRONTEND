@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:ntfy_dart/ntfy_dart.dart';
+
+import 'dart:async';
+import 'dart:convert';
 
 import 'info_page.dart';
+
+import './services/cryptography_service.dart';
 import './services/message_db_service.dart';
+import './services/db_service.dart';
+
 import './helpers/auth_box_helper.dart';
 
 class ChatDetailPage extends StatefulWidget {
@@ -20,6 +28,9 @@ class ChatDetailPage extends StatefulWidget {
 }
 
 class _ChatDetailPageState extends State<ChatDetailPage> {
+  final TextEditingController messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
   bool _isLoadingMessages = true;
 
   @override
@@ -27,6 +38,31 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     super.initState();
 
     getMessages();
+    createConnection();
+  }
+
+  Future<void> createConnection() async {
+    final String topic = 'notifications';
+    final NtfyClient ntfyClient = NtfyClient(basePath: Uri.parse("http://localhost:9980"));
+
+    // Subscribe to the topic(s), receiving the MessageResponses right as they are published
+    final Stream<MessageResponse> ntfyStream = (await ntfyClient.getMessageStream([topic]));
+
+    // listen to our stream for messages sent to the topic, instantaneous update
+    final StreamSubscription<MessageResponse> ntfyListen = ntfyStream.listen((event) async {
+      if (event.event == EventTypes.message) {
+        Map<String, dynamic> notification = jsonDecode(event.message ?? '{"userId": "", "title":"", "message":""}');
+
+        // check for message incoming here
+        if (notification['userId'].compareTo(AuthBoxHelper.getUserId()) == 0) {
+          String title = await CryptographyService.decryptRSA(notification['title']);
+
+          if (title.compareTo("New Message!") == 0) {
+            _onMessageChanged(await DBService.getAllMessages());
+          }
+        }
+      }
+    });
   }
 
   Future<void> getMessages() async {
@@ -50,7 +86,46 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
       widget.messages.add(mes);
     }
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 300), // Smooth animation
+          curve: Curves.easeOut,
+        );
+      }
+    });
+
     setState(() => _isLoadingMessages = false);
+  }
+
+  void _onMessageChanged(List<Map<String, dynamic>> messages) {
+    for (int i = 0; i < messages.length; i++) {
+      if (messages[i]['senderUserId'] == widget.userId) {
+        Map<String, dynamic> mes = {'content': "", "timestamp": "", "isSender": false};
+
+        mes["content"] = messages[i]['plainText'];
+
+        DateFormat format = DateFormat('yyyy-MM-ddTHH:mm:SS');
+        DateTime dateTime = format.parse(messages[i]["timestamp"]);
+        mes["timestamp"] = DateFormat('dd-MM-yyyy HH:mm').format(dateTime);
+
+        widget.messages.add(mes);
+
+        setState(() => _isLoadingMessages = false);
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_scrollController.hasClients) {
+            _scrollController.animateTo(
+              _scrollController.position.maxScrollExtent,
+              duration: Duration(milliseconds: 300), // Smooth animation
+              curve: Curves.easeOut,
+            );
+          }
+        });
+
+      }
+    }
   }
 
   @override
@@ -104,6 +179,8 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
             child: _isLoadingMessages
                 ? Center(child: CircularProgressIndicator())
                 : ListView.builder(
+                    controller: _scrollController, // Attach the controller
+
                     padding: const EdgeInsets.all(16),
                     itemCount: widget.messages.length,
                     itemBuilder: (context, index) {
@@ -144,6 +221,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
               children: [
                 Expanded(
                   child: TextField(
+                    controller: messageController,
                     decoration: InputDecoration(
                       hintText: 'Type something...',
                       filled: true,
@@ -164,7 +242,18 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                   ),
                   onPressed: () {
                     // Handle sending message logic
-                    print('Message sent!');
+                    if (messageController.text.trim() != "") {
+                      DBService.sendMessage(widget.userId, messageController.text);
+
+                      Map<String, dynamic> mes = {'content': "", "timestamp": "", "isSender": true};
+                      mes["content"] = messageController.text;
+                      mes["timestamp"] = DateFormat('dd-MM-yyyy HH:mm').format(DateTime.now());
+
+                      widget.messages.add(mes);
+
+                      messageController.clear();
+                      FocusScope.of(context).unfocus(); // Dismiss the keyboard
+                    }
                   },
                 ),
               ],

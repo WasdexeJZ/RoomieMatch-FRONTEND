@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:basic_utils/basic_utils.dart';
 
 import '../../services/auth_service.dart';
 import '../../services/db_service.dart';
+import '../../services/message_key_db_service.dart';
 import '../../services/cryptography_service.dart';
 import '../../services/main_init_service.dart';
 
@@ -49,6 +51,8 @@ class _AccountSetupPageState extends State<AccountSetupPage> {
 
         await CryptographyService.initRSA();
 
+        await _initMessageKey();
+
         _updateStat("self", "registration", "0");
         _updateSettings("notifPauseAll", "F");
 
@@ -79,6 +83,28 @@ class _AccountSetupPageState extends State<AccountSetupPage> {
       _showErrorDialog(response["error"] ?? "An unknown error occurred.");
     } else if (response["status"] == "UNKNOWN") {
       _showErrorDialog("An unknown error occurred.");
+    }
+  }
+
+  Future<void> _initMessageKey() async {
+    final response = await MessageKeyDBService().getLatestMessagesKey();
+
+    int keyId = -1;
+
+     if (response.isEmpty) {
+      keyId = 0;
+    }
+
+     if (keyId != -1) {
+      AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> keyPair = CryptographyService.generateRSAKeyPair();
+
+      // Convert RSAPrivateKey to PEM format and store to secureStorage
+      String privateKeyPEM = CryptoUtils.encodeRSAPrivateKeyToPem(keyPair.privateKey);
+      await MessageKeyDBService().insertMessageKey(keyId, privateKeyPEM);
+
+      // Send public key to backend to encrypt
+      String publicKeyPEM = CryptoUtils.encodeRSAPublicKeyToPem(keyPair.publicKey);
+      await CryptographyService.sendPublicMessageKey(publicKeyPEM, keyId);
     }
   }
 

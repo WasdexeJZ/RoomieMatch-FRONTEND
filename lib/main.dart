@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
+
 
 import 'services/main_init_service.dart';
 import 'services/hive_service.dart';
@@ -19,6 +19,14 @@ void main() async {
     MainInitService.initService();
     await MainInitService.startService();
   }
+  // runApp(
+  //   MultiProvider(
+  //     providers: [
+  //       ChangeNotifierProvider.value(value: messageProvider), // Use the global instance
+  //     ],
+  //     child: const MyApp(),
+  //   ),
+  // );
 
   runApp(const MyApp());
 }
