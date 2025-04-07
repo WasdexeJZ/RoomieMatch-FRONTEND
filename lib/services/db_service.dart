@@ -1,3 +1,5 @@
+import 'package:RoomieMatch/services/cryptography_service.dart';
+import 'package:RoomieMatch/services/message_key_db_service.dart';
 import 'package:intl/intl.dart';
 
 import './api_service.dart';
@@ -180,24 +182,29 @@ class DBService {
   }
 
   static Future<List<Map<String, dynamic>>> getAllMessages() async {
-    getAllChats();
+    await getAllChats();
 
     Map<String, dynamic> apiResponse = await apiService.get('messaging/get-messages/');
     String currUserId = AuthBoxHelper.getUserId();
     List<Map<String, dynamic>> result = [];
+    String plainText = "";
 
     if (apiResponse['status'] == "OK") {
       for (int i = 0; i < apiResponse['messages'].length; i++) {
-        //
-        //
-        // Do decryption later here
-        await MessageDBService().insertMessage(apiResponse['messages'][i]["senderUserId"], currUserId, apiResponse['messages'][i]['cipherText'], apiResponse['messages'][i]["timestamp"]);
+        final List<Map<String, dynamic>> keyResponse = await MessageKeyDBService().getMessagesPrivateKeyById(apiResponse['messages'][i]['keyId']);
+
+        if (keyResponse.isNotEmpty) {
+          plainText = await CryptographyService.decryptMessage(keyResponse[0]['private_key'], apiResponse['messages'][i]['cipherText']);
+        } else {
+          plainText = "An Error Occured";
+        }
+
+        await MessageDBService().insertMessage(apiResponse['messages'][i]["senderUserId"], currUserId, plainText, apiResponse['messages'][i]["timestamp"]);
         result.add({
           "senderUserId": apiResponse['messages'][i]["senderUserId"],
-          "plainText": apiResponse['messages'][i]['cipherText'],
+          "plainText": plainText,
           "timestamp": apiResponse['messages'][i]["timestamp"],
         });
-
       }
     }
 
@@ -205,37 +212,39 @@ class DBService {
   }
 
   static Future<void> sendMessage(String recipientUserId, String plainText) async {
-    String cipherText = plainText;
-    int keyId = 0;
+    Map<String, dynamic> apiResponse = await apiService.get('messaging/get-messaging-public-key/?user_id=$recipientUserId');
 
-//
-//
-// Do encryption later here
-// Get public key also
+    String timestamp = DateFormat('yyyy-MM-ddTHH:mm:ss').format(DateTime.now());
 
-    Map<String, dynamic> messageMap = {"recipientUserId": "", "cipherText": "", "keyId": -1};
+    if (apiResponse['status'] == "OK") {
+      String cipherText = await CryptographyService.encryptMessage(apiResponse['publicKey'], plainText);
 
-    messageMap['recipientUserId'] = recipientUserId;
-    messageMap['cipherText'] = cipherText;
-    messageMap['keyId'] = keyId;
+      Map<String, dynamic> messageMap = {"recipientUserId": "", "cipherText": "", "keyId": -1, "timestamp": ""};
 
-    String apiResponseStatus;
-    bool isIteration = false;
+      messageMap['recipientUserId'] = recipientUserId;
+      messageMap['cipherText'] = cipherText;
+      messageMap['keyId'] = apiResponse['keyId'];
+      messageMap['timestamp'] = timestamp;
 
-    do {
-      Map<String, dynamic> apiResponse = await apiService.post('messaging/send-messages/', messageMap);
+      String apiResponseStatus;
+      bool isIteration = false;
 
-      apiResponseStatus = apiResponse['status'];
+      do {
+        Map<String, dynamic> apiResponse = await apiService.post('messaging/send-messages/', messageMap);
 
-      if (isIteration) {
-        await Future.delayed(Duration(seconds: 30));
-      }
+        apiResponseStatus = apiResponse['status'];
 
-      isIteration = true;
-    } while (apiResponseStatus == 'ERROR' || apiResponseStatus == 'UNKNOWN');
+        if (isIteration) {
+          await Future.delayed(Duration(seconds: 30));
+        }
+
+        isIteration = true;
+      } while (apiResponseStatus == 'ERROR' || apiResponseStatus == 'UNKNOWN');
+    } else {
+      plainText = "An Error Occured";
+    }
 
     String currUserId = AuthBoxHelper.getUserId();
-    String timestamp = DateFormat('yyyy-MM-ddTHH:mm:SS').format(DateTime.now()).toString();
 
     await MessageDBService().insertMessage(currUserId, recipientUserId, plainText, timestamp);
   }

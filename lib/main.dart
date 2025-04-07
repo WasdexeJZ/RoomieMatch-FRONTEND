@@ -19,14 +19,6 @@ void main() async {
     MainInitService.initService();
     await MainInitService.startService();
   }
-  // runApp(
-  //   MultiProvider(
-  //     providers: [
-  //       ChangeNotifierProvider.value(value: messageProvider), // Use the global instance
-  //     ],
-  //     child: const MyApp(),
-  //   ),
-  // );
 
   runApp(const MyApp());
 }

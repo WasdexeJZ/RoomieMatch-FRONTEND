@@ -37,7 +37,6 @@ class _ChatPageState extends State<ChatPage> {
 
     chats = await ChatDBService().getChatsByUserId(AuthBoxHelper.getUserId());
 
-    await DBService.getAllMessages();
 
     setState(() => _isLoadingChats = false);
   }

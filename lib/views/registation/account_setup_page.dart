@@ -91,11 +91,11 @@ class _AccountSetupPageState extends State<AccountSetupPage> {
 
     int keyId = -1;
 
-     if (response.isEmpty) {
+    if (response.isEmpty) {
       keyId = 0;
     }
 
-     if (keyId != -1) {
+    if (keyId != -1) {
       AsymmetricKeyPair<RSAPublicKey, RSAPrivateKey> keyPair = CryptographyService.generateRSAKeyPair();
 
       // Convert RSAPrivateKey to PEM format and store to secureStorage

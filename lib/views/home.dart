@@ -27,6 +27,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
+    // CryptographyService.test();
+
     initMessagesKey();
   }
 

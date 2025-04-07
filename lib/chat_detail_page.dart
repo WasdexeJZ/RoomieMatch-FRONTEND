@@ -39,6 +39,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
 
     getMessages();
     createConnection();
+
   }
 
   Future<void> createConnection() async {
@@ -66,6 +67,8 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   }
 
   Future<void> getMessages() async {
+    await DBService.getAllMessages();
+
     final List<Map<String, dynamic>> temp = await MessageDBService().getMessagesByUserId(AuthBoxHelper.getUserId(), widget.userId);
 
     DateFormat format = DateFormat('yyyy-MM-ddTHH:mm:SS');
@@ -253,6 +256,15 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
 
                       messageController.clear();
                       FocusScope.of(context).unfocus(); // Dismiss the keyboard
+                         WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (_scrollController.hasClients) {
+                          _scrollController.animateTo(
+                            _scrollController.position.maxScrollExtent,
+                            duration: Duration(milliseconds: 300), // Smooth animation
+                            curve: Curves.easeOut,
+                          );
+                        }
+                      });
                     }
                   },
                 ),

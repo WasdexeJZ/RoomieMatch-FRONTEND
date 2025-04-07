@@ -57,8 +57,10 @@ class MessageKeyDBService {
   }
 
   // Query messages with a filter (e.g., by content)
-  Future<List<Map<String, dynamic>>> getMessagesPrivateKeyById(String userId, int keyId) async {
+  Future<List<Map<String, dynamic>>> getMessagesPrivateKeyById(int keyId) async {
     Database db = await database;
+    String userId = AuthBoxHelper.getUserId();
+
     return await db.query(
       'messagesKey',
       where: 'user_id = ? AND key_id = ?',
