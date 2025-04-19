@@ -44,7 +44,8 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
 
   Future<void> createConnection() async {
     final String topic = 'notifications';
-    final NtfyClient ntfyClient = NtfyClient(basePath: Uri.parse("http://localhost:9980"));
+    // final NtfyClient ntfyClient = NtfyClient(basePath: Uri.parse("http://localhost:9980"));
+    final NtfyClient ntfyClient = NtfyClient(basePath: Uri.parse("http://192.168.101.168:9980"));
 
     // Subscribe to the topic(s), receiving the MessageResponses right as they are published
     final Stream<MessageResponse> ntfyStream = (await ntfyClient.getMessageStream([topic]));
