@@ -73,10 +73,10 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
     _displayData.clear();
 
     for (int i = 0; i < _photoData.length; i++) {
-      _displayData.add(_photoData[i]);
+      if (_photoData[i]['matched'] == 0) {
+        _displayData.add(_photoData[i]);
+      }
     }
-
-    print(_displayData.length);
 
     _selectedDistance = distance;
     _selectedGenderIndex = genderIndex;
@@ -86,7 +86,6 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
     _maxBudget = maxBudget.round();
 
     for (int i = _displayData.length - 1; i >= 0; i--) {
-      print(i);
       if (_selectedDistance != 99) {
         if (_selectedDistance < int.parse(_displayData[i]["distance"])) {
           _displayData.removeAt(i);
@@ -118,16 +117,12 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
 
         continue;
       }
+    }
 
-   }
-
-   setState(() {
-        _displayData.add({});
-        _displayData.removeAt(_displayData.length - 1);
-      });
-    
-      print(_displayData);
-      print(_displayData.length);
+    setState(() {
+      _displayData.add({});
+      _displayData.removeAt(_displayData.length - 1);
+    });
 
     Navigator.pop(context);
   }
@@ -142,15 +137,38 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
       // Get all matches
       for (int i = 0; i < response['matches'].length; i++) {
         Map<String, dynamic> match = response['matches'][i];
-        _photoData.add(
-            {'user_id': match['user_id'], 'image': 'assets/profile/9.png', 'name': match['first_name'] ?? "", 'age': match['age'].toString(), "gender": match['gender'] ?? "", "distance": match['distance'].toString(), "budget": match['budget'].toString(), "match_score": match['match_score'] ?? ""});
-        _displayData.add(
-            {'user_id': match['user_id'], 'image': 'assets/profile/9.png', 'name': match['first_name'] ?? "", 'age': match['age'].toString(), "gender": match['gender'] ?? "", "distance": match['distance'].toString(), "budget": match['budget'].toString(), "match_score": match['match_score'] ?? ""});
+        _photoData.add({
+          'user_id': match['user_id'],
+          'image': 'assets/profile/9.png',
+          'name': match['first_name'] ?? "",
+          'age': match['age'].toString(),
+          "gender": match['gender'] ?? "",
+          "distance": match['distance'].toString(),
+          "budget": match['budget'].toString(),
+          "match_score": match['match_score'] ?? "",
+          "matched": 0
+        });
+        _displayData.add({
+          'user_id': match['user_id'],
+          'image': 'assets/profile/9.png',
+          'name': match['first_name'] ?? "",
+          'age': match['age'].toString(),
+          "gender": match['gender'] ?? "",
+          "distance": match['distance'].toString(),
+          "budget": match['budget'].toString(),
+          "match_score": match['match_score'] ?? "",
+          "matched": 0
+        });
       }
 
       // Sort matches by match_score, higher first, descending order
       _photoData.sort((a, b) => b['match_score'].compareTo(a['match_score']));
       _displayData.sort((a, b) => b['match_score'].compareTo(a['match_score']));
+
+      for (int i = 0; i < _photoData.length; i++) {
+        _photoData[i]['master_index'] = i;
+        _displayData[i]['master_index'] = i;
+      }
 
       for (int i = _displayData.length - 1; i >= 0; i--) {
         if (_selectedDistance != 99) {
@@ -192,9 +210,6 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
           _displayData.removeAt(_displayData.length - 1);
         });
       }
-
-      print("init");
-      print(_displayData.length);
     }
 
     setState(() => _isLoading = false);
@@ -310,9 +325,11 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
 
     // Update database
     if (toRight) {
-      _updateMatch(_photoData[_currentPhotoIndex]['user_id'], 1);
+      _updateMatch(_photoData[_displayData[_currentPhotoIndex]['master_index']]['user_id'], 1);
+      _photoData[_displayData[_currentPhotoIndex]['master_index']]['matched'] = 1;
     } else {
-      _updateMatch(_photoData[_currentPhotoIndex]['user_id'], 0);
+      _updateMatch(_photoData[_displayData[_currentPhotoIndex]['master_index']]['user_id'], 0);
+      _photoData[_displayData[_currentPhotoIndex]['master_index']]['matched'] = 1;
     }
 
     _swipeController.forward();
