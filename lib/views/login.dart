@@ -46,6 +46,7 @@ class _LogInPageState extends State<LogInPage> {
       Map<String, String> response = await AuthService.login(username, password);
 
       if (response["status"] == "OK") {
+        await Future.delayed(Duration(milliseconds: 300));
         if (await _getRegistrationStat()) {
           await MainInitService.requestPermissions();
           MainInitService.initService();

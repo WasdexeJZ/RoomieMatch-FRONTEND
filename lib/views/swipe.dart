@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../services/db_service.dart';
@@ -18,11 +21,20 @@ class SwipePage extends StatefulWidget {
 
 class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMixin {
   List<Map<String, dynamic>> _photoData = [];
+  List<Map<String, dynamic>> _displayData = [];
+
+  int _selectedDistance = 99;
+  int _selectedGenderIndex = 2;
+  int _minAge = 18;
+  int _maxAge = 60;
+  int _minBudget = 250;
+  int _maxBudget = 3000;
 
   late AnimationController _swipeController;
   late Animation<Offset> _swipeAnimation;
 
   int _currentPhotoIndex = 0;
+
   int _selectedIndex = 2; // Default to "Swipe" tab
   bool _isLoading = true;
 
@@ -56,6 +68,70 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
     });
   }
 
+  void filterMatches(int distance, int genderIndex, double minAge, double maxAge, double minBudget, double maxBudget) {
+    _currentPhotoIndex = 0;
+    _displayData.clear();
+
+    for (int i = 0; i < _photoData.length; i++) {
+      _displayData.add(_photoData[i]);
+    }
+
+    print(_displayData.length);
+
+    _selectedDistance = distance;
+    _selectedGenderIndex = genderIndex;
+    _minAge = minAge.round();
+    _maxAge = maxAge.round();
+    _minBudget = minBudget.round();
+    _maxBudget = maxBudget.round();
+
+    for (int i = _displayData.length - 1; i >= 0; i--) {
+      print(i);
+      if (_selectedDistance != 99) {
+        if (_selectedDistance < int.parse(_displayData[i]["distance"])) {
+          _displayData.removeAt(i);
+
+          continue;
+        }
+      }
+
+      if (_selectedGenderIndex != 2) {
+        if (_selectedGenderIndex == 0 && _displayData[i]["gender"] == "F") {
+          _displayData.removeAt(i);
+
+          continue;
+        } else if (_selectedGenderIndex == 1 && _displayData[i]["gender"] == "M") {
+          _displayData.removeAt(i);
+
+          continue;
+        }
+      }
+
+      if (int.parse(_displayData[i]["age"]) < _minAge || _maxAge < int.parse(_displayData[i]["age"])) {
+        _displayData.removeAt(i);
+
+        continue;
+      }
+
+      if (int.parse(_displayData[i]["budget"]) < _minBudget || _maxBudget < int.parse(_displayData[i]["budget"])) {
+        _displayData.removeAt(i);
+
+        continue;
+      }
+
+   }
+
+   setState(() {
+        _displayData.add({});
+        _displayData.removeAt(_displayData.length - 1);
+      });
+    
+      print(_displayData);
+      print(_displayData.length);
+
+    Navigator.pop(context);
+  }
+
   Future<void> getMatches() async {
     Map<String, dynamic> response = await DBService.getAllMatches();
 
@@ -68,10 +144,57 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
         Map<String, dynamic> match = response['matches'][i];
         _photoData.add(
             {'user_id': match['user_id'], 'image': 'assets/profile/9.png', 'name': match['first_name'] ?? "", 'age': match['age'].toString(), "gender": match['gender'] ?? "", "distance": match['distance'].toString(), "budget": match['budget'].toString(), "match_score": match['match_score'] ?? ""});
+        _displayData.add(
+            {'user_id': match['user_id'], 'image': 'assets/profile/9.png', 'name': match['first_name'] ?? "", 'age': match['age'].toString(), "gender": match['gender'] ?? "", "distance": match['distance'].toString(), "budget": match['budget'].toString(), "match_score": match['match_score'] ?? ""});
       }
 
       // Sort matches by match_score, higher first, descending order
       _photoData.sort((a, b) => b['match_score'].compareTo(a['match_score']));
+      _displayData.sort((a, b) => b['match_score'].compareTo(a['match_score']));
+
+      for (int i = _displayData.length - 1; i >= 0; i--) {
+        if (_selectedDistance != 99) {
+          if (_selectedDistance < int.parse(_displayData[i]["distance"])) {
+            _displayData.removeAt(i);
+
+            continue;
+          }
+        }
+
+        if (_selectedGenderIndex != 2) {
+          if (_selectedGenderIndex == 0 && _displayData[i]["gender"] == "F") {
+            _displayData.removeAt(i);
+
+            continue;
+          }
+
+          if (_selectedGenderIndex == 1 && _displayData[i]["gender"] == "M") {
+            _displayData.removeAt(i);
+
+            continue;
+          }
+        }
+
+        if (int.parse(_displayData[i]["age"]) < _minAge || _maxAge < int.parse(_displayData[i]["age"])) {
+          _displayData.removeAt(i);
+
+          continue;
+        }
+
+        if (int.parse(_displayData[i]["budget"]) < _minBudget || _maxBudget < int.parse(_displayData[i]["budget"])) {
+          _displayData.removeAt(i);
+
+          continue;
+        }
+
+        setState(() {
+          _displayData.add({});
+          _displayData.removeAt(_displayData.length - 1);
+        });
+      }
+
+      print("init");
+      print(_displayData.length);
     }
 
     setState(() => _isLoading = false);
@@ -159,15 +282,13 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
               elevation: 8,
               color: Colors.white,
               child: FilterWidget(
-                initialDistance: "0 km-10 km",
-                initialGenderIndex: 0,
-                initialMinAge: 22,
-                initialMaxAge: 34,
-                initialMinBudget: 550,
-                initialMaxBudget: 1200,
-                onApply: (distance, genderIndex, minAge, maxAge, minBudget, maxBudget) {
-                  Navigator.pop(context);
-                },
+                initialDistance: _selectedDistance,
+                initialGenderIndex: _selectedGenderIndex,
+                initialMinAge: _minAge,
+                initialMaxAge: _maxAge,
+                initialMinBudget: _minBudget,
+                initialMaxBudget: _maxBudget,
+                onApply: filterMatches,
               ),
             ),
           ),
@@ -252,7 +373,7 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : Stack(
-              children: _currentPhotoIndex >= _photoData.length
+              children: _currentPhotoIndex >= _displayData.length
                   ? [Center(child: CircularProgressIndicator())]
                   : [
                       Center(
@@ -285,7 +406,7 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(16),
                                     child: Image.asset(
-                                      _photoData[_currentPhotoIndex]['image']!,
+                                      _displayData[_currentPhotoIndex]['image']!,
                                       width: double.infinity,
                                       height: MediaQuery.of(context).size.height * 0.5,
                                       fit: BoxFit.cover,
@@ -298,7 +419,7 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          '${_photoData[_currentPhotoIndex]['name']}, ${_photoData[_currentPhotoIndex]['age']}',
+                                          '${_displayData[_currentPhotoIndex]['name']}, ${_displayData[_currentPhotoIndex]['age']}',
                                           style: const TextStyle(
                                             fontSize: 35,
                                             fontWeight: FontWeight.bold,
@@ -313,7 +434,7 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
                                           ),
                                         ),
                                         Text(
-                                          '${_photoData[_currentPhotoIndex]['distance']}',
+                                          '${_displayData[_currentPhotoIndex]['distance']} km',
                                           style: const TextStyle(
                                             fontSize: 24,
                                             color: Colors.white,
@@ -378,10 +499,10 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => InfoPage(
-                                        name: _photoData[_currentPhotoIndex]['name']!,
-                                        age: _photoData[_currentPhotoIndex]['age']!,
-                                        imagePath: _photoData[_currentPhotoIndex]['image']!,
-                                        distance: _photoData[_currentPhotoIndex]['distance']!,
+                                        name: _displayData[_currentPhotoIndex]['name']!,
+                                        age: _displayData[_currentPhotoIndex]['age']!,
+                                        imagePath: _displayData[_currentPhotoIndex]['image']!,
+                                        distance: _displayData[_currentPhotoIndex]['distance']!,
                                         location: 'Sample Location',
                                         about: 'Sample About Information',
                                         preferences: ['Preference 1', 'Preference 2'],

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class FilterWidget extends StatefulWidget {
-  final String initialDistance;
+  final int initialDistance;
   final int initialGenderIndex;
-  final double initialMinAge;
-  final double initialMaxAge;
-  final double initialMinBudget;
-  final double initialMaxBudget;
-  final void Function(String, int, double, double, double, double)? onApply;
+  final int initialMinAge;
+  final int initialMaxAge;
+  final int initialMinBudget;
+  final int initialMaxBudget;
+  final void Function(int, int, double, double, double, double)? onApply;
 
   const FilterWidget({
     Key? key,
@@ -25,22 +25,25 @@ class FilterWidget extends StatefulWidget {
 }
 
 class _FilterWidgetState extends State<FilterWidget> {
-  late String _selectedDistance;
+  late int _selectedDistance;
   late int _selectedGenderIndex;
   late double _minAge;
   late double _maxAge;
   late double _minBudget;
   late double _maxBudget;
 
+  final Map<int, String> _distanceOptions = {99: "No Limit", 10: "10 km", 20: "20 km", 30: "30 km", 40: "40 km", 50: "50 km"};
+  final Map<String, int> _distanceOptionsMapper = {"No Limit": 99,"10 km": 10, "20 km": 20, "30 km": 30, "40 km": 40, "50 km": 50};
+
   @override
   void initState() {
     super.initState();
     _selectedDistance = widget.initialDistance;
     _selectedGenderIndex = widget.initialGenderIndex;
-    _minAge = widget.initialMinAge;
-    _maxAge = widget.initialMaxAge;
-    _minBudget = widget.initialMinBudget;
-    _maxBudget = widget.initialMaxBudget;
+    _minAge = widget.initialMinAge.toDouble();
+    _maxAge = widget.initialMaxAge.toDouble();
+    _minBudget = widget.initialMinBudget.toDouble();
+    _maxBudget = widget.initialMaxBudget.toDouble();
   }
 
   @override
@@ -53,15 +56,9 @@ class _FilterWidgetState extends State<FilterWidget> {
           const Text("Distance", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           DropdownButton<String>(
-            value: _selectedDistance,
+            value: _distanceOptions[_selectedDistance],
             isExpanded: true,
-            items: [
-              "0 km-10 km",
-              "10 km-20 km",
-              "20 km-30 km",
-              "30 km-40 km",
-              "40 km-50 km"
-            ].map((String option) {
+            items: _distanceOptions.values.toList().map((String option) {
               return DropdownMenuItem<String>(
                 value: option,
                 child: Text(option),
@@ -69,7 +66,7 @@ class _FilterWidgetState extends State<FilterWidget> {
             }).toList(),
             onChanged: (String? newValue) {
               setState(() {
-                _selectedDistance = newValue!;
+                _selectedDistance = _distanceOptionsMapper[newValue] ?? 99;
               });
             },
           ),
@@ -148,9 +145,9 @@ class _FilterWidgetState extends State<FilterWidget> {
           ),
           RangeSlider(
             values: RangeValues(_minBudget, _maxBudget),
-            min: 500,
-            max: 5000,
-            divisions: 90,
+            min: 250,
+            max: 3000,
+            divisions: 275,
             labels: RangeLabels("${_minBudget.round()}", "${_maxBudget.round()}"),
             activeColor: const Color(0xFF9497B8),
             inactiveColor: const Color(0xFF9497B8).withOpacity(0.3),

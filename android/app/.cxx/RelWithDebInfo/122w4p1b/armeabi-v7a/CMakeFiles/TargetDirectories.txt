@@ -1,0 +1,2 @@
+C:/Users/wasde/Documents/SEGP (short)/frontend/android/app/.cxx/RelWithDebInfo/122w4p1b/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/wasde/Documents/SEGP (short)/frontend/android/app/.cxx/RelWithDebInfo/122w4p1b/armeabi-v7a/CMakeFiles/rebuild_cache.dir

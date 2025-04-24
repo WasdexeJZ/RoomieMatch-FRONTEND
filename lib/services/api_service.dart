@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'package:supertokens_flutter/http.dart' as http;
 
 class ApiService {
-  // final String baseUrl = 'http://localhost:8000/api/v1'; // Development
-  final String baseUrl = 'http://192.168.101.168:8000/api/v1'; // Deployment
+  final String baseUrl = 'http://localhost:8000/api/v1'; // Development
+  // final String baseUrl = 'http://127.0.0.1:8000/api/v1'; // Development
+  // final String baseUrl = 'http://192.168.202.168:8000/api/v1'; // Deployment
 
   Future<Map<String, dynamic>> get(String endpoint) async {
     try {
