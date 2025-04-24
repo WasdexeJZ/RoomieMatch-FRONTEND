@@ -112,7 +112,7 @@ class _BudgetPreferencePageState extends State<BudgetPreferencePage> {
                   ),
                 ),
                 Text(
-                  "Min: \$100   Max: \$5000",
+                  "Min: \$250   Max: \$3000",
                   style: TextStyle(
                     fontSize: 12,
                     color: Colors.grey[600],
@@ -126,13 +126,13 @@ class _BudgetPreferencePageState extends State<BudgetPreferencePage> {
               ),
               child: Slider(
                 value: _currentBudget,
-                min: 100,
-                max: 5000,
+                min: 250,
+                max: 3000,
                 label: "\$${_currentBudget.toInt()}",
                 activeColor: Colors.teal,
                 onChanged: (value) {
                   setState(() {
-                    _currentBudget = (value / 100).round() * 100;
+                    _currentBudget = (value / 50).round() * 50;
                   });
                 },
               ),

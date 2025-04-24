@@ -134,12 +134,42 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
     } else if (response["status"] == "UNKNOWN") {
       _showErrorDialog("An unknown error occurred.");
     } else if (response["status"] == "OK") {
+      List<String> _malePhoto = [
+        'assets/profile/2.jpg',
+        'assets/profile/4.png',
+        'assets/profile/7.jpg',
+        'assets/profile/8.png',
+        'assets/profile/10.png'
+      ];
+      List<String> _femalePhoto = [
+        'assets/profile/1.jpg',
+        'assets/profile/3.png',
+        'assets/profile/4.png',
+        'assets/profile/5.png',
+        'assets/profile/6.png',
+        'assets/profile/9.png',
+        'assets/profile/11.jpeg'
+      ];
+
+      int maleCounter = 0;
+      int femaleCounter = 0;
+
       // Get all matches
       for (int i = 0; i < response['matches'].length; i++) {
         Map<String, dynamic> match = response['matches'][i];
+
+        String _photoString = "";
+        if (match['gender'] == "M") {
+          _photoString = _malePhoto[maleCounter];
+          maleCounter = (maleCounter + 1) % _malePhoto.length;
+        } else if (match['gender'] == "F") {
+          _photoString = _femalePhoto[femaleCounter];
+          femaleCounter = (femaleCounter + 1) % _femalePhoto.length;
+        }
+
         _photoData.add({
           'user_id': match['user_id'],
-          'image': 'assets/profile/9.png',
+          'image': _photoString,
           'name': match['first_name'] ?? "",
           'age': match['age'].toString(),
           "gender": match['gender'] ?? "",
@@ -150,7 +180,7 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
         });
         _displayData.add({
           'user_id': match['user_id'],
-          'image': 'assets/profile/9.png',
+          'image': _photoString,
           'name': match['first_name'] ?? "",
           'age': match['age'].toString(),
           "gender": match['gender'] ?? "",
@@ -211,6 +241,8 @@ class _SwipePageState extends State<SwipePage> with SingleTickerProviderStateMix
         });
       }
     }
+
+    print(_displayData);
 
     setState(() => _isLoading = false);
   }
