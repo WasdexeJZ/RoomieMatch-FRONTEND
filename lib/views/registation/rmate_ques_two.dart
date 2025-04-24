@@ -1,56 +1,32 @@
 import 'package:flutter/material.dart';
 
-import 'your_interests_page.dart';
-
-import '../../helpers/enum_helper.dart';
+import 'rmate_ques_three.dart';
 
 import '../../services/db_service.dart';
 
-class MoreAboutYouPage extends StatefulWidget {
+class RMateQuesTwo extends StatefulWidget {
   @override
-  _MoreAboutYouPageState createState() => _MoreAboutYouPageState();
+  _RMateQuesTwoState createState() => _RMateQuesTwoState();
 }
 
-class _MoreAboutYouPageState extends State<MoreAboutYouPage> {
-  String? selectedPersonality;
-  String? selectedGuests;
-  String? selectedNoise;
-  String? selectedCleanliness;
+class _RMateQuesTwoState extends State<RMateQuesTwo> {
+  String? selectedTemp;
+  String? selectedDrinking;
+  String? selectedCook;
+  String? selectedGroceries;
   String? selectedSmoke;
 
-  // Convert string to enum
-  String stringToEnum<T extends Enum>(List<T> enumValues, String name) {
-    return enumValues
-        .firstWhere(
-          (enumInstance) => enumInstance.name == name,
-        )
-        .index
-        .toString();
-  }
-
   void _validateAndNavigate() async {
-    if (selectedPersonality == null || selectedGuests == null || selectedNoise == null || selectedCleanliness == null || selectedSmoke == null) {
+    if (selectedTemp == null || selectedDrinking == null || selectedCook == null || selectedGroceries == null || selectedSmoke == null) {
       _showErrorDialog('Please answer all questions before proceeding.');
     } else {
-      _updateStat("self", "registration", "13");
-
-      await _updatePreference("personality", stringToEnum(Personality.values, selectedPersonality ?? "Introverted"));
-      await _updatePreference("guestsOver", stringToEnum(GuestsOver.values, selectedGuests ?? "Often"));
-      await _updatePreference("loudNoise", stringToEnum(LoudNoise.values, selectedNoise ?? "Yes"));
-      await _updatePreference("cleanliness", stringToEnum(Cleanliness.values, selectedCleanliness?.replaceAll(" ", "") ?? "VeryTidy"));
-      await _updatePreference("smoke", stringToEnum(Smoke.values, selectedSmoke ?? "Yes"));
+      _updateStat("self", "registration", "11");
 
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => YourInterestPage()),
+        MaterialPageRoute(builder: (context) => RMateQuesThree()),
       );
     }
-  }
-
-  Future<void> _updatePreference(String field, String value) async {
-    Map<String, String> response = await DBService.updatePreferenceField(field, value);
-
-    _checkError(response);
   }
 
   void _updateStat(String userId, String key, String value) async {
@@ -138,68 +114,72 @@ class _MoreAboutYouPageState extends State<MoreAboutYouPage> {
                     "Sell yourself to us. You know you want to.",
                     style: TextStyle(fontSize: 14, color: Colors.grey),
                   ),
-                  SizedBox(height: 16),
+                  SizedBox(height: 30),
 
-                  // Personality Question
-                  Text('Which describes you best?', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  // Temperature Question
+                  Text('What’s your ideal room temp?', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   SizedBox(height: 12),
                   Row(children: [
-                    _optionButton('Introverted', selectedPersonality, (value) => selectedPersonality = value),
+                    _optionButton('Winter cold', selectedTemp, (value) => selectedTemp = value),
                     SizedBox(width: 8),
-                    _optionButton('Extroverted', selectedPersonality, (value) => selectedPersonality = value),
+                    _optionButton('Moderate AC', selectedTemp, (value) => selectedTemp = value),
                     SizedBox(width: 8),
-                    _optionButton('Ambivert', selectedPersonality, (value) => selectedPersonality = value),
+                    _optionButton('Warm fan', selectedTemp, (value) => selectedTemp = value),
                   ]),
 
-                  SizedBox(height: 16),
+                  SizedBox(height: 30),
 
-                  // Guests Question
-                  Text('How often do you have guests over?', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  // Drinking Question
+                  Text('What’s your stance on drinking alcohol?', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   SizedBox(height: 12),
                   Row(children: [
-                    _optionButton('Often', selectedGuests, (value) => selectedGuests = value),
+                    _optionButton('Never', selectedDrinking, (value) => selectedDrinking = value),
                     SizedBox(width: 8),
-                    _optionButton('Sometimes', selectedGuests, (value) => selectedGuests = value),
+                    _optionButton('Socially', selectedDrinking, (value) => selectedDrinking = value),
                     SizedBox(width: 8),
-                    _optionButton('Never', selectedGuests, (value) => selectedGuests = value),
+                    _optionButton('Regularly', selectedDrinking, (value) => selectedDrinking = value),
                   ]),
 
-                  SizedBox(height: 16),
+                  SizedBox(height: 30),
 
-                  // Noise Preference
-                  Text('Are you comfortable with loud noises?', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  // Cook Preference
+                  Text('How often do you cook at home?', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   SizedBox(height: 12),
                   Row(children: [
-                    _optionButton('Yes', selectedNoise, (value) => selectedNoise = value),
+                    _optionButton('Every day', selectedCook, (value) => selectedCook = value),
                     SizedBox(width: 8),
-                    _optionButton('No', selectedNoise, (value) => selectedNoise = value),
+                    _optionButton('Ocassionally', selectedCook, (value) => selectedCook = value),
+                    SizedBox(width: 8),
+                    _optionButton('Never', selectedCook, (value) => selectedCook = value),
                   ]),
 
-                  SizedBox(height: 16),
+                  SizedBox(height: 30),
 
-                  // Cleanliness Preference
-                  Text('How would you describe your approach to keeping shared spaces clean?', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  // Groceries Preference
+                  Text('Do you prefer shared groceries?', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   SizedBox(height: 12),
                   Row(children: [
-                    _optionButton('Very tidy', selectedCleanliness, (value) => selectedCleanliness = value),
+                    _optionButton('Shared basics', selectedGroceries, (value) => selectedGroceries = value),
                     SizedBox(width: 8),
-                    _optionButton('Moderate', selectedCleanliness, (value) => selectedCleanliness = value),
+                    _optionButton('Sperate', selectedGroceries, (value) => selectedGroceries = value),
                     SizedBox(width: 8),
-                    _optionButton('Casual', selectedCleanliness, (value) => selectedCleanliness = value),
+                    _optionButton('Depends', selectedGroceries, (value) => selectedGroceries = value),
                   ]),
 
-                  SizedBox(height: 16),
+                  SizedBox(height: 30),
 
-                  // Smoking Preference
-                  Text('Do you smoke?', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  // Dishwashing Preference
+                  Text('How soon do you wash dishes?', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   SizedBox(height: 12),
                   Row(children: [
-                    _optionButton('Yes', selectedSmoke, (value) => selectedSmoke = value),
+                    _optionButton('Immediately', selectedSmoke, (value) => selectedSmoke = value),
                     SizedBox(width: 8),
-                    _optionButton('No', selectedSmoke, (value) => selectedSmoke = value),
+                    _optionButton('Same day', selectedSmoke, (value) => selectedSmoke = value),
+                    SizedBox(width: 8),
+                    _optionButton('Next day', selectedSmoke, (value) => selectedSmoke = value),
                   ]),
 
-                  SizedBox(height: 16),
+                  SizedBox(height: 30),
                 ],
               ),
             ),

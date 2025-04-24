@@ -16,6 +16,9 @@ import 'registation/location_page.dart';
 import 'registation/distance_preference_page.dart';
 import 'registation/budget_preference_page.dart';
 import 'registation/about_you_page.dart';
+import 'registation/rmate_ques_one.dart';
+import 'registation/rmate_ques_two.dart';
+import 'registation/rmate_ques_three.dart';
 import 'registation/more_about_you.dart';
 import 'registation/your_interests_page.dart';
 
@@ -86,7 +89,7 @@ class _WelcomePageState extends State<WelcomePage> {
     } else if (response["status"] == "UNKNOWN") {
       _showErrorDialog("An unknown error occurred.", [false]);
     } else if (response["status"] == "OK") {
-      final List<dynamic> pageList = [VerificationCodePage(), FirstNamePage(), LastNamePage(), BirthdayPage(), GenderSelectionPage(), LocationPage(), DistancePreferencePage(), BudgetPreferencePage(), AboutYouPage(), MoreAboutYouPage(), YourInterestPage()];
+      final List<dynamic> pageList = [VerificationCodePage(), FirstNamePage(), LastNamePage(), BirthdayPage(), GenderSelectionPage(), LocationPage(), DistancePreferencePage(), BudgetPreferencePage(), AboutYouPage(), RMateQuesOne(), RMateQuesTwo(), RMateQuesThree(), MoreAboutYouPage(), YourInterestPage()];
 
       Navigator.push(
         context,

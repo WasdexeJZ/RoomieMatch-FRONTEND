@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'more_about_you.dart';
+import 'rmate_ques_one.dart';
 
 import '../../services/db_service.dart';
 
@@ -30,7 +30,7 @@ class _AboutYouPageState extends State<AboutYouPage> {
 
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => MoreAboutYouPage()),
+        MaterialPageRoute(builder: (context) => RMateQuesOne()),
       );
     }
   }
