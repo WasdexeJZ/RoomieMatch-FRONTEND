@@ -14,12 +14,14 @@ class ChatDBService {
 
   ChatDBService._internal();
 
+  /// Getter to lazily initialize and return the database instance.
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDatabase();
     return _database!;
   }
 
+  /// Initializes the SQLite database file and opens it.
   Future<Database> _initDatabase() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, 'chat.db');
@@ -30,6 +32,7 @@ class ChatDBService {
     );
   }
 
+  /// Creates the 'chat' table when the database is first created.
   Future<void> _onCreate(Database db, int version) async {
     await db.execute('''
       CREATE TABLE chat(
@@ -42,7 +45,7 @@ class ChatDBService {
     ''');
   }
 
-  // Insert chat
+  /// Inserts a new chat relationship into the database.
   Future<int> insertChat(String userId, String chatUserid, String firstName, int latestTime) async {
     Database db = await database;
     return await db.insert(
@@ -52,7 +55,7 @@ class ChatDBService {
     );
   }
 
-  // Query messages with a filter (e.g., by content)
+  /// Retrieves all chats associated with a specific user ID, ordered by latest time.
   Future<List<Map<String, dynamic>>> getChatsByUserId(String userId) async {
     Database db = await database;
     return await db.query(

@@ -16,12 +16,14 @@ class MessageKeyDBService {
 
   MessageKeyDBService._internal();
 
+  // Returns the database instance, initializing it if needed
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDatabase();
     return _database!;
   }
 
+  // Initializes the SQLite database
   Future<Database> _initDatabase() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, 'messagesKey.db');
@@ -32,6 +34,7 @@ class MessageKeyDBService {
     );
   }
 
+  // Creates the table when the database is first created
   Future<void> _onCreate(Database db, int version) async {
     await db.execute('''
       CREATE TABLE messagesKey(
@@ -44,7 +47,7 @@ class MessageKeyDBService {
     ''');
   }
 
-  // Insert a new key pair
+  // Inserts a new message key pair into the database
   Future<int> insertMessageKey(int keyId, String privateKey) async {
     Database db = await database;
     String userId = AuthBoxHelper.getUserId();
@@ -56,7 +59,7 @@ class MessageKeyDBService {
     );
   }
 
-  // Query messages with a filter (e.g., by content)
+  // Retrieves a specific private key by key ID and user ID
   Future<List<Map<String, dynamic>>> getMessagesPrivateKeyById(int keyId) async {
     Database db = await database;
     String userId = AuthBoxHelper.getUserId();
@@ -69,6 +72,7 @@ class MessageKeyDBService {
     );
   }
 
+  // Retrieves the latest stored message keys for the current user
   Future<List<Map<String, dynamic>>> getLatestMessagesKey() async {
     Database db = await database;
     String userId = AuthBoxHelper.getUserId();
@@ -81,7 +85,7 @@ class MessageKeyDBService {
     );
   }
 
-  // Delete a message by ID
+  // Deletes a message key entry based on the user ID
   Future<int> deleteMessage(int id) async {
     Database db = await database;
     return await db.delete(

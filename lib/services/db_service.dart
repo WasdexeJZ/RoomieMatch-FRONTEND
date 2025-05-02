@@ -13,6 +13,7 @@ class DBService {
 
   DBService();
 
+  /// Fetches all user settings from the backend API.
   static Future<Map<String, dynamic>> getAllSettings() async {
     Map<String, dynamic> apiResponse = await apiService.get('db/get-all-settings/');
 
@@ -25,6 +26,7 @@ class DBService {
     }
   }
 
+  /// Updates a specific setting field in the backend with a new value.
   static Future<Map<String, String>> updateSettingsField(String field, String value) async {
     Map<String, dynamic> settingsMap = {"field": "", "value": ""};
 
@@ -42,6 +44,7 @@ class DBService {
     }
   }
 
+  /// Retrieves all profile information for the current user from the backend.
   static Future<Map<String, dynamic>> getAllProfile() async {
     Map<String, dynamic> apiResponse = await apiService.get('db/get-all-profile/');
 
@@ -54,6 +57,7 @@ class DBService {
     }
   }
 
+  /// Updates a specific profile field with a new value via the backend.
   static Future<Map<String, String>> updateProfileField(String field, String value) async {
     Map<String, dynamic> profileMap = {"field": "", "value": ""};
 
@@ -71,6 +75,7 @@ class DBService {
     }
   }
 
+  /// Updates a specific preference field with a new value via the backend.
   static Future<Map<String, String>> updatePreferenceField(String field, String value) async {
     Map<String, dynamic> preferenceMap = {"field": "", "value": ""};
 
@@ -88,6 +93,7 @@ class DBService {
     }
   }
 
+  /// Retrieves all match data for the current user.
   static Future<Map<String, dynamic>> getAllMatches() async {
     Map<String, dynamic> apiResponse = await apiService.get('db/get-all-matches/');
 
@@ -100,6 +106,7 @@ class DBService {
     }
   }
 
+  /// Updates the match status between the current user and another user.
   static Future<Map<String, String>> updateMatch(String compareUserId, int currMatchType) async {
     Map<String, dynamic> matchMap = {"compareUserId": "", "currMatchType": 2};
 
@@ -117,6 +124,7 @@ class DBService {
     }
   }
 
+  /// Retrieves a specific stat value for a given user and key.
   static Future<Map<String, dynamic>> getStat(String userId, String key) async {
     Map<String, dynamic> apiResponse = await apiService.get('db/get-stat/?user_id=$userId&key=$key');
 
@@ -129,6 +137,7 @@ class DBService {
     }
   }
 
+  /// Updates a specific stat value for a given user and key.
   static Future<Map<String, String>> updateStat(String userId, String key, String value) async {
     Map<String, dynamic> statMap = {"userId": "", "key": "", "value": ""};
 
@@ -147,6 +156,7 @@ class DBService {
     }
   }
 
+  /// Deletes a specific stat entry for a given user and key.
   static Future<Map<String, String>> deleteStat(String userId, String key) async {
     Map<String, dynamic> apiResponse = await apiService.get('db/delete-stat/?user_id=$userId&key=$key');
 
@@ -159,6 +169,7 @@ class DBService {
     }
   }
 
+  /// Triggers the backend process to calculate or update matches.
   static Future<Map<String, String>> triggerProcessMatch() async {
     Map<String, dynamic> apiResponse = await apiService.get('logic/process-match/');
 
@@ -171,6 +182,7 @@ class DBService {
     }
   }
 
+  /// Fetches all chat relationships and inserts them into the local database.
   static Future<void> getAllChats() async {
     Map<String, dynamic> apiResponse = await apiService.get('messaging/get-all-chats/');
 
@@ -181,6 +193,7 @@ class DBService {
     }
   }
 
+  /// Fetches all messages for the current user, decrypts them, and stores them locally.
   static Future<List<Map<String, dynamic>>> getAllMessages() async {
     await getAllChats();
 
@@ -211,6 +224,7 @@ class DBService {
     return result;
   }
 
+  /// Sends an encrypted message to a recipient user via the backend.
   static Future<void> sendMessage(String recipientUserId, String plainText) async {
     Map<String, dynamic> apiResponse = await apiService.get('messaging/get-messaging-public-key/?user_id=$recipientUserId');
 

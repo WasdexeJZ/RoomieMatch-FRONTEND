@@ -4,7 +4,8 @@ class MessagingService {
   static final ApiService apiService = ApiService();
 
   MessagingService();
-
+  
+  // Fetches the messaging public key for a given user ID from the API
   static Future<Map<String, dynamic>> getMessagingPublicKey(String userId) async {
     Map<String, dynamic> apiResponse = await apiService.get('messaging/get-messaging-public-key/?user_id=$userId');
 
@@ -17,6 +18,7 @@ class MessagingService {
     }
   }
 
+  // Updates the user's messaging public key using the provided key and ID
   static Future<Map<String, String>> updateMessagingPublicKey(String publicKey, int keyId) async {
     Map<String, dynamic> publicKeyMap = {"publicKey": "", "keyId": 0};
 
@@ -34,7 +36,7 @@ class MessagingService {
     }
   }
 
-
+  // Retrieves messages for the current user from the API
   static Future<Map<String, dynamic>> getMessages() async {
     Map<String, dynamic> apiResponse = await apiService.get('messaging/get-messages/');
 
@@ -47,6 +49,7 @@ class MessagingService {
     }
   }
 
+  // Sends an encrypted message to a specified recipient with the provided key ID
   static Future<Map<String, String>> sendMessages(String recipientUserId, String cipherText, int keyId) async {
     Map<String, dynamic> messagesMap = {"recipientUserId": "", "cipherText": "", "keyId": 0};
 
@@ -64,6 +67,4 @@ class MessagingService {
       return {"status": "UNKNOWN"};
     }
   }
-
-
 }

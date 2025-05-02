@@ -29,57 +29,58 @@ import '../main.dart';
 class MainInitService {
   MainInitService();
 
+  // Initializes Supertokens for authentication
   static void initSupertoken() {
     SuperTokens.init(
       apiDomain: "http://localhost:8000",
-      // apiDomain: "http://192.168.202.168:8000",
+      // apiDomain: "http://192.168.2.168:8000",
       apiBasePath: "/api/v1/auth",
     );
   }
 
+  // Initializes Hive database and registers adapters
   static Future<void> initHive() async {
-    // Initialize Hive
+    // Initialize Hive in the app's documents directory
     final appDocumentDirectory = await getApplicationDocumentsDirectory();
     await Hive.initFlutter(appDocumentDirectory.path);
 
-    // Register Hive adapter for data Model
+    // Register Hive adapters for models
     Hive.registerAdapter(AuthAdapter());
     Hive.registerAdapter(UserAdapter());
     Hive.registerAdapter(ProfileAdapter());
     Hive.registerAdapter(SettingsAdapter());
     Hive.registerAdapter(PreferenceAdapter());
 
-    // Open Hive Boxes
+    // Open required Hive boxes
     await Hive.openBox('authBox');
     await Hive.openBox('appBox');
   }
 
+  // Sets up default Auth model and checks user authentication status
   static Future<void> initAuth() async {
-    // Set default Auth Model and update if Authentication True
     HiveService.setAuth(Auth());
     await AuthService.checkAuth();
   }
 
+  // Requests required permissions for foreground task (notifications, battery optimization)
   static Future<void> requestPermissions() async {
-    // Android 13+, you need to allow notification permission to display foreground service notification.
-    //
+    // Check notification permission
     final NotificationPermission notificationPermission = await FlutterForegroundTask.checkNotificationPermission();
 
     if (Platform.isAndroid) {
-      // Android 12+, there are restrictions on starting a foreground service.
-      //
-      // To restart the service on device reboot or unexpected problem, you need to allow below permission.
+      // Request battery optimization permission for Android 12+
       if (!await FlutterForegroundTask.isIgnoringBatteryOptimizations) {
-        // This function requires `android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` permission.
         await FlutterForegroundTask.requestIgnoreBatteryOptimization();
       }
 
+      // Request notification permission if not already granted
       if (notificationPermission != NotificationPermission.granted) {
         await FlutterForegroundTask.requestNotificationPermission();
       }
     }
   }
 
+  // Initializes the foreground service configuration
   static void initService() {
     FlutterForegroundTask.init(
       androidNotificationOptions: AndroidNotificationOptions(
@@ -101,6 +102,7 @@ class MainInitService {
     );
   }
 
+  // Starts or restarts the foreground service
   static Future<ServiceRequestResult> startService() async {
     if (await FlutterForegroundTask.isRunningService) {
       return FlutterForegroundTask.restartService();
@@ -113,10 +115,12 @@ class MainInitService {
     }
   }
 
+  // Stops the foreground service
   static Future<ServiceRequestResult> stopService() {
     return FlutterForegroundTask.stopService();
   }
 
+  // Initializes ntfy client and listens for incoming notifications
   static Future<void> initNtfy(FlutterLocalNotificationsPlugin notificationsPlugin, NotificationDetails notificationDetails, NotificationDetails summaryNotificationDetails) async {
     bool connectionEstablished = false;
     bool isIteration = false;
@@ -125,19 +129,19 @@ class MainInitService {
       try {
         final String topic = 'notifications';
         final NtfyClient ntfyClient = NtfyClient(basePath: Uri.parse("http://localhost:9980"));
-        // final NtfyClient ntfyClient = NtfyClient(basePath: Uri.parse("http://192.168.202.168:9980"));
+        // final NtfyClient ntfyClient = NtfyClient(basePath: Uri.parse("http://192.168.2.168:9980"));
 
-        // Subscribe to the topic(s), receiving the MessageResponses right as they are published
+        // Subscribe to the topic stream
         final Stream<MessageResponse> ntfyStream = (await ntfyClient.getMessageStream([topic]));
 
         int counter = 0;
 
-        // listen to our stream for messages sent to the topic, instantaneous update
+        // Listen for messages on the topic
         final StreamSubscription<MessageResponse> ntfyListen = ntfyStream.listen((event) async {
           if (event.event == EventTypes.message) {
             Map<String, dynamic> notification = jsonDecode(event.message ?? '{"userId": "", "title":"", "message":""}');
 
-            // check for message incoming here
+            // Handle message if it's addressed to the current user
             if (notification['userId'].compareTo(AuthBoxHelper.getUserId()) == 0) {
               String title = await CryptographyService.decryptRSA(notification['title']);
               String message = await CryptographyService.decryptRSA(notification['message']);
@@ -182,6 +186,7 @@ class MainInitService {
     } while (!connectionEstablished);
   }
 
+  // Initializes local notifications and starts listening for remote notifications
   static Future<void> initNotification() async {
     const AndroidInitializationSettings androidInitSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
     const InitializationSettings initSettings = InitializationSettings(android: androidInitSettings);
@@ -213,8 +218,9 @@ class MainInitService {
   }
 }
 
+// Handles events for the foreground service
 class MyTaskHandler extends TaskHandler {
-  // Called when the task is started.
+  // Called when the foreground task is started
   @override
   Future<void> onStart(DateTime timestamp, TaskStarter starter) async {
     MainInitService.initSupertoken();
@@ -222,21 +228,27 @@ class MyTaskHandler extends TaskHandler {
     await MainInitService.initNotification();
   }
 
+  // Called when the task repeats (not used here)
   @override
   void onRepeatEvent(DateTime timestamp) {}
 
+  // Called when the task is destroyed
   @override
   Future<void> onDestroy(DateTime timestamp) async {}
 
+  // Called when data is received by the foreground task
   @override
   void onReceiveData(Object data) {}
 
+  // Called when a notification button is pressed
   @override
   void onNotificationButtonPressed(String id) {}
 
+  // Called when the notification is pressed
   @override
   void onNotificationPressed() {}
 
+  // Called when the notification is dismissed
   @override
   void onNotificationDismissed() {}
 }

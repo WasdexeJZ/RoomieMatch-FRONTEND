@@ -4,8 +4,9 @@ import 'package:supertokens_flutter/http.dart' as http;
 class ApiService {
   final String baseUrl = 'http://localhost:8000/api/v1'; // Development
   // final String baseUrl = 'http://127.0.0.1:8000/api/v1'; // Development
-  // final String baseUrl = 'http://192.168.202.168:8000/api/v1'; // Deployment
+  // final String baseUrl = 'http://192.168.2.168:8000/api/v1'; // Deployment
 
+  /// Makes a GET request to the specified endpoint and returns the parsed JSON response.
   Future<Map<String, dynamic>> get(String endpoint) async {
     try {
       final response = await http.get(Uri.parse('$baseUrl/$endpoint'));
@@ -20,6 +21,7 @@ class ApiService {
     }
   }
 
+  /// Makes a POST request to the specified endpoint with the provided data and returns the parsed JSON response.
   Future<Map<String, dynamic>> post(String endpoint, Map<String, dynamic> data) async {
     try {
       final response = await http.post(

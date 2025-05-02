@@ -10,8 +10,7 @@ class AuthService {
 
   AuthService();
 
-  // Login Function
-  //
+  // Handles user login by sending email and password to the backend
   static Future<Map<String, String>> login(String email, String password) async {
     Map<String, dynamic> signinMap = {
       "formFields": [
@@ -42,8 +41,7 @@ class AuthService {
     }
   }
 
-  // Signup Function
-  //
+  // Handles user signup by sending email, password, and username to the backend
   static Future<Map<String, String>> signup(String email, String password, String username) async {
     Map<String, dynamic> signupMap = {
       "formFields": [
@@ -75,8 +73,7 @@ class AuthService {
     }
   }
 
-  // Check Auth of a user on app load
-  //
+  // Checks if a user is already authenticated when the app loads
   static Future<void> checkAuth() async {
     if (await SuperTokens.doesSessionExist()) {
       AuthBoxHelper.setIsAuthenticated(true);
@@ -85,8 +82,7 @@ class AuthService {
     }
   }
 
-  // Call on Log out button press
-  //
+  // Logs out the current user and clears local data
   static Future<void> signOut() async {
     await SuperTokens.signOut();
 
